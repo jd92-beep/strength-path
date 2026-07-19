@@ -25,11 +25,11 @@ export const LEVEL_YUE: Record<string, string> = {
 
 export const PROGRAMS_YUE: Record<string, ProgramYue> = {
   foundation: {
-    title: "基礎基礎",
-    tagline: "徒手動作模式，打好真力量",
+    title: "打好基礎",
+    tagline: "用徒手動作，學識真正嘅用力方法",
     description:
-      "三堂循序全身訓練。學推、蹲、鉸鏈、拉同核心控制——唔使去健身房都得。",
-    equipment: "淨係徒手",
+      "一共三堂全身訓練，由淺入深。你會學點推、點蹲、點鉸鏈、點拉，同埋點樣用核心——屋企都練到，唔一定要去健身房。",
+    equipment: "唔使器材（徒手）",
     level: "初階",
     sessions: {
       "foundation-a": {
@@ -78,11 +78,11 @@ export const PROGRAMS_YUE: Record<string, ProgramYue> = {
     },
   },
   "dumbbell-engine": {
-    title: "啞鈴引擎",
-    tagline: "屋企或者健身房——一對啞鈴就得",
+    title: "啞鈴力量",
+    tagline: "一對啞鈴，屋企定健身房都得",
     description:
-      "用推、划、鉸鏈同高腳杯深蹲練出用得嘅力量。打好基礎之後最適合。",
-    equipment: "啞鈴",
+      "練推、划、鉸鏈同高腳杯深蹲，整出日常生活用得着嘅力量。當你覺得「打好基礎」已經得心應手，就可以上嚟呢階段。",
+    equipment: "一對啞鈴",
     level: "中階",
     sessions: {
       "db-push": {
@@ -121,11 +121,11 @@ export const PROGRAMS_YUE: Record<string, ProgramYue> = {
     },
   },
   "barbell-base": {
-    title: "槓鈴基礎",
-    tagline: "四大複合動作",
+    title: "槓鈴四大項",
+    tagline: "卧推、深蹲、硬拉、划船",
     description:
-      "卧推、深蹲、硬拉、划船——經典力量組合。一定要先掌握徒手同啞鈴控制先好練。",
-    equipment: "槓鈴 + 架",
+      "經典力量四式：卧推、深蹲、硬拉、划船。建議你已經穩陣掌握徒手同啞鈴先開始，動作質素一定要放喺重量前面。",
+    equipment: "槓鈴同深蹲架",
     level: "高階",
     sessions: {
       "bb-a": {

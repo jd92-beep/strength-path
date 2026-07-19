@@ -20,7 +20,7 @@ type Props = {
   programId: string;
 };
 
-export function WorkoutClient({ session, exercises, programTitle: _programTitle, programId }: Props) {
+export function WorkoutClient({ session, exercises, programId }: Props) {
   const { tr, mode } = useLocale();
   const sessionLoc = localizedSession(programId, session, mode);
   const map = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises]);

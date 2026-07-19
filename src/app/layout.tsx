@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { LocaleProvider } from "@/lib/locale";
+import { NavTracker } from "@/components/NavTracker";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -39,7 +40,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className="min-h-full antialiased af-body">
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider>
+          <NavTracker />
+          {children}
+        </LocaleProvider>
       </body>
     </html>
   );

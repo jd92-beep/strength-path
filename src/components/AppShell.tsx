@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BottomNav } from "./BottomNav";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { BackButton } from "./BackButton";
 import { useLocale } from "@/lib/locale";
 
 export function AppShell({
@@ -19,19 +20,23 @@ export function AppShell({
   return (
     <div className="af-app">
       <header className="af-header">
-        <div className={`af-header__inner ${title ? "af-header__inner--titled" : "af-header__inner--home"}`.trim()}>
+        <div
+          className={`af-header__inner ${title || backHref ? "af-header__inner--titled" : "af-header__inner--home"}`.trim()}
+        >
           <div className="af-header__left">
             {backHref ? (
-              <Link href={backHref} className="af-back" aria-label={tr("back")}>
-                <span aria-hidden>‹</span> {tr("back")}
-              </Link>
+              <BackButton fallbackHref={backHref} />
             ) : (
               <Link href="/" className="af-brand">
                 {tr("brand")}
               </Link>
             )}
           </div>
-          {title ? <h1 className="af-header__title">{title}</h1> : <span className="af-header__spacer" />}
+          {title ? (
+            <h1 className="af-header__title">{title}</h1>
+          ) : (
+            <span className="af-header__spacer" />
+          )}
           <div className="af-header__right">
             <LanguageSwitcher compact />
           </div>
