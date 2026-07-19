@@ -25,9 +25,9 @@ const sizeClass: Record<Size, string> = {
 };
 
 /**
- * Inline-only player (no separate fullscreen page).
- * Still + GIF in a fixed square box, centered, no darkening overlays.
- * Tap image or Play/Pause to toggle. Unmounting GIF truly stops it.
+ * Inline-only form player — never navigates, never opens another page.
+ * Still + GIF layered in a fixed square, centered in the shell.
+ * No dark overlays, no mix-blend, no dimming on play.
  */
 export function MediaDemo({
   gifPath,
@@ -55,7 +55,9 @@ export function MediaDemo({
   const stillFailed = failedStill === stillSrc;
   const gifFailed = failedGif === animSrc;
 
-  const togglePlay = useCallback(() => {
+  const togglePlay = useCallback((e?: { preventDefault?: () => void; stopPropagation?: () => void }) => {
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
     setPlaying((p) => !p);
   }, []);
 
@@ -80,12 +82,15 @@ export function MediaDemo({
 
   const showSkeleton = !stillReady && !stillFailed;
   const failed = stillFailed && (!playing || gifFailed);
+  // Hide still once GIF is fully ready so layers never multiply/darken
+  const showStill = !failed && stillReady && !(playing && gifReady);
+  const showGif = playing && !gifFailed;
 
   return (
     <div
       className={`${sizeClass[size]} ${className}`.trim()}
-      data-playing={playing}
-      data-loaded={stillReady || gifReady}
+      data-playing={playing ? "true" : "false"}
+      data-loaded={stillReady || gifReady ? "true" : "false"}
     >
       <div className="media-demo__stage">
         <div
@@ -96,11 +101,11 @@ export function MediaDemo({
           aria-pressed={playing}
           aria-label={playing ? (locale?.tr("pause") ?? "Pause") : (locale?.tr("play") ?? "Play")}
           aria-controls={uid}
-          onClick={togglePlay}
+          onClick={(e) => togglePlay(e)}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              togglePlay();
+              togglePlay(e);
             }
           }}
         >
@@ -141,9 +146,12 @@ export function MediaDemo({
                 onLoad={() => setLoadedStill(stillSrc)}
                 onError={onStillError}
                 className="media-demo__img media-demo__img--still"
-                style={{ opacity: stillReady ? 1 : 0 }}
+                style={{
+                  opacity: showStill || (!playing && stillReady) ? 1 : stillReady && playing && !gifReady ? 1 : 0,
+                  visibility: stillFailed ? "hidden" : "visible",
+                }}
               />
-              {playing && !gifFailed ? (
+              {showGif ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   key={`gif-${animSrc}`}
@@ -167,8 +175,9 @@ export function MediaDemo({
               type="button"
               className="media-ctrl media-ctrl--solid"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                togglePlay();
+                togglePlay(e);
               }}
             >
               {playing

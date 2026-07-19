@@ -48,18 +48,18 @@ export function HomeClient({
           <SummaryRings size={118} />
         </header>
 
-        <section className="af-ring-legend" aria-label="Activity rings">
+        <section className="af-ring-legend" aria-label={tr("summary")}>
           <div>
             <span className="af-dot" style={{ background: "var(--ring-move)" }} />
-            Move
+            {tr("ringMove")}
           </div>
           <div>
             <span className="af-dot" style={{ background: "var(--ring-exercise)" }} />
-            Exercise
+            {tr("ringExercise")}
           </div>
           <div>
             <span className="af-dot" style={{ background: "var(--ring-stand)" }} />
-            Stand
+            {tr("ringStand")}
           </div>
         </section>
 
@@ -138,7 +138,7 @@ export function HomeClient({
             <Link href="/library">{tr("search")}</Link>
           </div>
           <p className="af-caption">
-            {total.toLocaleString()} {tr("moves")} · GIF · {langCount} langs
+            {total.toLocaleString()} {tr("moves")} · GIF · {langCount} {tr("demoLangs")}
           </p>
           <div className="af-stack-sm">
             {spotlight.map((ex, i) => (

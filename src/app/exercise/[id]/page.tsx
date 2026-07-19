@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { TeachStudio } from "@/components/TeachStudio";
+import { ExercisePageChrome } from "@/components/ExercisePageChrome";
 import { slugifyPart } from "@/lib/body-parts";
 import { filterExercises, getAllExercises, getExercise } from "@/lib/exercises";
 import { buildLesson } from "@/lib/teaching";
@@ -44,40 +44,20 @@ export default async function ExercisePage({
   );
 
   return (
-    <AppShell title="Form studio" backHref="/library">
-      <div className="stack-lg">
-        <header className="studio-head">
-          <p className="studio-head__id">#{exercise.id}</p>
-          <h1 className="studio-head__title">{exercise.name}</h1>
-          <div className="studio-head__tags">
-            <Link href={`/learn/${lesson.pattern}`} className="chip chip-accent">
-              {lesson.patternLabel}
-            </Link>
-            <Link href={`/body/${slugifyPart(exercise.body_part)}`} className="chip">
-              {exercise.body_part}
-            </Link>
-            <span className="chip">{exercise.equipment}</span>
-            <span className="chip">target · {exercise.target}</span>
-          </div>
-        </header>
-
+    <AppShell title={exercise.name} backHref="/library">
+      <ExercisePageChrome
+        exerciseId={exercise.id}
+        name={exercise.name}
+        pattern={lesson.pattern}
+        patternLabel={lesson.patternLabel}
+        bodyPart={exercise.body_part}
+        bodyHref={`/body/${slugifyPart(exercise.body_part)}`}
+        equipment={exercise.equipment}
+        target={exercise.target}
+        related={related.map((e) => ({ id: e.id, name: e.name }))}
+      >
         <TeachStudio exercise={exercise} autoPlay={false} />
-
-        {related.length ? (
-          <section>
-            <div className="section-head">
-              <h2 className="display">More {exercise.body_part}</h2>
-            </div>
-            <div className="related-rail">
-              {related.map((ex) => (
-                <Link key={ex.id} href={`/exercise/${ex.id}`} className="related-rail__item">
-                  {ex.name}
-                </Link>
-              ))}
-            </div>
-          </section>
-        ) : null}
-      </div>
+      </ExercisePageChrome>
     </AppShell>
   );
 }

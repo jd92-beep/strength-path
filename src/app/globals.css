@@ -840,25 +840,29 @@ img {
   font-size: 1.3rem;
 }
 
-/* Media — fixed square, centered, never darkens, never opens a new page */
+/* Media — fixed square, shell-centered, never darkens, never leaves the page */
 .media-demo {
   width: 100%;
   max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .media-demo__stage {
   position: relative;
-  width: min(100%, 320px);
+  /* Width-driven square only — never use max-height alone (breaks aspect / overflows) */
+  width: min(100%, 280px, 72vw);
   margin-inline: auto;
   border-radius: 18px;
   overflow: hidden;
   background: #ffffff;
   border: 0.5px solid var(--border);
   box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
 }
 
 .media-demo__canvas {
@@ -866,28 +870,21 @@ img {
   width: 100%;
   aspect-ratio: 1 / 1;
   height: auto;
-  max-width: 320px;
-  max-height: min(42dvh, 320px);
-  margin: 0 auto;
+  margin: 0;
   overflow: hidden;
   background: #ffffff;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  contain: strict;
+  isolation: isolate;
+  box-sizing: border-box;
 }
 
-.media-demo--sm .media-demo__canvas,
 .media-demo--sm .media-demo__stage {
-  max-width: 6.75rem;
   width: 6.75rem;
-  max-height: 6.75rem;
 }
 
-.media-demo--hero .media-demo__canvas,
 .media-demo--hero .media-demo__stage {
-  width: min(100%, 300px);
-  max-width: 300px;
-  max-height: min(40dvh, 300px);
+  width: min(100%, 260px, 68vw);
 }
 
 .media-demo__img {
@@ -898,24 +895,25 @@ img {
   max-width: 100% !important;
   max-height: 100% !important;
   object-fit: contain;
-  object-position: center;
-  /* NO mix-blend-mode — that darkened GIFs */
-  mix-blend-mode: normal;
-  filter: none;
+  object-position: center center;
+  /* Critical: multiply / filters darkened GIFs on play */
+  mix-blend-mode: normal !important;
+  filter: none !important;
   opacity: 1;
   pointer-events: none;
   user-select: none;
-  background: #fff;
+  -webkit-user-select: none;
+  background: #ffffff;
 }
 
 .media-demo__img--gif {
   z-index: 1;
-  background: #fff;
+  background: #ffffff;
 }
 
 .media-demo__img--still {
   z-index: 0;
-  background: #fff;
+  background: #ffffff;
 }
 
 .media-demo__skeleton {
@@ -940,6 +938,13 @@ img {
   font-weight: 600;
   text-align: center;
   background: #f2f2f7;
+}
+
+/* Kill legacy chrome / orb / dark overlays from older deploys if CSS is partially cached */
+.media-demo__chrome,
+.media-demo__play-orb,
+.media-demo__hit {
+  display: none !important;
 }
 
 .media-ctrl {
@@ -968,8 +973,9 @@ img {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.55rem 0.65rem 0.65rem;
-  background: var(--surface);
-  border-top: 0.5px solid var(--border);
+  /* Light solid bar — never semi-transparent black */
+  background: #f2f2f7;
+  border-top: 0.5px solid rgba(60, 60, 67, 0.18);
 }
 
 .media-demo__caption {
@@ -981,12 +987,18 @@ img {
   margin-inline: auto;
 }
 
-/* kill any leftover darkening rules */
+/* Force full brightness while playing — no dim, no multiply, no dark stage */
 .media-demo[data-playing="true"] .media-demo__canvas,
 .media-demo[data-playing="true"] .media-demo__img,
-.media-demo[data-playing="true"] .media-demo__stage {
+.media-demo[data-playing="true"] .media-demo__stage,
+.media-demo[data-playing="true"] .media-demo__toolbar {
   filter: none !important;
   opacity: 1 !important;
+  mix-blend-mode: normal !important;
+}
+
+.media-demo[data-playing="true"] .media-demo__canvas,
+.media-demo[data-playing="true"] .media-demo__stage {
   background: #ffffff !important;
 }
 
@@ -1027,7 +1039,8 @@ img {
 .ex-card__media img[src*="images/"],
 .ex-card__media img[src*="raw.githubusercontent"] {
   object-fit: contain;
-  mix-blend-mode: multiply;
+  /* white-bg stills only; never multiply on animated demos */
+  mix-blend-mode: normal;
   background: #fff;
 }
 

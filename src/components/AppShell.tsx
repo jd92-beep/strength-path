@@ -33,7 +33,9 @@ export function AppShell({
             )}
           </div>
           {title ? (
-            <h1 className="af-header__title">{title}</h1>
+            <h1 className="af-header__title" title={title}>
+              {title}
+            </h1>
           ) : (
             <span className="af-header__spacer" />
           )}

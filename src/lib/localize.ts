@@ -111,10 +111,9 @@ export function localizedPattern(
 }
 
 export function stageBadge(i: number, level: string, mode: AppLangMode) {
-  const lv = levelLabel(level, mode === "both" ? "en" : mode);
-  if (mode === "yue") return `階段 ${i + 1} · ${LEVEL_YUE[level] || level}`;
-  if (mode === "both") return `Stage ${i + 1} · 階段 ${i + 1} · ${level}/${LEVEL_YUE[level] || ""}`;
-  return `Stage ${i + 1} · ${lv}`;
+  if (mode === "yue") return `第 ${i + 1} 階段 · ${LEVEL_YUE[level] || level}`;
+  if (mode === "both") return `Stage ${i + 1} · ${LEVEL_YUE[level] || level}`;
+  return `Stage ${i + 1} · ${level}`;
 }
 
 export function ui(mode: AppLangMode, key: UiKey) {

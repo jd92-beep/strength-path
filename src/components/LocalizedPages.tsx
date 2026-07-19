@@ -44,9 +44,9 @@ export function PathPageClient({ programs }: { programs: Program[] }) {
           </h1>
           <p className="af-caption" style={{ marginTop: "0.45rem" }}>
             {mode === "yue"
-              ? "由打基礎 → 啞鈴 → 槓鈴，一步一步上。每階段都有引導課堂。"
+              ? "由打好基礎 → 啞鈴力量 → 槓鈴四大項，一步一步上。每個階段都有引導課堂。"
               : mode === "both"
-                ? "Climb Foundation → Dumbbell → Barbell. 由打基礎 → 啞鈴 → 槓鈴。"
+                ? "Climb Foundation → Dumbbell → Barbell. 由打好基礎 → 啞鈴 → 槓鈴。"
                 : "Climb Foundation → Dumbbell → Barbell. Each stage is a guided multi-session plan."}
           </p>
         </div>
