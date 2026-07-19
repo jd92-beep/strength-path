@@ -1,19 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Exercise } from "@/lib/types";
+import type { Exercise, LangCode } from "@/lib/types";
+import { LANGS } from "@/lib/langs";
 import { buildLesson } from "@/lib/teaching";
+import { useExerciseI18n } from "@/hooks/useExerciseI18n";
 import { MediaDemo } from "./MediaDemo";
 import { StepGuide } from "./StepGuide";
+import { ExerciseMeta } from "./ExerciseMeta";
 
-type Tab = "watch" | "steps" | "cues" | "mistakes" | "level";
+type Tab = "watch" | "steps" | "cues" | "mistakes" | "level" | "data";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "watch", label: "Watch" },
   { id: "steps", label: "Steps" },
   { id: "cues", label: "Cues" },
   { id: "mistakes", label: "Fix" },
-  { id: "level", label: "Level up" },
+  { id: "level", label: "Level" },
+  { id: "data", label: "Data" },
 ];
 
 export function TeachStudio({
@@ -25,34 +29,71 @@ export function TeachStudio({
 }) {
   const lesson = useMemo(() => buildLesson(exercise), [exercise]);
   const [tab, setTab] = useState<Tab>("watch");
+  const [lang, setLang] = useState<LangCode>("en");
+  const i18n = useExerciseI18n(exercise, lang);
 
   return (
     <div className="teach">
-      <div
-        className="teach__pattern"
-        style={{ ["--pattern" as string]: lesson.color }}
-      >
-        <span className="teach__pattern-dot" aria-hidden />
-        <div>
-          <p className="teach__pattern-label">{lesson.patternLabel}</p>
-          <p className="teach__pattern-focus">{lesson.skillFocus}</p>
+      <div className="teach-hero-card">
+        <div
+          className="teach__pattern"
+          style={{ ["--pattern" as string]: lesson.color }}
+        >
+          <span className="teach__pattern-dot" aria-hidden />
+          <div>
+            <p className="teach__pattern-label">{lesson.patternLabel}</p>
+            <p className="teach__pattern-focus">{lesson.skillFocus}</p>
+          </div>
         </div>
-      </div>
 
-      <MediaDemo
-        key={exercise.id}
-        gifPath={exercise.gif_url}
-        imagePath={exercise.image}
-        alt={`${exercise.name} form demo`}
-        autoPlay={autoPlay}
-        size="hero"
-        caption="Learn the shape first — then match it set by set."
-      />
+        <MediaDemo
+          key={exercise.id}
+          gifPath={exercise.gif_url}
+          imagePath={exercise.image}
+          alt={`${exercise.name} form demo`}
+          autoPlay={autoPlay}
+          size="hero"
+          caption={`${exercise.name} · ${exercise.media_id || "demo"} · © Gym visual`}
+        />
 
-      <div className="teach__meta-row">
-        <span className="chip">{exercise.equipment}</span>
-        <span className="chip chip-accent">{exercise.target}</span>
-        <span className="chip">{lesson.tempo}</span>
+        <div className="teach-toolbar">
+          <div className="teach__meta-row">
+            <span className="chip">{exercise.equipment}</span>
+            <span className="chip chip-accent">{exercise.target}</span>
+            <span className="chip">{exercise.body_part}</span>
+            {exercise.muscle_group ? (
+              <span className="chip">{exercise.muscle_group}</span>
+            ) : null}
+          </div>
+          <label className="lang-picker">
+            <span className="lang-picker__label">Language</span>
+            <select
+              className="lang-picker__select"
+              value={lang}
+              onChange={(e) => setLang(e.target.value as LangCode)}
+              aria-label="Instruction language"
+            >
+              {LANGS.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.flag} {l.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        {exercise.secondary_muscles?.length ? (
+          <div className="muscle-row muscle-row--inline">
+            <span className="muscle-row__label">Also hits</span>
+            <div className="muscle-row__tags">
+              {exercise.secondary_muscles.map((m) => (
+                <span key={m} className="muscle-tag muscle-tag--sec">
+                  {m}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="teach-tabs" role="tablist" aria-label="Teaching sections">
@@ -71,15 +112,19 @@ export function TeachStudio({
         ))}
       </div>
 
-      <div className="teach-panel surface" role="tabpanel">
+      <div className="teach-panel" role="tabpanel">
         {tab === "watch" && (
           <div className="stack">
-            <h3 className="teach-panel__title">What to notice in the demo</h3>
+            <h3 className="teach-panel__title">Watch like a coach</h3>
             <ul className="teach-bullets">
-              <li>Joint path — does it match the {lesson.patternLabel.toLowerCase()} pattern?</li>
-              <li>Tempo — count “{lesson.tempo}” while you watch one rep.</li>
               <li>
-                Finish position — you should <em>feel</em>: {lesson.feel}
+                Pattern: <strong>{lesson.patternLabel}</strong> — {lesson.skillFocus}
+              </li>
+              <li>
+                Tempo cue: <strong>{lesson.tempo}</strong>
+              </li>
+              <li>
+                You should feel: <strong>{lesson.feel}</strong>
               </li>
             </ul>
             <div className="teach-callout">
@@ -95,12 +140,21 @@ export function TeachStudio({
 
         {tab === "steps" && (
           <div className="stack">
-            <h3 className="teach-panel__title">Step-by-step</h3>
-            <StepGuide steps={exercise.steps} />
-            {exercise.instructions ? (
+            <div className="teach-panel__head-row">
+              <h3 className="teach-panel__title">Step-by-step</h3>
+              {i18n.loading ? (
+                <span className="faint" style={{ fontSize: "0.78rem" }}>
+                  Loading {lang}…
+                </span>
+              ) : (
+                <span className="chip">{LANGS.find((l) => l.code === lang)?.flag} {lang}</span>
+              )}
+            </div>
+            <StepGuide steps={i18n.steps} />
+            {i18n.instructions ? (
               <div className="teach-callout teach-callout--soft">
-                <strong>Full coach note</strong>
-                <p>{exercise.instructions}</p>
+                <strong>Full instructions ({lang})</strong>
+                <p>{i18n.instructions}</p>
               </div>
             ) : null}
           </div>
@@ -133,7 +187,7 @@ export function TeachStudio({
 
         {tab === "mistakes" && (
           <div className="stack">
-            <h3 className="teach-panel__title">Common misses → quick fixes</h3>
+            <h3 className="teach-panel__title">Common misses → fixes</h3>
             {lesson.mistakes.map((m) => (
               <div key={m.bad} className="mistake-card">
                 <div className="mistake-card__bad">
@@ -160,11 +214,12 @@ export function TeachStudio({
               <p>{lesson.progress}</p>
             </div>
             <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
-              Rule of thumb: if you can’t keep the demo shape for every rep, regress. If the last 2
-              reps still look crisp, progress next session.
+              Keep the demo shape on every rep. Break form → regress. Clean last reps → progress.
             </p>
           </div>
         )}
+
+        {tab === "data" && <ExerciseMeta exercise={exercise} />}
       </div>
     </div>
   );

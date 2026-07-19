@@ -11,6 +11,25 @@ export type Exercise = {
   steps: string[];
   image: string;
   gif_url: string;
+  media_id: string;
+  attribution: string;
+};
+
+export type LangCode =
+  | "en"
+  | "es"
+  | "it"
+  | "tr"
+  | "ru"
+  | "zh"
+  | "hi"
+  | "pl"
+  | "ko"
+  | "fr";
+
+export type ExerciseI18n = {
+  instructions: string;
+  steps: string[];
 };
 
 export type WorkoutSet = {

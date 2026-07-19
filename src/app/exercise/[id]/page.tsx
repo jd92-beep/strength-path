@@ -35,18 +35,17 @@ export default async function ExercisePage({
   if (!exercise) notFound();
 
   const lesson = buildLesson(exercise);
-  const related = filterExercises({ bodyPart: exercise.body_part, limit: 6 }).filter(
+  const related = filterExercises({ bodyPart: exercise.body_part, limit: 8 }).filter(
     (e) => e.id !== exercise.id,
   );
 
   return (
     <AppShell title="Form studio" backHref="/library">
-      <div className="stack-md">
-        <header>
-          <h1 className="display" style={{ margin: "0 0 0.55rem", fontSize: "1.5rem" }}>
-            {exercise.name}
-          </h1>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+      <div className="stack-lg">
+        <header className="studio-head">
+          <p className="studio-head__id">#{exercise.id}</p>
+          <h1 className="studio-head__title">{exercise.name}</h1>
+          <div className="studio-head__tags">
             <Link href={`/learn/${lesson.pattern}`} className="chip chip-accent">
               {lesson.patternLabel}
             </Link>
@@ -54,28 +53,20 @@ export default async function ExercisePage({
               {exercise.body_part}
             </Link>
             <span className="chip">{exercise.equipment}</span>
+            <span className="chip">target · {exercise.target}</span>
           </div>
         </header>
 
         <TeachStudio exercise={exercise} autoPlay />
 
-        <p className="faint" style={{ fontSize: "0.75rem", margin: 0, textAlign: "center" }}>
-          Media © Gym visual — gymvisual.com · Dataset: exercises-dataset
-        </p>
-
         {related.length ? (
           <section>
-            <h2 className="display" style={{ fontSize: "1.05rem", margin: "0 0 0.65rem" }}>
-              Keep practicing · {exercise.body_part}
-            </h2>
-            <div className="stack">
+            <div className="section-head">
+              <h2 className="display">More {exercise.body_part}</h2>
+            </div>
+            <div className="related-rail">
               {related.map((ex) => (
-                <Link
-                  key={ex.id}
-                  href={`/exercise/${ex.id}`}
-                  className="surface surface-interactive"
-                  style={{ padding: "0.85rem 1rem", fontWeight: 650 }}
-                >
+                <Link key={ex.id} href={`/exercise/${ex.id}`} className="related-rail__item">
                   {ex.name}
                 </Link>
               ))}
