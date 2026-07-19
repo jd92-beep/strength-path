@@ -141,7 +141,7 @@ export function MediaDemo({
                 onLoad={() => setLoadedStill(stillSrc)}
                 onError={onStillError}
                 className="media-demo__img media-demo__img--still"
-                style={{ opacity: stillReady && !(playing && gifReady) ? 1 : playing && !gifReady ? 1 : stillReady ? 1 : 0 }}
+                style={{ opacity: stillReady ? 1 : 0 }}
               />
               {playing && !gifFailed ? (
                 // eslint-disable-next-line @next/next/no-img-element
