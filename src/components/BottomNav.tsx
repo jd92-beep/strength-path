@@ -6,40 +6,41 @@ import { usePathname } from "next/navigation";
 const links = [
   {
     href: "/",
-    label: "Home",
+    label: "Summary",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z" />
-      </svg>
-    ),
-  },
-  {
-    href: "/learn",
-    label: "Learn",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" strokeLinecap="round" />
-        <path d="M6.5 2H20v15H6.5A2.5 2.5 0 0 0 4 19.5V4.5A2.5 2.5 0 0 1 6.5 2z" />
-        <path d="M8 7h8M8 11h5" strokeLinecap="round" />
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <circle cx="12" cy="12" r="3" />
+        <circle cx="12" cy="12" r="7.5" strokeOpacity="0.55" />
+        <circle cx="12" cy="12" r="10.5" strokeOpacity="0.3" />
       </svg>
     ),
   },
   {
     href: "/path",
-    label: "Train",
+    label: "Workouts",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 19h4l3-7 3 4 3-9h3" strokeLinecap="round" strokeLinejoin="round" />
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M4 8h3l2-3h6l2 3h3v11H4V8z" strokeLinejoin="round" />
+        <circle cx="12" cy="13" r="3" />
+      </svg>
+    ),
+  },
+  {
+    href: "/learn",
+    label: "Library",
+    icon: (
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M5 4h5v16H5zM14 4h5v16h-5z" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
     href: "/library",
-    label: "Demos",
+    label: "Search",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="M10 9.5v5l5-2.5-5-2.5z" fill="currentColor" stroke="none" />
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <circle cx="11" cy="11" r="6.5" />
+        <path d="M16 16l4 4" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -49,8 +50,8 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="bottom-nav" aria-label="Primary">
-      <div className="bottom-nav-inner">
+    <nav className="af-tabbar" aria-label="Primary">
+      <div className="af-tabbar__inner">
         {links.map((link) => {
           const active =
             link.href === "/"
@@ -60,7 +61,7 @@ export function BottomNav() {
             <Link
               key={link.href}
               href={link.href}
-              className="nav-link"
+              className="af-tab"
               data-active={active}
               aria-current={active ? "page" : undefined}
             >

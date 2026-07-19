@@ -5,7 +5,6 @@ export function AppShell({
   children,
   title,
   backHref,
-  bare = false,
 }: {
   children: React.ReactNode;
   title?: string;
@@ -13,23 +12,23 @@ export function AppShell({
   bare?: boolean;
 }) {
   return (
-    <>
-      <header className="app-header">
-        <div className="app-header__inner">
+    <div className="af-app">
+      <header className="af-header">
+        <div className="af-header__inner">
           {backHref ? (
-            <Link href={backHref} className="chip" aria-label="Go back" style={{ paddingInline: "0.7rem" }}>
-              ← Back
+            <Link href={backHref} className="af-back" aria-label="Go back">
+              <span aria-hidden>‹</span> Back
             </Link>
           ) : (
-            <Link href="/" className="brand">
-              Strength<span>Path</span>
+            <Link href="/" className="af-brand">
+              Strength Path
             </Link>
           )}
-          {title ? <h1 className="page-title">{title}</h1> : null}
+          {title ? <h1 className="af-header__title">{title}</h1> : null}
         </div>
       </header>
-      <main className={bare ? undefined : "shell"}>{children}</main>
+      <main className="af-shell">{children}</main>
       <BottomNav />
-    </>
+    </div>
   );
 }
