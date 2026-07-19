@@ -179,9 +179,9 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
         gifPath={exercise.gif_url}
         imagePath={exercise.image}
         alt={`${exercise.name} form demo`}
-        autoPlay
+        autoPlay={false}
         size="hero"
-        caption="Match the demo shape before adding speed."
+        caption="Tap photo to play or pause the form demo."
       />
 
       {restLeft > 0 ? (

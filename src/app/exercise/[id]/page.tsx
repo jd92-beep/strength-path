@@ -61,7 +61,7 @@ export default async function ExercisePage({
           </div>
         </header>
 
-        <TeachStudio exercise={exercise} autoPlay />
+        <TeachStudio exercise={exercise} autoPlay={false} />
 
         {related.length ? (
           <section>

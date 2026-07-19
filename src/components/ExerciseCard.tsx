@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Exercise } from "@/lib/types";
-import { thumbUrl } from "@/lib/media";
+import { ExercisePhoto } from "./ExercisePhoto";
 
 export function ExerciseCard({
   exercise,
@@ -15,13 +15,12 @@ export function ExerciseCard({
       className={`ex-card ${featured ? "ex-card--featured" : ""}`.trim()}
     >
       <div className="ex-card__media">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={thumbUrl(exercise.image)}
+        <ExercisePhoto
+          imagePath={exercise.image}
+          bodyPart={exercise.body_part}
           alt=""
           width={featured ? 720 : 112}
           height={featured ? 480 : 112}
-          loading="lazy"
         />
         <span className="ex-card__play" aria-hidden>
           ▶

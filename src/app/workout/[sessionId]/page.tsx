@@ -4,6 +4,8 @@ import { WorkoutClient } from "@/components/WorkoutClient";
 import { getExercisesByIds } from "@/lib/exercises";
 import { getAllSessions, getSession } from "@/lib/programs";
 
+export const dynamicParams = true;
+
 export function generateStaticParams() {
   return getAllSessions().map(({ session }) => ({ sessionId: session.id }));
 }

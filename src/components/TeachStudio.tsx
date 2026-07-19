@@ -23,7 +23,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 export function TeachStudio({
   exercise,
-  autoPlay = true,
+  autoPlay = false,
 }: {
   exercise: Exercise;
   autoPlay?: boolean;

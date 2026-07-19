@@ -4,7 +4,7 @@ import { AppShell } from "@/components/AppShell";
 import { getExercisesByIds } from "@/lib/exercises";
 import { getProgram, PROGRAMS } from "@/lib/programs";
 import { gradientForKey } from "@/lib/fitness-theme";
-import { thumbUrl } from "@/lib/media";
+import { ExercisePhoto } from "@/components/ExercisePhoto";
 
 export function generateStaticParams() {
   return PROGRAMS.map((p) => ({ programId: p.id }));
@@ -101,23 +101,17 @@ export default async function ProgramPage({
                             height: "4.5rem",
                             borderRadius: "14px",
                             overflow: "hidden",
-                            background: "#fff",
+                            background: "#111",
                             marginBottom: "0.3rem",
                           }}
                         >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={thumbUrl(m.image)}
+                          <ExercisePhoto
+                            imagePath={m.image}
+                            bodyPart={m.body_part}
                             alt=""
                             width={72}
                             height={72}
-                            loading="lazy"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "contain",
-                              mixBlendMode: "multiply",
-                            }}
+                            className="ex-thumb"
                           />
                         </div>
                         <span
