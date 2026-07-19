@@ -9,6 +9,8 @@ import { BodyPartIcon } from "@/components/BodyPartIcon";
 import type { Exercise } from "@/lib/types";
 import type { Program } from "@/lib/types";
 import { useLocale } from "@/lib/locale";
+import { localizedPattern, localizedProgram, stageBadge } from "@/lib/localize";
+import type { MovementPattern } from "@/lib/teaching";
 
 type Pattern = { id: string; label: string; skillFocus: string; color: string };
 
@@ -26,7 +28,6 @@ export function HomeClient({
   spotlight: Exercise[];
 }) {
   const { tr, mode } = useLocale();
-  const nextProgram = programs[0];
   const bodies = [
     { id: "chest", href: "/body/chest", label: "Chest", yue: "胸" },
     { id: "back", href: "/body/back", label: "Back", yue: "背" },
@@ -68,26 +69,21 @@ export function HomeClient({
             <Link href="/path">{tr("seeAll")}</Link>
           </div>
           <div className="af-tile-stack">
-            <WorkoutTile
-              large
-              href={`/path/${nextProgram.id}`}
-              title={nextProgram.title}
-              subtitle={nextProgram.tagline}
-              meta={`${nextProgram.sessions.length} ${tr("sessions")} · ${nextProgram.equipment}`}
-              badge={tr("featured")}
-              gradientKey={nextProgram.id}
-            />
-            {programs.slice(1).map((p) => (
-              <WorkoutTile
-                key={p.id}
-                href={`/path/${p.id}`}
-                title={p.title}
-                subtitle={p.tagline}
-                meta={`${p.sessions.length} ${tr("workoutsCount")} · ${p.level}`}
-                badge={p.level}
-                gradientKey={p.id}
-              />
-            ))}
+            {programs.map((prog, i) => {
+              const p = localizedProgram(prog, mode);
+              return (
+                <WorkoutTile
+                  key={prog.id}
+                  large={i === 0}
+                  href={`/path/${prog.id}`}
+                  title={p.title}
+                  subtitle={p.tagline}
+                  meta={`${prog.sessions.length} ${tr("sessions")} · ${p.equipment}`}
+                  badge={i === 0 ? tr("featured") : stageBadge(i, prog.level, mode)}
+                  gradientKey={prog.id}
+                />
+              );
+            })}
           </div>
         </section>
 
@@ -97,17 +93,25 @@ export function HomeClient({
             <Link href="/learn">{tr("seeAll")}</Link>
           </div>
           <div className="af-h-scroll">
-            {patterns.map((p) => (
-              <Link
-                key={p.id}
-                href={`/learn/${p.id}`}
-                className="af-mini-tile"
-                style={{ ["--g" as string]: p.color }}
-              >
-                <span className="af-mini-tile__label">{p.label}</span>
-                <span className="af-mini-tile__sub">{tr("formPattern")}</span>
-              </Link>
-            ))}
+            {patterns.map((p) => {
+              const loc = localizedPattern(
+                p.id as MovementPattern,
+                p.label,
+                p.skillFocus,
+                mode,
+              );
+              return (
+                <Link
+                  key={p.id}
+                  href={`/learn/${p.id}`}
+                  className="af-mini-tile"
+                  style={{ ["--g" as string]: p.color }}
+                >
+                  <span className="af-mini-tile__label">{loc.label}</span>
+                  <span className="af-mini-tile__sub">{tr("formPattern")}</span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 

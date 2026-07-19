@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { AppShell } from "@/components/AppShell";
-import { WorkoutClient } from "@/components/WorkoutClient";
+import { WorkoutSessionClient } from "@/components/WorkoutSessionClient";
 import { getExercisesByIds } from "@/lib/exercises";
 import { getAllSessions, getSession } from "@/lib/programs";
 
@@ -33,13 +32,11 @@ export default async function WorkoutPage({
   const exercises = getExercisesByIds(session.exercises.map((e) => e.exerciseId));
 
   return (
-    <AppShell title={session.title} backHref={`/path/${program.id}`}>
-      <WorkoutClient
-        session={session}
-        exercises={exercises}
-        programTitle={program.title}
-        programId={program.id}
-      />
-    </AppShell>
+    <WorkoutSessionClient
+      session={session}
+      exercises={exercises}
+      programTitle={program.title}
+      programId={program.id}
+    />
   );
 }

@@ -12,7 +12,7 @@ import { StepGuide } from "./StepGuide";
 import { BilingualList, BilingualText } from "./Bilingual";
 import { BodyPartIcon } from "./BodyPartIcon";
 import { markSessionComplete } from "@/lib/progress";
-
+import { localizedCoaching, localizedSession, localizedSetNote } from "@/lib/localize";
 type Props = {
   session: Session;
   exercises: Exercise[];
@@ -20,8 +20,9 @@ type Props = {
   programId: string;
 };
 
-export function WorkoutClient({ session, exercises, programTitle, programId }: Props) {
+export function WorkoutClient({ session, exercises, programTitle: _programTitle, programId }: Props) {
   const { tr, mode } = useLocale();
+  const sessionLoc = localizedSession(programId, session, mode);
   const map = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises]);
   const [index, setIndex] = useState(0);
   const [setIndexNum, setSetIndexNum] = useState(0);
@@ -141,7 +142,7 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
     <div className="stack-md">
       <div>
         <p className="muted" style={{ margin: "0 0 0.3rem", fontSize: "0.85rem" }}>
-          {programTitle} · {safeIndex + 1}/{totalMoves}
+          {sessionLoc.title} · {safeIndex + 1}/{totalMoves}
         </p>
         <div style={{ display: "flex", gap: "0.65rem", alignItems: "center", marginBottom: "0.45rem" }}>
           <BodyPartIcon bodyPart={exercise.body_part} size={44} className="workout-bp-icon" />
@@ -175,10 +176,19 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
         </div>
         {currentSet.note ? (
           <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
-            {currentSet.note}
+            {localizedSetNote(
+              programId,
+              session.id,
+              item.exerciseId,
+              setIndexNum,
+              currentSet.note,
+              mode,
+            )}
           </p>
         ) : null}
-        <p style={{ margin: 0, fontSize: "0.98rem", lineHeight: 1.45 }}>{item.coaching}</p>
+        <p style={{ margin: 0, fontSize: "0.98rem", lineHeight: 1.45, whiteSpace: "pre-line" }}>
+          {localizedCoaching(programId, session.id, item, mode)}
+        </p>
         <div className="teach-callout teach-callout--soft" style={{ marginTop: "0.25rem" }}>
           <strong>{tr("feel")}</strong>
           <BilingualText en={lessonEn.feel} yue={lessonYue.feel} as="p" />
