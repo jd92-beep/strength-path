@@ -1,14 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Sans, Space_Grotesk } from "next/font/google";
+import { Manrope, Sora } from "next/font/google";
 import "./globals.css";
 
-const body = DM_Sans({
+const body = Manrope({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const display = Space_Grotesk({
+const display = Sora({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -16,25 +16,29 @@ const display = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: {
-    default: "Strength Path — Get stronger, step by step",
+    default: "Strength Path — Learn form, get stronger",
     template: "%s · Strength Path",
   },
   description:
-    "Mobile-first workout coach: progressive strength paths, body-part training, and 1,300+ exercises with step-by-step teaching.",
+    "Mobile React workout coach: pattern-based teaching, playable form demos, and guided strength sessions.",
   applicationName: "Strength Path",
-  authors: [{ name: "Strength Path" }],
+  appleWebApp: {
+    capable: true,
+    title: "Strength Path",
+    statusBarStyle: "black-translucent",
+  },
   openGraph: {
     title: "Strength Path",
-    description: "Guided strength training from first push-up to barbell base.",
+    description: "Learn movement patterns, watch form demos, train step by step.",
     type: "website",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#141a2a",
+  themeColor: "#0f1220",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  maximumScale: 5,
   viewportFit: "cover",
 };
 

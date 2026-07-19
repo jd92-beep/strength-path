@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Exercise, Session } from "@/lib/types";
+import { buildLesson } from "@/lib/teaching";
 import { MediaDemo } from "./MediaDemo";
 import { RestRing } from "./RestRing";
 import { StepGuide } from "./StepGuide";
@@ -22,10 +23,14 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
   const [restLeft, setRestLeft] = useState(0);
   const [restTotal, setRestTotal] = useState(0);
   const [done, setDone] = useState(false);
-  const [showSteps, setShowSteps] = useState(false);
+  const [teachOpen, setTeachOpen] = useState(false);
 
   const item = session.exercises[index];
   const exercise = item ? map.get(item.exerciseId) : undefined;
+  const lesson = useMemo(
+    () => (exercise ? buildLesson(exercise) : null),
+    [exercise],
+  );
   const totalMoves = session.exercises.length;
   const totalSets = item?.sets.length ?? 0;
   const progressPct = done
@@ -54,7 +59,7 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
       setIndex((i) => i + 1);
       setSetIndexNum(0);
       startRest(25);
-      setShowSteps(false);
+      setTeachOpen(false);
       return;
     }
     setDone(true);
@@ -74,21 +79,21 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
           Stronger than yesterday
         </h2>
         <p className="muted" style={{ marginBottom: "1.25rem", position: "relative", zIndex: 1 }}>
-          You finished {session.title}. Rest well, then keep climbing the path.
+          You finished {session.title}. Review form on Learn when you recover.
         </p>
         <div className="stack" style={{ position: "relative", zIndex: 1 }}>
           <Link href={`/path/${programId}`} className="btn btn-primary btn-block btn-lg">
             Back to program
           </Link>
-          <Link href="/body" className="btn btn-ghost btn-block">
-            Train a body part
+          <Link href="/learn" className="btn btn-ghost btn-block">
+            Study patterns
           </Link>
         </div>
       </div>
     );
   }
 
-  if (!item || !exercise) {
+  if (!item || !exercise || !lesson) {
     return <p className="muted">Exercise data missing for this session.</p>;
   }
 
@@ -100,15 +105,18 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
         <p className="muted" style={{ margin: "0 0 0.3rem", fontSize: "0.85rem" }}>
           {programTitle} · Move {index + 1} of {totalMoves}
         </p>
-        <h2 className="display" style={{ margin: "0 0 0.65rem", fontSize: "1.4rem" }}>
+        <h2 className="display" style={{ margin: "0 0 0.45rem", fontSize: "1.35rem" }}>
           {exercise.name}
         </h2>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginBottom: "0.65rem" }}>
+          <Link href={`/learn/${lesson.pattern}`} className="chip chip-accent">
+            {lesson.patternLabel}
+          </Link>
+          <span className="chip">{lesson.tempo}</span>
+        </div>
         <div className="progress-track" aria-hidden>
           <div className="progress-fill" style={{ width: `${progressPct}%` }} />
         </div>
-        <p className="faint" style={{ margin: "0.4rem 0 0", fontSize: "0.78rem" }}>
-          {progressPct}% complete · targets {exercise.target}
-        </p>
       </div>
 
       <MediaDemo
@@ -118,7 +126,7 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
         alt={`${exercise.name} form demo`}
         autoPlay
         size="hero"
-        caption="Watch once, then match the form. Pause anytime."
+        caption="Match the demo shape before adding speed."
       />
 
       {restLeft > 0 ? (
@@ -138,6 +146,10 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
           </p>
         ) : null}
         <p style={{ margin: 0, fontSize: "0.98rem", lineHeight: 1.45 }}>{item.coaching}</p>
+        <div className="teach-callout teach-callout--soft" style={{ marginTop: "0.25rem" }}>
+          <strong>Feel</strong>
+          <p>{lesson.feel}</p>
+        </div>
       </div>
 
       <div className="workout-dock">
@@ -154,17 +166,46 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
         <button
           type="button"
           className="btn btn-ghost btn-block"
-          style={{ marginBottom: showSteps ? "0.85rem" : 0 }}
-          onClick={() => setShowSteps((s) => !s)}
+          style={{ marginBottom: teachOpen ? "0.85rem" : 0 }}
+          onClick={() => setTeachOpen((s) => !s)}
         >
-          {showSteps ? "Hide teaching steps" : "Show teaching steps"}
+          {teachOpen ? "Hide coaching" : "Open coaching (cues · fixes · steps)"}
         </button>
-        {showSteps ? <StepGuide steps={exercise.steps} compact /> : null}
+        {teachOpen ? (
+          <div className="stack-md">
+            <section>
+              <h3 className="teach-panel__title">Setup</h3>
+              <ol className="teach-numbered">
+                {lesson.setup.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ol>
+            </section>
+            <section>
+              <h3 className="teach-panel__title">If form breaks</h3>
+              {lesson.mistakes.slice(0, 2).map((m) => (
+                <div key={m.bad} className="mistake-card" style={{ marginBottom: "0.45rem" }}>
+                  <div className="mistake-card__bad">
+                    <span>Avoid</span>
+                    <p>{m.bad}</p>
+                  </div>
+                  <div className="mistake-card__fix">
+                    <span>Do this</span>
+                    <p>{m.fix}</p>
+                  </div>
+                </div>
+              ))}
+            </section>
+            <section>
+              <h3 className="teach-panel__title">Steps</h3>
+              <StepGuide steps={exercise.steps} compact />
+            </section>
+            <Link href={`/exercise/${exercise.id}`} className="btn btn-ghost btn-block">
+              Full form studio →
+            </Link>
+          </div>
+        ) : null}
       </div>
-
-      <p className="faint" style={{ fontSize: "0.75rem", margin: 0, textAlign: "center" }}>
-        Media © Gym visual · {exercise.equipment}
-      </p>
     </div>
   );
 }
