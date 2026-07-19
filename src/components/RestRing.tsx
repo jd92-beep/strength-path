@@ -1,5 +1,7 @@
 "use client";
 
+import { useLocaleOptional } from "@/lib/locale";
+
 type Props = {
   total: number;
   left: number;
@@ -7,6 +9,7 @@ type Props = {
 };
 
 export function RestRing({ total, left, onSkip }: Props) {
+  const locale = useLocaleOptional();
   const r = 42;
   const c = 2 * Math.PI * r;
   const pct = total > 0 ? left / total : 0;
@@ -32,10 +35,10 @@ export function RestRing({ total, left, onSkip }: Props) {
         </div>
       </div>
       <div className="rest-ring__copy">
-        <p className="rest-ring__title">Rest & reset</p>
-        <p className="muted">Breathe. Next set when ready.</p>
+        <p className="rest-ring__title">{locale?.tr("restReset") ?? "Rest & reset"}</p>
+        <p className="muted">{locale?.tr("breatheReady") ?? "Breathe. Next set when ready."}</p>
         <button type="button" className="btn btn-ghost" onClick={onSkip}>
-          Skip rest
+          {locale?.tr("skipRest") ?? "Skip rest"}
         </button>
       </div>
     </div>

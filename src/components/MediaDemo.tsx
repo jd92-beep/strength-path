@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useId, useState } from "react";
 import { gifUrl, nextCdnIndex, thumbUrl } from "@/lib/media";
+import { useLocaleOptional } from "@/lib/locale";
 
 type Size = "sm" | "md" | "lg" | "hero";
 
@@ -24,8 +25,8 @@ const sizeClass: Record<Size, string> = {
 };
 
 /**
- * Dual-layer player: still always mounted; GIF only while playing (unmount = stop).
- * Tap stage to play/pause. Fixed frame never expands the page.
+ * Still photo always shown; GIF only while playing (unmount stops loop).
+ * Tap stage toggles. No pause orb covering the video.
  */
 export function MediaDemo({
   gifPath,
@@ -38,6 +39,7 @@ export function MediaDemo({
   caption,
 }: Props) {
   const uid = useId();
+  const locale = useLocaleOptional();
   const [playing, setPlaying] = useState(autoPlay);
   const [cdn, setCdn] = useState(0);
   const [loadedStill, setLoadedStill] = useState<string | null>(null);
@@ -48,7 +50,6 @@ export function MediaDemo({
 
   const stillSrc = thumbUrl(imagePath, cdn);
   const animSrc = gifUrl(gifPath, cdn);
-
   const stillReady = loadedStill === stillSrc;
   const gifReady = loadedGif === animSrc;
   const stillFailed = failedStill === stillSrc;
@@ -93,6 +94,13 @@ export function MediaDemo({
 
   const showSkeleton = !stillReady && !stillFailed;
   const failed = stillFailed && (!playing || gifFailed);
+  const playLabel = locale
+    ? playing
+      ? locale.tr("playingTap")
+      : locale.tr("photoTap")
+    : playing
+      ? "Playing · tap to pause"
+      : "Photo · tap to play";
 
   return (
     <>
@@ -107,21 +115,15 @@ export function MediaDemo({
             className="media-demo__hit"
             onClick={togglePlay}
             aria-pressed={playing}
-            aria-label={playing ? "Pause form demo" : "Play form demo"}
+            aria-label={playing ? (locale?.tr("pause") ?? "Pause") : (locale?.tr("play") ?? "Play")}
             aria-controls={uid}
           >
             <div className="media-demo__canvas" aria-busy={showSkeleton}>
               {showSkeleton ? <div className="media-demo__skeleton" aria-hidden /> : null}
 
               {failed ? (
-                <div
-                  className="media-demo__fallback"
-                  onClick={(e) => e.stopPropagation()}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  role="presentation"
-                >
+                <div className="media-demo__fallback" role="presentation">
                   <span>Demo unavailable</span>
-                  <span className="faint">Could not load form media</span>
                   <button
                     type="button"
                     className="btn btn-ghost"
@@ -135,7 +137,7 @@ export function MediaDemo({
                       setLoadedGif(null);
                     }}
                   >
-                    Retry
+                    {locale?.tr("tryAgain") ?? "Retry"}
                   </button>
                 </div>
               ) : (
@@ -171,25 +173,10 @@ export function MediaDemo({
               )}
             </div>
 
+            {/* Small corner badge only — no big orb covering the video */}
             {showControls && !failed ? (
-              <div className="media-demo__chrome" aria-hidden>
-                <div className="media-demo__badges">
-                  <span className="media-badge">
-                    {playing ? "Playing · tap to pause" : "Photo · tap to play"}
-                  </span>
-                </div>
-                <div className="media-demo__play-orb media-demo__play-orb--overlay">
-                  {playing ? (
-                    <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden>
-                      <rect x="6" y="5" width="4" height="14" rx="1" />
-                      <rect x="14" y="5" width="4" height="14" rx="1" />
-                    </svg>
-                  ) : (
-                    <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden>
-                      <path d="M9 7.2v9.6L17.5 12 9 7.2z" />
-                    </svg>
-                  )}
-                </div>
+              <div className="media-demo__chrome media-demo__chrome--minimal" aria-hidden>
+                <span className="media-badge">{playLabel}</span>
               </div>
             ) : null}
           </button>
@@ -197,10 +184,12 @@ export function MediaDemo({
           {showControls && size !== "sm" && !failed ? (
             <div className="media-demo__toolbar">
               <button type="button" className="media-ctrl" onClick={togglePlay}>
-                {playing ? "Pause" : "Play"}
+                {playing
+                  ? (locale?.tr("pause") ?? "Pause")
+                  : (locale?.tr("play") ?? "Play")}
               </button>
               <button type="button" className="media-ctrl" onClick={() => setFullscreen(true)}>
-                Expand
+                {locale?.tr("expand") ?? "Expand"}
               </button>
             </div>
           ) : null}
@@ -213,15 +202,17 @@ export function MediaDemo({
       </div>
 
       {fullscreen ? (
-        <div className="media-fs" role="dialog" aria-modal="true" aria-label={`${alt} full screen`}>
+        <div className="media-fs" role="dialog" aria-modal="true" aria-label={alt}>
           <div className="media-fs__bar">
             <p className="media-fs__title">{alt}</p>
             <div className="media-fs__bar-actions">
               <button type="button" className="media-ctrl" onClick={togglePlay}>
-                {playing ? "Pause" : "Play"}
+                {playing
+                  ? (locale?.tr("pause") ?? "Pause")
+                  : (locale?.tr("play") ?? "Play")}
               </button>
               <button type="button" className="btn btn-ghost" onClick={() => setFullscreen(false)}>
-                Close
+                {locale?.tr("close") ?? "Close"}
               </button>
             </div>
           </div>

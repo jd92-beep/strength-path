@@ -4,9 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Exercise, Session } from "@/lib/types";
 import { buildLesson } from "@/lib/teaching";
+import { applyYueToLesson } from "@/lib/teaching-yue";
+import { useLocale } from "@/lib/locale";
 import { MediaDemo } from "./MediaDemo";
 import { RestRing } from "./RestRing";
 import { StepGuide } from "./StepGuide";
+import { BilingualList, BilingualText } from "./Bilingual";
+import { BodyPartIcon } from "./BodyPartIcon";
 import { markSessionComplete } from "@/lib/progress";
 
 type Props = {
@@ -17,6 +21,7 @@ type Props = {
 };
 
 export function WorkoutClient({ session, exercises, programTitle, programId }: Props) {
+  const { tr, mode } = useLocale();
   const map = useMemo(() => new Map(exercises.map((e) => [e.id, e])), [exercises]);
   const [index, setIndex] = useState(0);
   const [setIndexNum, setSetIndexNum] = useState(0);
@@ -28,7 +33,12 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
   const safeIndex = Math.min(index, Math.max(session.exercises.length - 1, 0));
   const item = session.exercises[safeIndex];
   const exercise = item ? map.get(item.exerciseId) : undefined;
-  const lesson = useMemo(() => (exercise ? buildLesson(exercise) : null), [exercise]);
+  const lessonEn = useMemo(() => (exercise ? buildLesson(exercise) : null), [exercise]);
+  const lessonYue = useMemo(
+    () => (lessonEn ? applyYueToLesson(lessonEn) : null),
+    [lessonEn],
+  );
+  const lesson = mode === "yue" ? lessonYue : lessonEn;
   const totalMoves = session.exercises.length;
   const totalSets = item?.sets.length ?? 0;
   const currentSet = totalSets > 0 ? item.sets[Math.min(setIndexNum, totalSets - 1)] : undefined;
@@ -40,7 +50,6 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
       ? 0
       : Math.round(((safeIndex + (totalSets ? setIndexNum / totalSets : 0)) / totalMoves) * 100);
 
-  // Stable timer: only re-bind when a rest period starts/stops, not every second.
   useEffect(() => {
     if (!resting) return;
     const t = setInterval(() => {
@@ -57,11 +66,7 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
 
   function completeSet() {
     if (!item || !currentSet) return;
-
-    // Completing during rest skips remaining rest first.
-    if (restLeft > 0) {
-      setRestLeft(0);
-    }
+    if (restLeft > 0) setRestLeft(0);
 
     if (setIndexNum + 1 < item.sets.length) {
       setSetIndexNum((s) => s + 1);
@@ -82,14 +87,9 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
   if (!session.exercises.length) {
     return (
       <div className="surface" style={{ padding: "1.25rem", textAlign: "center" }}>
-        <p className="display" style={{ margin: "0 0 0.5rem" }}>
-          Empty workout
-        </p>
-        <p className="muted" style={{ margin: "0 0 1rem" }}>
-          This session has no exercises configured.
-        </p>
+        <p className="display">{tr("missingData")}</p>
         <Link href={`/path/${programId}`} className="btn btn-primary">
-          Back to program
+          {tr("backToProgram")}
         </Link>
       </div>
     );
@@ -99,75 +99,55 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
     return (
       <div className="hero-panel" style={{ textAlign: "center" }}>
         <p className="chip" style={{ marginBottom: "0.75rem", position: "relative", zIndex: 1 }}>
-          Session complete
+          {tr("sessionComplete")}
         </p>
         <h2
           className="display"
           style={{ fontSize: "1.7rem", margin: "0 0 0.5rem", position: "relative", zIndex: 1 }}
         >
-          Stronger than yesterday
+          {tr("stronger")}
         </h2>
-        <p className="muted" style={{ marginBottom: "1.25rem", position: "relative", zIndex: 1 }}>
-          You finished {session.title}. Review form on Learn when you recover.
-        </p>
         <div className="stack" style={{ position: "relative", zIndex: 1 }}>
           <Link href={`/path/${programId}`} className="btn btn-primary btn-block btn-lg">
-            Back to program
+            {tr("backToProgram")}
           </Link>
           <Link href="/learn" className="btn btn-ghost btn-block">
-            Study patterns
+            {tr("studyPatterns")}
           </Link>
         </div>
       </div>
     );
   }
 
-  if (!item || !exercise || !lesson || !currentSet) {
+  if (!item || !exercise || !lesson || !lessonEn || !lessonYue || !currentSet) {
     return (
       <div className="surface" style={{ padding: "1.25rem", textAlign: "center" }}>
-        <p className="display" style={{ margin: "0 0 0.5rem" }}>
-          Missing exercise data
-        </p>
-        <p className="muted" style={{ margin: "0 0 1rem" }}>
-          Could not load move {safeIndex + 1}
-          {item ? ` (${item.exerciseId})` : ""}. Skip to the next session or program.
-        </p>
-        <div className="stack">
-          {safeIndex + 1 < totalMoves ? (
-            <button
-              type="button"
-              className="btn btn-primary btn-block"
-              onClick={() => {
-                setIndex(safeIndex + 1);
-                setSetIndexNum(0);
-                setRestLeft(0);
-              }}
-            >
-              Skip to next move
-            </button>
-          ) : null}
-          <Link href={`/path/${programId}`} className="btn btn-ghost btn-block">
-            Back to program
-          </Link>
-        </div>
+        <p className="display">{tr("missingData")}</p>
+        <Link href={`/path/${programId}`} className="btn btn-ghost btn-block">
+          {tr("backToProgram")}
+        </Link>
       </div>
     );
   }
+
+  const setLabel =
+    mode === "yue"
+      ? `${tr("set")} ${setIndexNum + 1}${tr("of")}${totalSets}`
+      : mode === "both"
+        ? `Set ${setIndexNum + 1}/${totalSets} · 第 ${setIndexNum + 1}/${totalSets} 組`
+        : `Set ${setIndexNum + 1} / ${totalSets}`;
 
   return (
     <div className="stack-md">
       <div>
         <p className="muted" style={{ margin: "0 0 0.3rem", fontSize: "0.85rem" }}>
-          {programTitle} · Move {safeIndex + 1} of {totalMoves}
+          {programTitle} · {safeIndex + 1}/{totalMoves}
         </p>
-        <h2 className="display" style={{ margin: "0 0 0.45rem", fontSize: "1.35rem" }}>
-          {exercise.name}
-        </h2>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginBottom: "0.65rem" }}>
-          <Link href={`/learn/${lesson.pattern}`} className="chip chip-accent">
-            {lesson.patternLabel}
-          </Link>
-          <span className="chip">{lesson.tempo}</span>
+        <div style={{ display: "flex", gap: "0.65rem", alignItems: "center", marginBottom: "0.45rem" }}>
+          <BodyPartIcon bodyPart={exercise.body_part} size={44} className="workout-bp-icon" />
+          <h2 className="display" style={{ margin: 0, fontSize: "1.3rem" }}>
+            {exercise.name}
+          </h2>
         </div>
         <div className="progress-track" aria-hidden>
           <div className="progress-fill" style={{ width: `${progressPct}%` }} />
@@ -181,7 +161,7 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
         alt={`${exercise.name} form demo`}
         autoPlay={false}
         size="hero"
-        caption="Tap photo to play or pause the form demo."
+        caption={tr("photoTap")}
       />
 
       {restLeft > 0 ? (
@@ -190,9 +170,7 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
 
       <div className="surface workout-set-panel">
         <div className="workout-set-panel__top">
-          <span className="chip">
-            Set {setIndexNum + 1} / {totalSets}
-          </span>
+          <span className="chip set-chip">{setLabel}</span>
           <span className="workout-reps">{currentSet.reps}</span>
         </div>
         {currentSet.note ? (
@@ -202,20 +180,20 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
         ) : null}
         <p style={{ margin: 0, fontSize: "0.98rem", lineHeight: 1.45 }}>{item.coaching}</p>
         <div className="teach-callout teach-callout--soft" style={{ marginTop: "0.25rem" }}>
-          <strong>Feel</strong>
-          <p>{lesson.feel}</p>
+          <strong>{tr("feel")}</strong>
+          <BilingualText en={lessonEn.feel} yue={lessonYue.feel} as="p" />
         </div>
       </div>
 
       <div className="workout-dock">
         <button type="button" className="btn btn-primary btn-block btn-lg" onClick={completeSet}>
           {restLeft > 0
-            ? "Skip rest · complete set"
+            ? tr("skipRestComplete")
             : setIndexNum + 1 < totalSets
-              ? "Complete set · start rest"
+              ? tr("completeSet")
               : safeIndex + 1 < totalMoves
-                ? "Next exercise"
-                : "Finish workout"}
+                ? tr("nextExercise")
+                : tr("finishWorkout")}
         </button>
       </div>
 
@@ -226,39 +204,58 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
           style={{ marginBottom: teachOpen ? "0.85rem" : 0 }}
           onClick={() => setTeachOpen((s) => !s)}
         >
-          {teachOpen ? "Hide coaching" : "Open coaching (cues · fixes · steps)"}
+          {teachOpen ? tr("hideCoaching") : tr("openCoaching")}
         </button>
         {teachOpen ? (
           <div className="stack-md">
             <section>
-              <h3 className="teach-panel__title">Setup</h3>
-              <ol className="teach-numbered">
-                {lesson.setup.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ol>
+              <h3 className="teach-panel__title">{tr("setup")}</h3>
+              <BilingualList enItems={lessonEn.setup} yueItems={lessonYue.setup} ordered />
             </section>
             <section>
-              <h3 className="teach-panel__title">If form breaks</h3>
-              {lesson.mistakes.slice(0, 2).map((m) => (
+              <h3 className="teach-panel__title">{tr("ifFormBreaks")}</h3>
+              {(mode === "yue" ? lessonYue.mistakes : lessonEn.mistakes).slice(0, 2).map((m, i) => (
                 <div key={m.bad} className="mistake-card" style={{ marginBottom: "0.45rem" }}>
                   <div className="mistake-card__bad">
-                    <span>Avoid</span>
-                    <p>{m.bad}</p>
+                    <span>{tr("avoid")}</span>
+                    {mode === "both" ? (
+                      <p>
+                        <span className="bi-en">{lessonEn.mistakes[i]?.bad}</span>
+                        <span className="bi-sep" />
+                        <span className="bi-yue">{lessonYue.mistakes[i]?.bad}</span>
+                      </p>
+                    ) : (
+                      <p>{m.bad}</p>
+                    )}
                   </div>
                   <div className="mistake-card__fix">
-                    <span>Do this</span>
-                    <p>{m.fix}</p>
+                    <span>{tr("doThis")}</span>
+                    {mode === "both" ? (
+                      <p>
+                        <span className="bi-en">{lessonEn.mistakes[i]?.fix}</span>
+                        <span className="bi-sep" />
+                        <span className="bi-yue">{lessonYue.mistakes[i]?.fix}</span>
+                      </p>
+                    ) : (
+                      <p>{m.fix}</p>
+                    )}
                   </div>
                 </div>
               ))}
             </section>
             <section>
-              <h3 className="teach-panel__title">Steps</h3>
-              <StepGuide steps={exercise.steps} compact />
+              <h3 className="teach-panel__title">{tr("steps")}</h3>
+              {mode === "both" ? (
+                <>
+                  <p className="guide-block__label">{tr("guideEn")}</p>
+                  <StepGuide steps={exercise.steps} compact />
+                </>
+              ) : (
+                <StepGuide steps={exercise.steps} compact />
+              )}
             </section>
             <Link href={`/exercise/${exercise.id}`} className="btn btn-ghost btn-block">
-              Full form studio →
+              {tr("fullStudio")}
             </Link>
           </div>
         ) : null}

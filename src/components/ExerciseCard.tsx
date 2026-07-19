@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Exercise } from "@/lib/types";
 import { ExercisePhoto } from "./ExercisePhoto";
+import { BodyPartIcon } from "./BodyPartIcon";
 
 export function ExerciseCard({
   exercise,
@@ -22,6 +23,9 @@ export function ExerciseCard({
           width={featured ? 720 : 112}
           height={featured ? 480 : 112}
         />
+        <span className="ex-card__icon-badge" aria-hidden>
+          <BodyPartIcon bodyPart={exercise.body_part} size={28} />
+        </span>
         <span className="ex-card__play" aria-hidden>
           ▶
         </span>
@@ -34,11 +38,13 @@ export function ExerciseCard({
         </div>
         <div className="ex-card__title">{exercise.name}</div>
         <div className="ex-card__tags">
-          <span className="chip">{exercise.body_part}</span>
+          <span className="chip chip-with-icon">
+            <BodyPartIcon bodyPart={exercise.body_part} size={16} />
+            {exercise.body_part}
+          </span>
           {exercise.secondary_muscles?.[0] ? (
-            <span className="chip">+{exercise.secondary_muscles.length} synergists</span>
+            <span className="chip">+{exercise.secondary_muscles.length}</span>
           ) : null}
-          {featured ? <span className="chip chip-accent">Open form studio</span> : null}
         </div>
       </div>
     </Link>

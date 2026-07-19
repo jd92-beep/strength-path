@@ -1,25 +1,29 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Exercise, ExerciseI18n, LangCode } from "@/lib/types";
+import type { Exercise, ExerciseI18n } from "@/lib/types";
+import { useLocale } from "@/lib/locale";
 
-const cache = new Map<LangCode, Record<string, ExerciseI18n>>();
+const cache = new Map<string, Record<string, ExerciseI18n>>();
 
-async function loadLang(lang: LangCode) {
-  const hit = cache.get(lang);
+/** Chinese pack from dataset (zh) used as written guide for Cantonese mode. */
+async function loadZhPack() {
+  const hit = cache.get("zh");
   if (hit) return hit;
-  const res = await fetch(`/data/i18n/${lang}.json`);
-  if (!res.ok) throw new Error(`Failed to load ${lang}`);
+  const res = await fetch("/data/i18n/zh.json");
+  if (!res.ok) throw new Error("Failed to load zh");
   const data = (await res.json()) as Record<string, ExerciseI18n>;
-  cache.set(lang, data);
+  cache.set("zh", data);
   return data;
 }
 
 /**
- * English comes from the exercise record (no fetch).
- * Other languages load on demand from /public/data/i18n/{lang}.json.
+ * English always from exercise record.
+ * Cantonese mode loads dataset Chinese (zh) instructions as written 粵/中 guide.
+ * Mode "both" exposes both.
  */
-export function useExerciseI18n(exercise: Exercise, lang: LangCode) {
+export function useExerciseI18n(exercise: Exercise) {
+  const { showEn, showYue, mode } = useLocale();
   const english = useMemo<ExerciseI18n>(
     () => ({
       instructions: exercise.instructions,
@@ -28,45 +32,45 @@ export function useExerciseI18n(exercise: Exercise, lang: LangCode) {
     [exercise.instructions, exercise.steps],
   );
 
-  // Bump when a language pack arrives so components re-render.
   const [version, setVersion] = useState(0);
-  const [failedLang, setFailedLang] = useState<LangCode | null>(null);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    if (lang === "en") return;
-
+    if (!showYue) return;
     let cancelled = false;
-
-    void loadLang(lang)
+    void loadZhPack()
       .then(() => {
-        if (cancelled) return;
-        setFailedLang((prev) => (prev === lang ? null : prev));
-        setVersion((v) => v + 1);
+        if (!cancelled) {
+          setFailed(false);
+          setVersion((v) => v + 1);
+        }
       })
       .catch(() => {
-        if (!cancelled) setFailedLang(lang);
+        if (!cancelled) setFailed(true);
       });
-
     return () => {
       cancelled = true;
     };
-  }, [lang]);
+  }, [showYue, exercise.id]);
 
-  if (lang === "en") {
-    return { ...english, loading: false, error: false };
-  }
-
-  // version is read so successful fetches re-render with cache data
   void version;
-
-  const pack = cache.get(lang)?.[exercise.id];
-  const loading = !pack && failedLang !== lang;
-  const error = failedLang === lang && !pack;
+  const zh = cache.get("zh")?.[exercise.id];
+  const yuePack: ExerciseI18n = {
+    instructions: zh?.instructions || english.instructions,
+    steps: zh?.steps?.length ? zh.steps : english.steps,
+  };
 
   return {
-    instructions: pack?.instructions || english.instructions,
-    steps: pack?.steps?.length ? pack.steps : english.steps,
-    loading,
-    error,
+    mode,
+    showEn,
+    showYue,
+    en: english,
+    yue: yuePack,
+    /** Primary steps for single-language modes */
+    steps: showYue && !showEn ? yuePack.steps : english.steps,
+    instructions:
+      showYue && !showEn ? yuePack.instructions : english.instructions,
+    loading: showYue && !zh && !failed,
+    error: failed && showYue && !zh,
   };
 }

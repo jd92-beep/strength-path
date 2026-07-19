@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { LocaleProvider } from "@/lib/locale";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s · Strength Path",
   },
   description:
-    "Apple Fitness–inspired strength coach: form demos, pattern lessons, and guided workouts on your phone.",
+    "Strength coach with English + Cantonese coaching, form demos, and guided workouts.",
   applicationName: "Strength Path",
   appleWebApp: {
     capable: true,
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Strength Path",
-    description: "Learn form. Get stronger. Built for iPhone browsers.",
+    description: "Learn form. Get stronger. English + 粵語.",
     type: "website",
   },
 };
@@ -37,7 +38,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="min-h-full antialiased af-body">{children}</body>
+      <body className="min-h-full antialiased af-body">
+        <LocaleProvider>{children}</LocaleProvider>
+      </body>
     </html>
   );
 }

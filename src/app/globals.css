@@ -152,8 +152,230 @@ img {
 
 .af-header__right {
   justify-self: end;
-  width: 1px;
-  height: 1px;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.af-header__inner--home {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.af-header__spacer {
+  flex: 1;
+}
+
+/* Language switcher EN | 粵 | EN+粵 */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.lang-switch__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lang-switch__seg {
+  display: inline-flex;
+  padding: 0.15rem;
+  border-radius: 999px;
+  background: #000;
+  border: 0.5px solid var(--border);
+  gap: 0.1rem;
+}
+
+.lang-switch__btn {
+  border: none;
+  background: transparent;
+  color: var(--ink-faint);
+  font-size: 0.72rem;
+  font-weight: 750;
+  min-height: 1.85rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.lang-switch__btn[data-active="true"] {
+  background: var(--ring-exercise);
+  color: #003311;
+}
+
+.lang-switch--compact .lang-switch__btn {
+  font-size: 0.68rem;
+  padding: 0.2rem 0.45rem;
+  min-height: 1.7rem;
+}
+
+/* Bilingual blocks */
+.bi-block {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.bi-en {
+  display: block;
+  color: var(--ink);
+}
+
+.bi-yue {
+  display: block;
+  color: var(--ink-muted);
+  font-size: 0.95em;
+}
+
+.bi-sep {
+  display: block;
+  height: 0.25rem;
+}
+
+.guide-block {
+  padding: 0.85rem;
+  border-radius: 14px;
+  background: #000;
+  border: 0.5px solid var(--border);
+}
+
+.guide-block--yue {
+  border-color: rgba(48, 209, 88, 0.35);
+}
+
+.guide-block__label {
+  margin: 0 0 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ring-exercise);
+}
+
+/* Home body icons — AI generated assets always visible */
+.home-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.home-icon-card {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: center;
+  padding: 0.65rem 0.4rem 0.75rem;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  text-align: center;
+}
+
+.home-icon-card__img {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.home-icon-card__label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.bp-icon {
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+  background: #111;
+}
+
+.chip-with-icon {
+  gap: 0.35rem;
+}
+
+.chip-with-icon .bp-icon {
+  border-radius: 6px;
+}
+
+.ex-card__icon-badge {
+  position: absolute;
+  left: 0.35rem;
+  top: 0.35rem;
+  width: 1.85rem;
+  height: 1.85rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+.ex-card__icon-badge .bp-icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+
+.teach__pattern-icon {
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+}
+
+.teach__pattern {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.workout-bp-icon {
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.set-chip {
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+}
+
+.bodymap__icons-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.bodymap__card {
+  display: grid;
+  gap: 0.4rem;
+  justify-items: center;
+  padding: 0.85rem 0.55rem;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 0.5px solid color-mix(in srgb, var(--region) 40%, var(--border));
+  text-align: center;
+}
+
+.bodymap__card-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.media-demo__chrome--minimal {
+  justify-content: flex-start;
+  align-items: flex-start;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+.media-demo__chrome--minimal .media-badge {
+  max-width: 90%;
 }
 
 .af-brand {
