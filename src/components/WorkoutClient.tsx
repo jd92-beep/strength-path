@@ -25,45 +25,74 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
   const [done, setDone] = useState(false);
   const [teachOpen, setTeachOpen] = useState(false);
 
-  const item = session.exercises[index];
+  const safeIndex = Math.min(index, Math.max(session.exercises.length - 1, 0));
+  const item = session.exercises[safeIndex];
   const exercise = item ? map.get(item.exerciseId) : undefined;
-  const lesson = useMemo(
-    () => (exercise ? buildLesson(exercise) : null),
-    [exercise],
-  );
+  const lesson = useMemo(() => (exercise ? buildLesson(exercise) : null), [exercise]);
   const totalMoves = session.exercises.length;
   const totalSets = item?.sets.length ?? 0;
+  const currentSet = totalSets > 0 ? item.sets[Math.min(setIndexNum, totalSets - 1)] : undefined;
+  const resting = restLeft > 0;
+
   const progressPct = done
     ? 100
-    : Math.round(((index + setIndexNum / Math.max(totalSets, 1)) / totalMoves) * 100);
+    : totalMoves === 0
+      ? 0
+      : Math.round(((safeIndex + (totalSets ? setIndexNum / totalSets : 0)) / totalMoves) * 100);
 
+  // Stable timer: only re-bind when a rest period starts/stops, not every second.
   useEffect(() => {
-    if (restLeft <= 0) return;
-    const t = setInterval(() => setRestLeft((s) => s - 1), 1000);
+    if (!resting) return;
+    const t = setInterval(() => {
+      setRestLeft((s) => (s <= 1 ? 0 : s - 1));
+    }, 1000);
     return () => clearInterval(t);
-  }, [restLeft]);
+  }, [resting, restTotal]);
 
   function startRest(sec: number) {
-    setRestTotal(sec);
-    setRestLeft(sec);
+    const safe = Math.max(0, Math.floor(sec));
+    setRestTotal(safe);
+    setRestLeft(safe);
   }
 
   function completeSet() {
-    if (!item) return;
+    if (!item || !currentSet) return;
+
+    // Completing during rest skips remaining rest first.
+    if (restLeft > 0) {
+      setRestLeft(0);
+    }
+
     if (setIndexNum + 1 < item.sets.length) {
       setSetIndexNum((s) => s + 1);
       startRest(item.restSec);
       return;
     }
-    if (index + 1 < session.exercises.length) {
-      setIndex((i) => i + 1);
+    if (safeIndex + 1 < session.exercises.length) {
+      setIndex(safeIndex + 1);
       setSetIndexNum(0);
       startRest(25);
       setTeachOpen(false);
       return;
     }
     setDone(true);
-    markSessionComplete(session.id);
+    markSessionComplete(session.id, programId);
+  }
+
+  if (!session.exercises.length) {
+    return (
+      <div className="surface" style={{ padding: "1.25rem", textAlign: "center" }}>
+        <p className="display" style={{ margin: "0 0 0.5rem" }}>
+          Empty workout
+        </p>
+        <p className="muted" style={{ margin: "0 0 1rem" }}>
+          This session has no exercises configured.
+        </p>
+        <Link href={`/path/${programId}`} className="btn btn-primary">
+          Back to program
+        </Link>
+      </div>
+    );
   }
 
   if (done) {
@@ -93,17 +122,43 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
     );
   }
 
-  if (!item || !exercise || !lesson) {
-    return <p className="muted">Exercise data missing for this session.</p>;
+  if (!item || !exercise || !lesson || !currentSet) {
+    return (
+      <div className="surface" style={{ padding: "1.25rem", textAlign: "center" }}>
+        <p className="display" style={{ margin: "0 0 0.5rem" }}>
+          Missing exercise data
+        </p>
+        <p className="muted" style={{ margin: "0 0 1rem" }}>
+          Could not load move {safeIndex + 1}
+          {item ? ` (${item.exerciseId})` : ""}. Skip to the next session or program.
+        </p>
+        <div className="stack">
+          {safeIndex + 1 < totalMoves ? (
+            <button
+              type="button"
+              className="btn btn-primary btn-block"
+              onClick={() => {
+                setIndex(safeIndex + 1);
+                setSetIndexNum(0);
+                setRestLeft(0);
+              }}
+            >
+              Skip to next move
+            </button>
+          ) : null}
+          <Link href={`/path/${programId}`} className="btn btn-ghost btn-block">
+            Back to program
+          </Link>
+        </div>
+      </div>
+    );
   }
-
-  const currentSet = item.sets[setIndexNum];
 
   return (
     <div className="stack-md">
       <div>
         <p className="muted" style={{ margin: "0 0 0.3rem", fontSize: "0.85rem" }}>
-          {programTitle} · Move {index + 1} of {totalMoves}
+          {programTitle} · Move {safeIndex + 1} of {totalMoves}
         </p>
         <h2 className="display" style={{ margin: "0 0 0.45rem", fontSize: "1.35rem" }}>
           {exercise.name}
@@ -154,11 +209,13 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
 
       <div className="workout-dock">
         <button type="button" className="btn btn-primary btn-block btn-lg" onClick={completeSet}>
-          {setIndexNum + 1 < totalSets
-            ? "Complete set · start rest"
-            : index + 1 < totalMoves
-              ? "Next exercise"
-              : "Finish workout"}
+          {restLeft > 0
+            ? "Skip rest · complete set"
+            : setIndexNum + 1 < totalSets
+              ? "Complete set · start rest"
+              : safeIndex + 1 < totalMoves
+                ? "Next exercise"
+                : "Finish workout"}
         </button>
       </div>
 

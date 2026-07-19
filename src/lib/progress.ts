@@ -27,14 +27,17 @@ export function loadProgress(): ProgressState {
 export function saveProgress(state: ProgressState) {
   if (typeof window === "undefined") return;
   localStorage.setItem(KEY, JSON.stringify(state));
+  // Notify same-tab subscribers (storage event only fires cross-tab).
+  window.dispatchEvent(new Event("strength-path-progress"));
 }
 
-export function markSessionComplete(sessionId: string) {
+export function markSessionComplete(sessionId: string, programId?: string) {
   const p = loadProgress();
   if (!p.completedSessions.includes(sessionId)) {
     p.completedSessions.push(sessionId);
   }
   p.lastSessionId = sessionId;
+  if (programId) p.lastProgramId = programId;
   saveProgress(p);
   return p;
 }

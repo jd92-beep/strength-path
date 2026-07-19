@@ -10,6 +10,7 @@ const REGION_HREF: Record<string, string> = {
   back: "back",
   legs: "upper legs",
   calves: "lower legs",
+  cardio: "cardio",
 };
 
 const REGION_COLOR: Record<string, string> = Object.fromEntries(

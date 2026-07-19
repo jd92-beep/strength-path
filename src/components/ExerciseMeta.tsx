@@ -1,10 +1,11 @@
+import type { ReactNode } from "react";
 import type { Exercise } from "@/lib/types";
 import { slugifyPart } from "@/lib/body-parts";
 import Link from "next/link";
 
 /** Surfaces every dataset field the browser can show. */
 export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
-  const rows: { label: string; value: React.ReactNode }[] = [
+  const rows: { label: string; value: ReactNode }[] = [
     { label: "ID", value: exercise.id },
     {
       label: "Category",

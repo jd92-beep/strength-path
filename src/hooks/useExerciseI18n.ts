@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Exercise, ExerciseI18n, LangCode } from "@/lib/types";
 
-const cache = new Map<string, Record<string, ExerciseI18n>>();
+const cache = new Map<LangCode, Record<string, ExerciseI18n>>();
 
 async function loadLang(lang: LangCode) {
-  if (cache.has(lang)) return cache.get(lang)!;
+  const hit = cache.get(lang);
+  if (hit) return hit;
   const res = await fetch(`/data/i18n/${lang}.json`);
   if (!res.ok) throw new Error(`Failed to load ${lang}`);
   const data = (await res.json()) as Record<string, ExerciseI18n>;
@@ -14,47 +15,58 @@ async function loadLang(lang: LangCode) {
   return data;
 }
 
+/**
+ * English comes from the exercise record (no fetch).
+ * Other languages load on demand from /public/data/i18n/{lang}.json.
+ */
 export function useExerciseI18n(exercise: Exercise, lang: LangCode) {
-  const [pack, setPack] = useState<ExerciseI18n>({
-    instructions: exercise.instructions,
-    steps: exercise.steps,
-  });
-  const [loading, setLoading] = useState(false);
+  const english = useMemo<ExerciseI18n>(
+    () => ({
+      instructions: exercise.instructions,
+      steps: exercise.steps,
+    }),
+    [exercise.instructions, exercise.steps],
+  );
+
+  // Bump when a language pack arrives so components re-render.
+  const [version, setVersion] = useState(0);
+  const [failedLang, setFailedLang] = useState<LangCode | null>(null);
 
   useEffect(() => {
+    if (lang === "en") return;
+
     let cancelled = false;
-    if (lang === "en") {
-      setPack({ instructions: exercise.instructions, steps: exercise.steps });
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    loadLang(lang)
-      .then((map) => {
+
+    void loadLang(lang)
+      .then(() => {
         if (cancelled) return;
-        const hit = map[exercise.id];
-        setPack(
-          hit || {
-            instructions: exercise.instructions,
-            steps: exercise.steps,
-          },
-        );
+        setFailedLang((prev) => (prev === lang ? null : prev));
+        setVersion((v) => v + 1);
       })
       .catch(() => {
-        if (!cancelled) {
-          setPack({
-            instructions: exercise.instructions,
-            steps: exercise.steps,
-          });
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setFailedLang(lang);
       });
+
     return () => {
       cancelled = true;
     };
-  }, [exercise.id, exercise.instructions, exercise.steps, lang]);
+  }, [lang]);
 
-  return { ...pack, loading };
+  if (lang === "en") {
+    return { ...english, loading: false, error: false };
+  }
+
+  // version is read so successful fetches re-render with cache data
+  void version;
+
+  const pack = cache.get(lang)?.[exercise.id];
+  const loading = !pack && failedLang !== lang;
+  const error = failedLang === lang && !pack;
+
+  return {
+    instructions: pack?.instructions || english.instructions,
+    steps: pack?.steps?.length ? pack.steps : english.steps,
+    loading,
+    error,
+  };
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
-import { ActivityRings } from "@/components/ActivityRings";
+import { SummaryRings } from "@/components/SummaryRings";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { WorkoutTile } from "@/components/WorkoutTile";
 import { getAllExercises, getExercise } from "@/lib/exercises";
@@ -24,7 +24,7 @@ export default function HomePage() {
             <p className="af-eyebrow">Summary</p>
             <h1 className="af-large-title">For You</h1>
           </div>
-          <ActivityRings move={0.78} exercise={0.55} stand={0.92} size={118} />
+          <SummaryRings size={118} />
         </header>
 
         <section className="af-ring-legend" aria-label="Activity rings">
@@ -86,6 +86,27 @@ export default function HomePage() {
               >
                 <span className="af-mini-tile__label">{p.label}</span>
                 <span className="af-mini-tile__sub">Form pattern</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <div className="af-section-head">
+            <h2>By body</h2>
+            <Link href="/body">See All</Link>
+          </div>
+          <div className="af-h-scroll" style={{ marginBottom: "0.25rem" }}>
+            {[
+              { href: "/body/chest", label: "Chest" },
+              { href: "/body/back", label: "Back" },
+              { href: "/body/upper-legs", label: "Legs" },
+              { href: "/body/shoulders", label: "Shoulders" },
+              { href: "/body/upper-arms", label: "Arms" },
+              { href: "/body/waist", label: "Core" },
+            ].map((b) => (
+              <Link key={b.href} href={b.href} className="af-mini-tile" style={{ ["--g" as string]: "#30d158", minHeight: "4.5rem", width: "7.5rem" }}>
+                <span className="af-mini-tile__label">{b.label}</span>
               </Link>
             ))}
           </div>

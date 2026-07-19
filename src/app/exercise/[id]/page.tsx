@@ -6,7 +6,11 @@ import { slugifyPart } from "@/lib/body-parts";
 import { filterExercises, getAllExercises, getExercise } from "@/lib/exercises";
 import { buildLesson } from "@/lib/teaching";
 
+/** Allow any exercise id from the full 1,324 set (not only prebuilt pages). */
+export const dynamicParams = true;
+
 export function generateStaticParams() {
+  // Pre-render a popular subset for speed; remaining ids render on demand.
   return getAllExercises()
     .slice(0, 200)
     .map((e) => ({ id: e.id }));

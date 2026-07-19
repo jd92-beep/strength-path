@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Exercise, LangCode } from "@/lib/types";
 import { LANGS } from "@/lib/langs";
 import { buildLesson } from "@/lib/teaching";
 import { useExerciseI18n } from "@/hooks/useExerciseI18n";
+import { markExerciseLearned } from "@/lib/progress";
 import { MediaDemo } from "./MediaDemo";
 import { StepGuide } from "./StepGuide";
 import { ExerciseMeta } from "./ExerciseMeta";
@@ -31,6 +32,12 @@ export function TeachStudio({
   const [tab, setTab] = useState<Tab>("watch");
   const [lang, setLang] = useState<LangCode>("en");
   const i18n = useExerciseI18n(exercise, lang);
+
+  useEffect(() => {
+    // Defer so we don't sync-set during render/effect in strict mode warnings
+    const t = window.setTimeout(() => markExerciseLearned(exercise.id), 0);
+    return () => window.clearTimeout(t);
+  }, [exercise.id]);
 
   return (
     <div className="teach">
@@ -150,6 +157,11 @@ export function TeachStudio({
                 <span className="chip">{LANGS.find((l) => l.code === lang)?.flag} {lang}</span>
               )}
             </div>
+            {i18n.error ? (
+              <p className="muted" style={{ margin: "0 0 0.65rem", fontSize: "0.88rem" }}>
+                Couldn’t load {lang} instructions — showing English.
+              </p>
+            ) : null}
             <StepGuide steps={i18n.steps} />
             {i18n.instructions ? (
               <div className="teach-callout teach-callout--soft">

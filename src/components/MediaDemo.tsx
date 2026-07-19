@@ -36,18 +36,18 @@ export function MediaDemo({
 }: Props) {
   const uid = useId();
   const [playing, setPlaying] = useState(autoPlay);
-  const [loaded, setLoaded] = useState(false);
-  const [failed, setFailed] = useState(false);
+  /** Track which src finished loading / failed — avoids setState-in-effect resets. */
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
+  const [retryTick, setRetryTick] = useState(0);
 
   const staticSrc = thumbUrl(imagePath);
   const animSrc = gifUrl(gifPath);
-  const src = playing ? animSrc : staticSrc;
-
-  useEffect(() => {
-    setLoaded(false);
-    setFailed(false);
-  }, [src, gifPath, imagePath]);
+  const baseSrc = playing ? animSrc : staticSrc;
+  const src = retryTick ? `${baseSrc}${baseSrc.includes("?") ? "&" : "?"}r=${retryTick}` : baseSrc;
+  const loaded = loadedSrc === src;
+  const failed = failedSrc === src;
 
   useEffect(() => {
     if (!fullscreen) return;
@@ -67,6 +67,12 @@ export function MediaDemo({
     setPlaying((p) => !p);
   }, []);
 
+  function retry() {
+    setFailedSrc(null);
+    setLoadedSrc(null);
+    setRetryTick((n) => n + 1);
+  }
+
   const stage = (
     <div
       className={`${sizeClass[size]} ${className}`.trim()}
@@ -81,6 +87,9 @@ export function MediaDemo({
             <div className="media-demo__fallback">
               <span>Demo unavailable</span>
               <span className="faint">Check connection and retry</span>
+              <button type="button" className="btn btn-ghost" style={{ marginTop: "0.5rem" }} onClick={retry}>
+                Retry
+              </button>
             </div>
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
@@ -90,10 +99,10 @@ export function MediaDemo({
               alt={alt}
               decoding="async"
               loading={size === "sm" ? "lazy" : "eager"}
-              onLoad={() => setLoaded(true)}
+              onLoad={() => setLoadedSrc(src)}
               onError={() => {
-                setFailed(true);
-                setLoaded(true);
+                setFailedSrc(src);
+                setLoadedSrc(src);
               }}
               className="media-demo__img"
               style={{ opacity: loaded ? 1 : 0 }}
@@ -188,7 +197,12 @@ export function MediaDemo({
           <div className="media-fs__bar">
             <p className="media-fs__title">{alt}</p>
             <div className="media-fs__bar-actions">
-              <button type="button" className="media-ctrl" onClick={togglePlay} aria-label={playing ? "Pause" : "Play"}>
+              <button
+                type="button"
+                className="media-ctrl"
+                onClick={togglePlay}
+                aria-label={playing ? "Pause" : "Play"}
+              >
                 {playing ? "Pause" : "Play"}
               </button>
               <button type="button" className="btn btn-ghost" onClick={() => setFullscreen(false)}>

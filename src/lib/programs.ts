@@ -391,3 +391,7 @@ export function getAllSessions() {
     p.sessions.map((s) => ({ program: p, session: s })),
   );
 }
+
+export function getSessionCount() {
+  return PROGRAMS.reduce((n, p) => n + p.sessions.length, 0);
+}
