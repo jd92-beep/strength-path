@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Exercise, Session } from "@/lib/types";
-import { gifUrl } from "@/lib/media";
+import { MediaDemo } from "./MediaDemo";
+import { RestRing } from "./RestRing";
 import { StepGuide } from "./StepGuide";
 import { markSessionComplete } from "@/lib/progress";
 
@@ -19,8 +20,9 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
   const [index, setIndex] = useState(0);
   const [setIndexNum, setSetIndexNum] = useState(0);
   const [restLeft, setRestLeft] = useState(0);
+  const [restTotal, setRestTotal] = useState(0);
   const [done, setDone] = useState(false);
-  const [showSteps, setShowSteps] = useState(true);
+  const [showSteps, setShowSteps] = useState(false);
 
   const item = session.exercises[index];
   const exercise = item ? map.get(item.exerciseId) : undefined;
@@ -36,18 +38,23 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
     return () => clearInterval(t);
   }, [restLeft]);
 
+  function startRest(sec: number) {
+    setRestTotal(sec);
+    setRestLeft(sec);
+  }
+
   function completeSet() {
     if (!item) return;
     if (setIndexNum + 1 < item.sets.length) {
       setSetIndexNum((s) => s + 1);
-      setRestLeft(item.restSec);
+      startRest(item.restSec);
       return;
     }
     if (index + 1 < session.exercises.length) {
       setIndex((i) => i + 1);
       setSetIndexNum(0);
-      setRestLeft(session.exercises[index + 1]?.restSec ? 20 : 0);
-      setShowSteps(true);
+      startRest(25);
+      setShowSteps(false);
       return;
     }
     setDone(true);
@@ -57,17 +64,20 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
   if (done) {
     return (
       <div className="hero-panel" style={{ textAlign: "center" }}>
-        <p className="chip" style={{ marginBottom: "0.75rem" }}>
+        <p className="chip" style={{ marginBottom: "0.75rem", position: "relative", zIndex: 1 }}>
           Session complete
         </p>
-        <h2 className="display" style={{ fontSize: "1.6rem", margin: "0 0 0.5rem" }}>
+        <h2
+          className="display"
+          style={{ fontSize: "1.7rem", margin: "0 0 0.5rem", position: "relative", zIndex: 1 }}
+        >
           Stronger than yesterday
         </h2>
-        <p className="muted" style={{ marginBottom: "1.25rem" }}>
+        <p className="muted" style={{ marginBottom: "1.25rem", position: "relative", zIndex: 1 }}>
           You finished {session.title}. Rest well, then keep climbing the path.
         </p>
-        <div style={{ display: "grid", gap: "0.65rem" }}>
-          <Link href={`/path/${programId}`} className="btn btn-primary btn-block">
+        <div className="stack" style={{ position: "relative", zIndex: 1 }}>
+          <Link href={`/path/${programId}`} className="btn btn-primary btn-block btn-lg">
             Back to program
           </Link>
           <Link href="/body" className="btn btn-ghost btn-block">
@@ -85,78 +95,62 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
   const currentSet = item.sets[setIndexNum];
 
   return (
-    <div style={{ display: "grid", gap: "1rem" }}>
+    <div className="stack-md">
       <div>
-        <p className="muted" style={{ margin: "0 0 0.25rem", fontSize: "0.85rem" }}>
-          {programTitle} · Move {index + 1}/{totalMoves}
+        <p className="muted" style={{ margin: "0 0 0.3rem", fontSize: "0.85rem" }}>
+          {programTitle} · Move {index + 1} of {totalMoves}
         </p>
-        <h2 className="display" style={{ margin: "0 0 0.5rem", fontSize: "1.35rem" }}>
+        <h2 className="display" style={{ margin: "0 0 0.65rem", fontSize: "1.4rem" }}>
           {exercise.name}
         </h2>
         <div className="progress-track" aria-hidden>
           <div className="progress-fill" style={{ width: `${progressPct}%` }} />
         </div>
+        <p className="faint" style={{ margin: "0.4rem 0 0", fontSize: "0.78rem" }}>
+          {progressPct}% complete · targets {exercise.target}
+        </p>
       </div>
 
-      <div className="exercise-media">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={gifUrl(exercise.gif_url)} alt={`${exercise.name} demonstration`} />
-      </div>
+      <MediaDemo
+        key={exercise.id}
+        gifPath={exercise.gif_url}
+        imagePath={exercise.image}
+        alt={`${exercise.name} form demo`}
+        autoPlay
+        size="hero"
+        caption="Watch once, then match the form. Pause anytime."
+      />
 
-      <div className="surface" style={{ padding: "1rem" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
-            gap: "0.75rem",
-            marginBottom: "0.5rem",
-          }}
-        >
+      {restLeft > 0 ? (
+        <RestRing total={restTotal || restLeft} left={restLeft} onSkip={() => setRestLeft(0)} />
+      ) : null}
+
+      <div className="surface workout-set-panel">
+        <div className="workout-set-panel__top">
           <span className="chip">
-            Set {setIndexNum + 1}/{totalSets}
+            Set {setIndexNum + 1} / {totalSets}
           </span>
-          <span className="display" style={{ fontSize: "1.5rem", color: "var(--primary)" }}>
-            {currentSet.reps}
-          </span>
+          <span className="workout-reps">{currentSet.reps}</span>
         </div>
         {currentSet.note ? (
-          <p className="muted" style={{ margin: "0 0 0.65rem", fontSize: "0.9rem" }}>
+          <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
             {currentSet.note}
           </p>
         ) : null}
-        <p style={{ margin: 0, fontSize: "0.95rem" }}>{item.coaching}</p>
+        <p style={{ margin: 0, fontSize: "0.98rem", lineHeight: 1.45 }}>{item.coaching}</p>
       </div>
 
-      {restLeft > 0 ? (
-        <div
-          className="surface-soft"
-          style={{
-            padding: "0.9rem 1rem",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <span className="muted">Rest</span>
-          <span className="display" style={{ fontSize: "1.4rem" }}>
-            {restLeft}s
-          </span>
-          <button type="button" className="btn btn-ghost" onClick={() => setRestLeft(0)}>
-            Skip
-          </button>
-        </div>
-      ) : null}
+      <div className="workout-dock">
+        <button type="button" className="btn btn-primary btn-block btn-lg" onClick={completeSet}>
+          {setIndexNum + 1 < totalSets
+            ? "Complete set · start rest"
+            : index + 1 < totalMoves
+              ? "Next exercise"
+              : "Finish workout"}
+        </button>
+      </div>
 
-      <button type="button" className="btn btn-primary btn-block" onClick={completeSet}>
-        {setIndexNum + 1 < totalSets
-          ? "Complete set → rest"
-          : index + 1 < totalMoves
-            ? "Next exercise"
-            : "Finish workout"}
-      </button>
-
-      <div className="surface" style={{ padding: "1rem" }}>
+      <div className="surface" style={{ padding: "0.9rem" }}>
         <button
           type="button"
           className="btn btn-ghost btn-block"
@@ -165,11 +159,11 @@ export function WorkoutClient({ session, exercises, programTitle, programId }: P
         >
           {showSteps ? "Hide teaching steps" : "Show teaching steps"}
         </button>
-        {showSteps ? <StepGuide steps={exercise.steps} /> : null}
+        {showSteps ? <StepGuide steps={exercise.steps} compact /> : null}
       </div>
 
-      <p className="faint" style={{ fontSize: "0.75rem", margin: 0 }}>
-        Media © Gym visual · {exercise.equipment} · targets {exercise.target}
+      <p className="faint" style={{ fontSize: "0.75rem", margin: 0, textAlign: "center" }}>
+        Media © Gym visual · {exercise.equipment}
       </p>
     </div>
   );

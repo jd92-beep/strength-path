@@ -2,62 +2,59 @@ import Link from "next/link";
 import type { Exercise } from "@/lib/types";
 import { thumbUrl } from "@/lib/media";
 
-export function ExerciseCard({ exercise }: { exercise: Exercise }) {
+export function ExerciseCard({
+  exercise,
+  featured = false,
+}: {
+  exercise: Exercise;
+  featured?: boolean;
+}) {
   return (
     <Link
       href={`/exercise/${exercise.id}`}
-      className="surface"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "5.25rem 1fr",
-        gap: "0.75rem",
-        padding: "0.65rem",
-        alignItems: "center",
-        transition: "transform 150ms var(--ease-out)",
-      }}
+      className={`surface surface-interactive ex-card ${featured ? "ex-card--featured" : ""}`.trim()}
     >
-      <div
-        style={{
-          width: "5.25rem",
-          height: "5.25rem",
-          borderRadius: "var(--radius-sm)",
-          overflow: "hidden",
-          background: "oklch(1 0 0)",
-          border: "1px solid var(--border)",
-        }}
-      >
+      <div className="ex-card__media">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={thumbUrl(exercise.image)}
           alt=""
-          width={84}
-          height={84}
+          width={featured ? 640 : 104}
+          height={featured ? 440 : 104}
           loading="lazy"
-          style={{ width: "100%", height: "100%", objectFit: "contain" }}
-        />
-      </div>
-      <div style={{ minWidth: 0 }}>
-        <div
-          className="display"
           style={{
-            fontSize: "0.98rem",
-            marginBottom: "0.25rem",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            background: "var(--media-canvas)",
+            mixBlendMode: "multiply",
+          }}
+        />
+        <span
+          className="media-badge"
+          style={{
+            position: "absolute",
+            left: "0.4rem",
+            bottom: "0.4rem",
           }}
         >
-          {exercise.name}
-        </div>
-        <div className="muted" style={{ fontSize: "0.8rem" }}>
+          Demo
+        </span>
+      </div>
+      <div className="ex-card__body">
+        <div className="ex-card__title">{exercise.name}</div>
+        <div className="ex-card__meta">
           {exercise.target} · {exercise.equipment}
         </div>
-        <div style={{ marginTop: "0.4rem", display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
+        <div className="ex-card__tags">
           <span className="chip" style={{ fontSize: "0.72rem" }}>
             {exercise.body_part}
           </span>
+          {featured ? (
+            <span className="chip chip-accent" style={{ fontSize: "0.72rem" }}>
+              Tap to learn form
+            </span>
+          ) : null}
         </div>
       </div>
     </Link>

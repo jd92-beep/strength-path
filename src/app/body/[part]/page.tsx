@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { ExerciseCard } from "@/components/ExerciseCard";
+import { MediaDemo } from "@/components/MediaDemo";
 import { BODY_PARTS, deslugifyPart, getBodyPart, slugifyPart } from "@/lib/body-parts";
 import { filterExercises } from "@/lib/exercises";
 
@@ -126,14 +127,15 @@ export default async function BodyPartPage({
   const teach = TEACHING[meta.id];
   const bodyweight = exercises.filter((e) => e.equipment === "body weight").slice(0, 6);
   const featured = bodyweight.length ? bodyweight : exercises.slice(0, 6);
+  const hero = featured[0];
 
   return (
     <AppShell title={meta.label} backHref="/body">
+      <div className="stack-md">
       <div
         className="surface"
         style={{
-          padding: "1.1rem",
-          marginBottom: "1rem",
+          padding: "1.15rem",
           borderColor: `color-mix(in oklab, ${meta.accent} 45%, var(--border))`,
           background: `linear-gradient(160deg, color-mix(in oklab, ${meta.accent} 18%, var(--surface)), var(--surface))`,
         }}
@@ -146,6 +148,17 @@ export default async function BodyPartPage({
           {teach?.goal ?? meta.blurb}
         </p>
       </div>
+
+      {hero ? (
+        <MediaDemo
+          gifPath={hero.gif_url}
+          imagePath={hero.image}
+          alt={`${hero.name} form demo`}
+          autoPlay
+          size="lg"
+          caption={`${hero.name} · tap play if paused`}
+        />
+      ) : null}
 
       {teach ? (
         <section style={{ marginBottom: "1.25rem" }}>
@@ -210,6 +223,7 @@ export default async function BodyPartPage({
           </p>
         ) : null}
       </section>
+      </div>
     </AppShell>
   );
 }
