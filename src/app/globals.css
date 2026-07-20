@@ -706,6 +706,15 @@ img {
   box-shadow: var(--shadow-sm);
 }
 
+.af-mini-tile__kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 0.15rem;
+}
+
 .af-mini-tile__label {
   font-weight: 750;
   font-size: 1rem;
@@ -717,6 +726,61 @@ img {
   font-size: 0.75rem;
   color: var(--ink-muted);
   font-weight: 500;
+}
+
+.af-mini-tile--machine {
+  width: 10.25rem;
+  min-height: 7.5rem;
+}
+
+/* Equipment index rows */
+.equip-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  transition: background 150ms var(--ease-out);
+}
+
+.equip-row:active {
+  background: var(--surface-hover);
+}
+
+.equip-row__swatch {
+  width: 0.55rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  background: var(--g, var(--ring-exercise));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--g, var(--ring-exercise)) 45%, transparent);
+}
+
+.equip-row__body {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.equip-row__title {
+  font-weight: 750;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.equip-row__hint {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.equip-row__meta {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ink-faint);
+  white-space: nowrap;
 }
 
 /* Legacy aliases mapped to Fitness look */

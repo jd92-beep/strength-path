@@ -11,20 +11,29 @@ import type { Program } from "@/lib/types";
 import { useLocale } from "@/lib/locale";
 import { localizedPattern, localizedProgram, stageBadge } from "@/lib/localize";
 import type { MovementPattern } from "@/lib/teaching";
+import {
+  equipmentHref,
+  hintEquipment,
+  labelEquipment,
+  type EquipmentCategory,
+} from "@/lib/equipment";
 
 type Pattern = { id: string; label: string; skillFocus: string; color: string };
+type MachineItem = EquipmentCategory & { count: number };
 
 export function HomeClient({
   total,
   langCount,
   programs,
   patterns,
+  machines,
   spotlight,
 }: {
   total: number;
   langCount: number;
   programs: Program[];
   patterns: Pattern[];
+  machines: MachineItem[];
   spotlight: Exercise[];
 }) {
   const { tr, mode } = useLocale();
@@ -84,6 +93,37 @@ export function HomeClient({
                 />
               );
             })}
+          </div>
+        </section>
+
+        <section>
+          <div className="af-section-head">
+            <h2>{tr("byMachine")}</h2>
+            <Link href="/equipment">{tr("seeAll")}</Link>
+          </div>
+          <p className="af-caption" style={{ marginTop: "-0.15rem", marginBottom: "0.55rem" }}>
+            {mode === "yue"
+              ? "揀你面前嘅器材，睇示範學動作。"
+              : mode === "both"
+                ? "Pick a machine. 揀器材學示範。"
+                : "Pick a machine type and learn the demos for it."}
+          </p>
+          <div className="af-h-scroll" role="list">
+            {machines.map((m) => (
+              <Link
+                key={m.id}
+                href={equipmentHref(m.id)}
+                className="af-mini-tile af-mini-tile--machine"
+                style={{ ["--g" as string]: m.color }}
+                role="listitem"
+              >
+                <span className="af-mini-tile__kicker">{tr("machineType")}</span>
+                <span className="af-mini-tile__label">{labelEquipment(m, mode)}</span>
+                <span className="af-mini-tile__sub">
+                  {m.count} {tr("moves")} · {hintEquipment(m, mode)}
+                </span>
+              </Link>
+            ))}
           </div>
         </section>
 

@@ -2,6 +2,7 @@ import { HomeClient } from "./HomeClient";
 import { getAllExercises, getExercise } from "@/lib/exercises";
 import { PROGRAMS } from "@/lib/programs";
 import { patternCatalog } from "@/lib/teaching";
+import { equipmentCatalog } from "@/lib/equipment";
 import { LANGS } from "@/lib/langs";
 import type { Exercise } from "@/lib/types";
 
@@ -17,6 +18,7 @@ export default function HomePage() {
       langCount={LANGS.length}
       programs={PROGRAMS}
       patterns={patternCatalog().slice(0, 4)}
+      machines={equipmentCatalog(8)}
       spotlight={spotlight}
     />
   );

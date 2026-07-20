@@ -9,6 +9,8 @@ export type UiKey =
   | "seeAll"
   | "trainerTips"
   | "byBody"
+  | "byMachine"
+  | "machineType"
   | "withDemos"
   | "search"
   | "workouts"
@@ -92,6 +94,8 @@ const en: Record<UiKey, string> = {
   seeAll: "See All",
   trainerTips: "Trainer tips",
   byBody: "By body",
+  byMachine: "By machine",
+  machineType: "Machine type",
   withDemos: "With demos",
   search: "Search",
   workouts: "Workouts",
@@ -177,6 +181,8 @@ const yue: Record<UiKey, string> = {
   seeAll: "睇晒",
   trainerTips: "教練貼士",
   byBody: "按部位練",
+  byMachine: "按器材練",
+  machineType: "器材類型",
   withDemos: "有示範嘅動作",
   search: "搵動作",
   workouts: "訓練計劃",
