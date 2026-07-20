@@ -60,7 +60,7 @@ export function ExercisePageChrome({
   const targetLabel = mode === "yue" ? `目標 · ${target}` : `target · ${target}`;
 
   return (
-    <div className="stack-lg">
+    <div className="stack-lg studio-page">
       <header className="studio-head">
         <p className="studio-head__id">
           {tr("formStudio")} · #{exerciseId}

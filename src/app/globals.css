@@ -618,6 +618,11 @@ textarea {
   gap: 0.15rem;
 }
 
+/* Sidebar-only brand — hidden in the phone tab bar */
+.af-tabbar__brand {
+  display: none;
+}
+
 .af-tab,
 .nav-link {
   display: flex;
@@ -2658,6 +2663,143 @@ textarea {
   }
   .meta-sheet__row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   Desktop / large-screen layout (RWD)
+   Phones keep the app layout; ≥1024px gets a sidebar + grids
+   ========================================================= */
+@media (min-width: 1024px) {
+  :root {
+    --sidebar-w: 15rem;
+  }
+
+  /* Bottom tab bar becomes a fixed left sidebar */
+  .af-tabbar,
+  .bottom-nav {
+    inset: 0 auto 0 0;
+    width: var(--sidebar-w);
+    border-top: none;
+    border-right: 0.5px solid var(--border);
+    padding: 1.15rem 0.85rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+
+  .af-tabbar__brand {
+    display: inline-flex;
+    padding: 0.35rem 0.55rem;
+    font-size: 1.15rem;
+  }
+
+  .af-tabbar__inner,
+  .bottom-nav-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .af-tab,
+  .nav-link {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.7rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    padding: 0.6rem 0.8rem;
+    border-radius: 12px;
+  }
+
+  /* Content sits right of the sidebar and widens */
+  .af-app {
+    padding-left: var(--sidebar-w);
+  }
+
+  .af-shell,
+  .shell,
+  .af-header__inner,
+  .af-tabbar__inner {
+    max-width: 1140px;
+  }
+
+  .af-shell,
+  .shell {
+    padding: 1.25rem 2.25rem 3rem;
+  }
+
+  .af-header__inner {
+    padding-inline: 2.25rem;
+  }
+
+  .af-header__title {
+    max-width: 40rem;
+  }
+
+  /* Brand lives in the sidebar on desktop */
+  .af-header .af-brand {
+    display: none;
+  }
+
+  /* Multi-column composition — auto-fit collapses unused tracks */
+  .af-tile-stack {
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 1rem;
+  }
+
+  .af-tile--large {
+    grid-column: 1 / -1;
+  }
+
+  .af-stack-sm {
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 0.85rem;
+  }
+
+  .home-icon-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .bodymap__icons-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .pattern-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .stat-grid {
+    max-width: 40rem;
+  }
+
+  /* Rails unfurl into wrapping grids — nothing hidden off-screen */
+  .af-h-scroll {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+    cursor: default;
+    scroll-snap-type: none;
+  }
+
+  /* Reading surfaces keep a comfortable measure, centered */
+  .studio-page,
+  .workout-page,
+  .teach,
+  .hero-panel {
+    max-width: 46rem;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  /* No bottom bar to clear anymore */
+  .workout-dock {
+    bottom: 1rem;
   }
 }
 

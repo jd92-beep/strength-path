@@ -160,7 +160,7 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
         : `Set ${setIndexNum + 1} / ${totalSets}`;
 
   return (
-    <div className="stack-md">
+    <div className="stack-md workout-page">
       <div>
         <p className="muted" style={{ margin: "0 0 0.3rem", fontSize: "0.85rem" }}>
           {sessionLoc.title} · {safeIndex + 1}/{totalMoves}
