@@ -202,7 +202,7 @@ export function MediaDemo({
 
       {caption ? (
         <p className="media-demo__caption">
-          {playing ? (locale?.tr("playingTap") ?? caption) : caption}
+          {playing && gifReady ? (locale?.tr("playingTap") ?? caption) : caption}
         </p>
       ) : null}
       <span id={uid} className="sr-only">

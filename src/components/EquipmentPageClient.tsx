@@ -41,7 +41,7 @@ export function EquipmentPageClient({ machines }: { machines: MachineItem[] }) {
               <Link
                 href={equipmentHref(m.id)}
                 className="equip-row"
-                style={{ ["--g" as string]: m.color, border: "none", borderRadius: 0 }}
+                style={{ ["--g" as string]: m.color }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import { AppShell } from "@/components/AppShell";
+import {
+  getProgressSnapshot,
+  subscribeProgress,
+  type ProgressState,
+} from "@/lib/progress";
 import { WorkoutTile } from "@/components/WorkoutTile";
 import { ExercisePhoto } from "@/components/ExercisePhoto";
 import { ScrollRail } from "@/components/ScrollRail";
@@ -18,6 +24,9 @@ import {
 } from "@/lib/localize";
 import type { MovementPattern } from "@/lib/teaching";
 import { BODY_PARTS } from "@/lib/body-parts";
+
+const EMPTY_PROGRESS: ProgressState = { completedSessions: [], completedExercises: [] };
+const emptyProgress = () => EMPTY_PROGRESS;
 
 const BODY_YUE: Record<string, string> = {
   chest: "胸",
@@ -82,6 +91,7 @@ export function ProgramPageClient({
 }) {
   const { tr, mode } = useLocale();
   const p = localizedProgram(program, mode);
+  const progress = useSyncExternalStore(subscribeProgress, getProgressSnapshot, emptyProgress);
 
   return (
     <AppShell title={p.title} backHref="/path">
@@ -131,6 +141,11 @@ export function ProgramPageClient({
                   >
                     <span className="faint" style={{ fontWeight: 700, fontSize: "0.78rem" }}>
                       {mode === "yue" ? `訓練 ${idx + 1}` : `WORKOUT ${idx + 1}`}
+                      {progress.completedSessions.includes(session.id) ? (
+                        <span className="chip chip-accent" style={{ marginLeft: "0.5rem" }}>
+                          ✓ {mode === "yue" ? "完成" : "Done"}
+                        </span>
+                      ) : null}
                     </span>
                     <span className="muted" style={{ fontSize: "0.8rem" }}>
                       {session.durationMin} {mode === "yue" ? "分鐘" : "MIN"}

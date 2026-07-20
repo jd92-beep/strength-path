@@ -125,7 +125,6 @@ export function HistoryClient() {
               type="button"
               className="btn btn-primary"
               disabled={entries.length === 0}
-              style={entries.length === 0 ? { opacity: 0.5, cursor: "default" } : undefined}
               onClick={() => downloadFile("strength-path-log.csv", "text/csv", toCsv(entries))}
             >
               {tr("exportCsv")}
@@ -134,7 +133,6 @@ export function HistoryClient() {
               type="button"
               className="btn btn-ghost"
               disabled={entries.length === 0}
-              style={entries.length === 0 ? { opacity: 0.5, cursor: "default" } : undefined}
               onClick={() =>
                 downloadFile(
                   "strength-path-log.json",

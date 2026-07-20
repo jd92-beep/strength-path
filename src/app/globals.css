@@ -271,8 +271,8 @@ img {
 
 .lang-switch--compact .lang-switch__btn {
   font-size: 0.65rem;
-  padding: 0.18rem 0.38rem;
-  min-height: 1.65rem;
+  padding: 0.28rem 0.45rem;
+  min-height: 2rem;
   flex-shrink: 1;
 }
 
@@ -1206,6 +1206,13 @@ textarea {
   transform: scale(0.98);
 }
 
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+  pointer-events: none;
+}
+
 .btn-primary {
   background: var(--ring-exercise);
   color: var(--primary-ink);
@@ -1371,11 +1378,18 @@ textarea {
   background: #f2f2f7;
 }
 
-/* Kill legacy chrome / orb / dark overlays from older deploys if CSS is partially cached */
+/* Kill legacy chrome / dark overlays from older deploys if CSS is partially cached */
 .media-demo__chrome,
 .media-demo__play-orb,
 .media-demo__hit {
   display: none !important;
+}
+
+/* Rows nested inside a .surface wrapper (equipment page) — no double panel */
+.surface .equip-row {
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 
 /* Overlay play / pause control — glass circle, bottom-right of the stage */
@@ -1443,9 +1457,7 @@ textarea {
 
 /* Force full brightness while playing — no dim, no multiply, no dark stage */
 .media-demo[data-playing="true"] .media-demo__canvas,
-.media-demo[data-playing="true"] .media-demo__img,
-.media-demo[data-playing="true"] .media-demo__stage,
-.media-demo[data-playing="true"] .media-demo__toolbar {
+.media-demo[data-playing="true"] .media-demo__img {
   filter: none !important;
   opacity: 1 !important;
   mix-blend-mode: normal !important;
@@ -1914,9 +1926,12 @@ textarea {
 
 .progress-fill {
   height: 100%;
+  width: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--ring-move), var(--ring-exercise), var(--ring-stand));
-  transition: width 280ms var(--ease-out);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 280ms var(--ease-out);
 }
 
 .level-pill {
@@ -2652,12 +2667,21 @@ textarea {
   }
   .btn,
   .af-tile,
+  .af-tab,
+  .nav-link,
   .progress-fill,
   .media-demo__img,
+  .media-demo__stage,
+  .media-demo__orb,
+  .log-stepper__btn,
   .rest-ring__progress {
     transition: none;
   }
   .media-demo__skeleton {
     animation: none;
+  }
+  .af-h-scroll,
+  .related-rail {
+    scroll-snap-type: none;
   }
 }

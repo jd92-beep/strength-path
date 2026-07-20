@@ -172,7 +172,7 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
           </h2>
         </div>
         <div className="progress-track" aria-hidden>
-          <div className="progress-fill" style={{ width: `${progressPct}%` }} />
+          <div className="progress-fill" style={{ transform: `scaleX(${progressPct / 100})` }} />
         </div>
       </div>
 
