@@ -6,6 +6,7 @@ import { SummaryRings } from "@/components/SummaryRings";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { WorkoutTile } from "@/components/WorkoutTile";
 import { BodyPartIcon } from "@/components/BodyPartIcon";
+import { ScrollRail } from "@/components/ScrollRail";
 import type { Exercise } from "@/lib/types";
 import type { Program } from "@/lib/types";
 import { useLocale } from "@/lib/locale";
@@ -108,7 +109,7 @@ export function HomeClient({
                 ? "Pick a machine. 揀器材學示範。"
                 : "Pick a machine type and learn the demos for it."}
           </p>
-          <div className="af-h-scroll" role="list">
+          <ScrollRail role="list">
             {machines.map((m) => (
               <Link
                 key={m.id}
@@ -136,7 +137,7 @@ export function HomeClient({
                 </span>
               </Link>
             ))}
-          </div>
+          </ScrollRail>
         </section>
 
         <section>
@@ -144,7 +145,7 @@ export function HomeClient({
             <h2>{tr("trainerTips")}</h2>
             <Link href="/learn">{tr("seeAll")}</Link>
           </div>
-          <div className="af-h-scroll">
+          <ScrollRail>
             {patterns.map((p) => {
               const loc = localizedPattern(
                 p.id as MovementPattern,
@@ -164,7 +165,7 @@ export function HomeClient({
                 </Link>
               );
             })}
-          </div>
+          </ScrollRail>
         </section>
 
         <section>

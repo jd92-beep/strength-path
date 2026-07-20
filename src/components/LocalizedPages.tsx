@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { WorkoutTile } from "@/components/WorkoutTile";
 import { ExercisePhoto } from "@/components/ExercisePhoto";
+import { ScrollRail } from "@/components/ScrollRail";
 import { BodyMap } from "@/components/BodyMap";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { useLocale } from "@/lib/locale";
@@ -142,7 +143,7 @@ export function ProgramPageClient({
                   <p className="muted" style={{ margin: "0 0 0.85rem", fontSize: "0.9rem" }}>
                     {s.focus}
                   </p>
-                  <div className="af-h-scroll" style={{ marginBottom: "0.85rem" }}>
+                  <ScrollRail style={{ marginBottom: "0.85rem" }}>
                     {moves.map((m) => (
                       <Link
                         key={m.id}
@@ -183,7 +184,7 @@ export function ProgramPageClient({
                         </span>
                       </Link>
                     ))}
-                  </div>
+                  </ScrollRail>
                   <Link href={`/workout/${session.id}`} className="btn btn-primary btn-block btn-lg">
                     {tr("letsGo")}
                   </Link>

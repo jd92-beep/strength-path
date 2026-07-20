@@ -831,13 +831,42 @@ textarea {
   padding-bottom: 0.35rem;
   padding-right: 0.15rem;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
   overscroll-behavior-x: contain;
   touch-action: pan-x;
+  scroll-snap-type: x proximity;
+  /* Right-edge fade — hints that more cells sit off-screen */
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 1.5rem), transparent);
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 1.5rem), transparent);
+  /* Visible-but-quiet scrollbar as the scroll affordance */
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-hover) transparent;
+}
+
+.af-h-scroll > * {
+  scroll-snap-align: start;
 }
 
 .af-h-scroll::-webkit-scrollbar {
-  display: none;
+  height: 4px;
+}
+
+.af-h-scroll::-webkit-scrollbar-thumb {
+  background: var(--surface-hover);
+  border-radius: 999px;
+}
+
+.af-h-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (hover: hover) {
+  .af-h-scroll {
+    cursor: grab;
+  }
+
+  .af-h-scroll:active {
+    cursor: grabbing;
+  }
 }
 
 .af-mini-tile {
@@ -2186,6 +2215,35 @@ textarea {
   min-width: 0;
   padding-bottom: 0.35rem;
   overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  scroll-snap-type: x proximity;
+  mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 1.5rem), transparent);
+  -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 1.5rem), transparent);
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-hover) transparent;
+}
+
+.related-rail > * {
+  scroll-snap-align: start;
+}
+
+.related-rail::-webkit-scrollbar {
+  height: 4px;
+}
+
+.related-rail::-webkit-scrollbar-thumb {
+  background: var(--surface-hover);
+  border-radius: 999px;
+}
+
+@media (hover: hover) {
+  .related-rail {
+    cursor: grab;
+  }
+
+  .related-rail:active {
+    cursor: grabbing;
+  }
 }
 
 .related-rail__item {

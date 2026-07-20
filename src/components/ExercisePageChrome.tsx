@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ScrollRail } from "@/components/ScrollRail";
 import { useLocale } from "@/lib/locale";
 import { localizedPattern } from "@/lib/localize";
 import type { MovementPattern } from "@/lib/teaching";
@@ -84,13 +85,13 @@ export function ExercisePageChrome({
           <div className="section-head">
             <h2 className="display">{moreLabel}</h2>
           </div>
-          <div className="related-rail">
+          <ScrollRail className="related-rail">
             {related.map((ex) => (
               <Link key={ex.id} href={`/exercise/${ex.id}`} className="related-rail__item">
                 {ex.name}
               </Link>
             ))}
-          </div>
+          </ScrollRail>
         </section>
       ) : null}
     </div>
