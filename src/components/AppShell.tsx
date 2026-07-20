@@ -28,6 +28,10 @@ export function AppShell({
               <BackButton fallbackHref={backHref} />
             ) : (
               <Link href="/" className="af-brand">
+                <svg className="af-brand__glyph" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <circle cx="12" cy="12" r="9" stroke="var(--ring-exercise)" strokeWidth="2.6" strokeLinecap="round" strokeDasharray="40 17" />
+                  <circle cx="12" cy="12" r="4.5" stroke="var(--ring-stand)" strokeWidth="2.4" strokeLinecap="round" strokeDasharray="18 11" />
+                </svg>
                 {tr("brand")}
               </Link>
             )}

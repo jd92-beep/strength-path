@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 import { AppShell } from "@/components/AppShell";
+import { computeStats, getLogSnapshot, subscribeLog, type SetLogEntry } from "@/lib/log";
+import { getProgressSnapshot, subscribeProgress, type ProgressState } from "@/lib/progress";
 import { SummaryRings } from "@/components/SummaryRings";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { WorkoutTile } from "@/components/WorkoutTile";
@@ -22,6 +25,11 @@ import {
 type Pattern = { id: string; label: string; skillFocus: string; color: string };
 type MachineItem = EquipmentCategory & { count: number };
 
+const EMPTY_LOG: SetLogEntry[] = [];
+const EMPTY_PROGRESS: ProgressState = { completedSessions: [], completedExercises: [] };
+const emptyLog = () => EMPTY_LOG;
+const emptyProgress = () => EMPTY_PROGRESS;
+
 export function HomeClient({
   total,
   langCount,
@@ -38,6 +46,9 @@ export function HomeClient({
   spotlight: Exercise[];
 }) {
   const { tr, mode } = useLocale();
+  const log = useSyncExternalStore(subscribeLog, getLogSnapshot, emptyLog);
+  const progress = useSyncExternalStore(subscribeProgress, getProgressSnapshot, emptyProgress);
+  const stats = computeStats(log);
   const bodies = [
     { id: "chest", href: "/body/chest", label: "Chest", yue: "胸" },
     { id: "back", href: "/body/back", label: "Back", yue: "背" },
@@ -58,19 +69,16 @@ export function HomeClient({
           <SummaryRings size={118} />
         </header>
 
-        <section className="af-ring-legend" aria-label={tr("summary")}>
-          <div>
-            <span className="af-dot" style={{ background: "var(--ring-move)" }} />
-            {tr("ringMove")}
-          </div>
-          <div>
-            <span className="af-dot" style={{ background: "var(--ring-exercise)" }} />
-            {tr("ringExercise")}
-          </div>
-          <div>
-            <span className="af-dot" style={{ background: "var(--ring-stand)" }} />
-            {tr("ringStand")}
-          </div>
+        <section className="hero-chips" aria-label={tr("summary")}>
+          <Link href="/path" className="hero-chip" style={{ ["--c" as string]: "var(--ring-move)" }}>
+            <strong>{progress.completedSessions.length}</strong> {tr("sessions")}
+          </Link>
+          <Link href="/history" className="hero-chip" style={{ ["--c" as string]: "var(--ring-exercise)" }}>
+            <strong>{stats.totalSets}</strong> {tr("loggedSets").toLowerCase()}
+          </Link>
+          <Link href="/history" className="hero-chip" style={{ ["--c" as string]: "var(--ring-stand)" }}>
+            <strong>{stats.daysActive}</strong> {tr("daysActive").toLowerCase()}
+          </Link>
         </section>
 
         <section>
@@ -90,7 +98,8 @@ export function HomeClient({
                   subtitle={p.tagline}
                   meta={`${prog.sessions.length} ${tr("sessions")} · ${p.equipment}`}
                   badge={i === 0 ? tr("featured") : stageBadge(i, prog.level, mode)}
-                  gradientKey={prog.id}
+                  accent={prog.color}
+                  stage={i + 1}
                 />
               );
             })}

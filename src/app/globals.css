@@ -152,6 +152,19 @@ img {
   background: var(--bg);
 }
 
+/* Atmosphere — faint neon wash on the black canvas, fixed so it never scrolls */
+.af-app::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(52rem 30rem at 110% -8%, rgba(61, 220, 255, 0.07), transparent 62%),
+    radial-gradient(46rem 30rem at -18% 4%, rgba(255, 45, 108, 0.06), transparent 60%),
+    radial-gradient(50rem 34rem at 50% 118%, rgba(138, 92, 255, 0.05), transparent 62%);
+}
+
 .af-header {
   position: sticky;
   top: 0;
@@ -421,6 +434,16 @@ img {
   font-weight: 700;
   letter-spacing: -0.03em;
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.af-brand__glyph {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ring-exercise) 60%, transparent));
 }
 
 .af-back {
@@ -601,18 +624,20 @@ textarea {
   flex-direction: column;
   align-items: center;
   gap: 0.12rem;
-  padding: 0.35rem 0.15rem;
-  border-radius: 10px;
+  padding: 0.4rem 0.15rem 0.35rem;
+  border-radius: 14px;
   font-size: 0.625rem;
   font-weight: 500;
   color: rgba(235, 235, 245, 0.48);
   letter-spacing: 0;
+  transition: color 160ms var(--ease-out), background 160ms var(--ease-out);
 }
 
 .af-tab[data-active="true"],
 .nav-link[data-active="true"] {
   color: var(--ring-exercise);
-  background: transparent;
+  background: color-mix(in srgb, var(--ring-exercise) 10%, transparent);
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--ring-exercise) 25%, transparent);
   text-shadow: 0 0 12px color-mix(in srgb, var(--ring-exercise) 55%, transparent);
 }
 
@@ -682,6 +707,37 @@ textarea {
   color: var(--ink-muted);
 }
 
+/* Live hero stat pills under the Summary title */
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: -0.9rem;
+}
+
+.hero-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.32rem 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #17171e 0%, #121218 100%);
+  border: 0.5px solid var(--border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+}
+
+.hero-chip strong {
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--c, var(--ink));
+  text-shadow: 0 0 12px color-mix(in srgb, var(--c, transparent) 45%, transparent);
+}
+
 .af-ring-legend > div {
   display: inline-flex;
   align-items: center;
@@ -714,8 +770,13 @@ textarea {
 .af-section-head a,
 .section-link {
   color: var(--ring-exercise);
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 0.82rem;
+  font-weight: 650;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ring-exercise) 10%, transparent);
+  border: 0.5px solid color-mix(in srgb, var(--ring-exercise) 22%, transparent);
+  white-space: nowrap;
 }
 
 .af-caption {
@@ -730,19 +791,48 @@ textarea {
   gap: 0.85rem;
 }
 
+/* Program / pattern tiles — dark hardware, neon accent edge, no gradient blobs.
+   Accent color comes in via --a (per program / pattern). */
 .af-tile {
+  --a: var(--ring-exercise);
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
   position: relative;
   display: block;
   min-height: 9.5rem;
-  border-radius: 22px;
+  border-radius: 24px;
   overflow: hidden;
-  color: #fff;
+  color: var(--ink);
   isolation: isolate;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-  transition: transform 180ms var(--ease-out);
+  background:
+    radial-gradient(26rem 15rem at 100% 0%, color-mix(in srgb, var(--a) 20%, transparent), transparent 65%),
+    linear-gradient(180deg, #16161d 0%, #0c0c11 100%);
+  border: 1px solid color-mix(in srgb, var(--a) 32%, var(--border));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 28px rgba(0, 0, 0, 0.45);
+  transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
+}
+
+/* Accent rail of light along the top edge */
+.af-tile::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1.25rem;
+  right: 45%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--a), transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--a) 70%, transparent);
+}
+
+.af-tile:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 28px rgba(0, 0, 0, 0.45),
+    0 0 24px color-mix(in srgb, var(--a) 22%, transparent);
 }
 
 .af-tile:active {
@@ -753,16 +843,24 @@ textarea {
   min-height: 13.5rem;
 }
 
-.af-tile__veil {
+/* Big stage numeral — programs are a real ordered sequence */
+.af-tile__num {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.05) 0%,
-    rgba(0, 0, 0, 0.15) 40%,
-    rgba(0, 0, 0, 0.55) 100%
-  );
+  right: 0.85rem;
+  bottom: 0.35rem;
   z-index: 0;
+  font-size: 6.5rem;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: color-mix(in srgb, var(--a) 16%, transparent);
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  pointer-events: none;
+}
+
+.af-tile__veil {
+  display: none;
 }
 
 .af-tile__content {
@@ -785,9 +883,9 @@ textarea {
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: capitalize;
-  background: rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(8px);
-  border: 0.5px solid rgba(255, 255, 255, 0.18);
+  color: color-mix(in srgb, var(--a) 85%, #fff);
+  background: color-mix(in srgb, var(--a) 14%, transparent);
+  border: 0.5px solid color-mix(in srgb, var(--a) 35%, transparent);
 }
 
 .af-tile__title {
@@ -796,7 +894,6 @@ textarea {
   font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1.05;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
 }
 
 .af-tile--large .af-tile__title {
@@ -807,15 +904,15 @@ textarea {
   margin: 0;
   font-size: 0.95rem;
   font-weight: 500;
-  opacity: 0.95;
-  max-width: 28ch;
+  color: var(--ink-muted);
+  max-width: 34ch;
 }
 
 .af-tile__meta {
-  margin: 0.25rem 0 0;
+  margin: 0.35rem 0 0;
   font-size: 0.8rem;
-  font-weight: 600;
-  opacity: 0.85;
+  font-weight: 650;
+  color: color-mix(in srgb, var(--a) 75%, #fff);
 }
 
 .af-h-scroll {
@@ -880,11 +977,26 @@ textarea {
   flex-direction: column;
   justify-content: flex-end;
   gap: 0.2rem;
-  background: linear-gradient(155deg, color-mix(in srgb, var(--g) 85%, #000), var(--surface));
-  border: 0.5px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-sm);
+  position: relative;
+  background:
+    radial-gradient(12rem 8rem at 100% 0%, color-mix(in srgb, var(--g) 22%, transparent), transparent 70%),
+    linear-gradient(180deg, #16161d 0%, #0d0d12 100%);
+  border: 1px solid color-mix(in srgb, var(--g) 30%, var(--border));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--shadow-sm);
   box-sizing: border-box;
   overflow: hidden;
+}
+
+.af-mini-tile::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0.85rem;
+  right: 50%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--g), transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--g) 65%, transparent);
 }
 
 .af-mini-tile__kicker {
@@ -1045,9 +1157,10 @@ textarea {
 
 .surface,
 .surface-soft {
-  background: var(--surface);
+  background: linear-gradient(180deg, #17171e 0%, #121218 100%);
   border: 0.5px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .surface-interactive:hover {

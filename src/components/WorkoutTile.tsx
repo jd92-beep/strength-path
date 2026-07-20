@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { gradientForKey } from "@/lib/fitness-theme";
+import { accentForKey } from "@/lib/fitness-theme";
 
 type Props = {
   href: string;
@@ -7,7 +7,11 @@ type Props = {
   subtitle: string;
   meta?: string;
   badge?: string;
+  /** Neon accent color; falls back to a stable hash of gradientKey/title */
+  accent?: string;
   gradientKey?: string;
+  /** Stage number watermark — only for genuinely ordered sequences */
+  stage?: number;
   large?: boolean;
 };
 
@@ -17,18 +21,24 @@ export function WorkoutTile({
   subtitle,
   meta,
   badge,
+  accent,
   gradientKey,
+  stage,
   large,
 }: Props) {
-  const bg = gradientForKey(gradientKey || title);
+  const a = accent ?? accentForKey(gradientKey || title);
 
   return (
     <Link
       href={href}
       className={`af-tile ${large ? "af-tile--large" : ""}`.trim()}
-      style={{ background: bg }}
+      style={{ ["--a" as string]: a }}
     >
-      <div className="af-tile__veil" />
+      {typeof stage === "number" ? (
+        <span className="af-tile__num" aria-hidden>
+          {String(stage).padStart(2, "0")}
+        </span>
+      ) : null}
       <div className="af-tile__content">
         {badge ? <span className="af-tile__badge">{badge}</span> : null}
         <h3 className="af-tile__title">{title}</h3>

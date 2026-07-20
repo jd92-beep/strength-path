@@ -16,7 +16,6 @@ import {
   localizedSession,
   stageBadge,
 } from "@/lib/localize";
-import { gradientForKey } from "@/lib/fitness-theme";
 import type { MovementPattern } from "@/lib/teaching";
 import { BODY_PARTS } from "@/lib/body-parts";
 
@@ -63,7 +62,8 @@ export function PathPageClient({ programs }: { programs: Program[] }) {
                 subtitle={p.tagline}
                 meta={`${program.sessions.length} ${tr("workoutsCount")} · ${program.weeks}${mode === "yue" ? " 星期" : " weeks"} · ${p.equipment}`}
                 badge={stageBadge(i, program.level, mode)}
-                gradientKey={program.id}
+                accent={program.color}
+                stage={i + 1}
               />
             );
           })}
@@ -88,9 +88,8 @@ export function ProgramPageClient({
       <div className="af-stack">
         <section
           className="af-tile af-tile--large"
-          style={{ background: gradientForKey(program.id), minHeight: "11rem" }}
+          style={{ ["--a" as string]: program.color, minHeight: "11rem" }}
         >
-          <div className="af-tile__veil" />
           <div className="af-tile__content">
             <span className="af-tile__badge">{levelLabel(program.level, mode)}</span>
             <h1 className="af-tile__title" style={{ fontSize: "1.85rem" }}>
@@ -236,7 +235,7 @@ export function LearnPageClient({
                 subtitle={loc.skillFocus}
                 meta={`${p.count} ${mode === "yue" ? "個示範" : "demos"}`}
                 badge={mode === "yue" ? "模式" : "Pattern"}
-                gradientKey={p.id}
+                accent={p.color}
               />
             );
           })}

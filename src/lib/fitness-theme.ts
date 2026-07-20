@@ -36,3 +36,19 @@ export function gradientForKey(key: string): string {
   for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
   return WORKOUT_GRADIENTS[hash % WORKOUT_GRADIENTS.length];
 }
+
+/** Neon accents for the dark-hardware tile look. */
+export const NEON_ACCENTS = [
+  "#ff2d6c",
+  "#34e860",
+  "#3ddcff",
+  "#8a5cff",
+  "#ff9f0a",
+  "#ffd60a",
+] as const;
+
+export function accentForKey(key: string): string {
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+  return NEON_ACCENTS[hash % NEON_ACCENTS.length];
+}
