@@ -38,7 +38,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    /* min-h only — never h-full, or the page locks to viewport height and clips */
+    <html lang="en" className="min-h-full">
       <body className="min-h-full antialiased af-body">
         <LocaleProvider>
           <NavTracker />

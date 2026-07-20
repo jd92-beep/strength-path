@@ -63,18 +63,30 @@ html {
   background: #000;
   width: 100%;
   max-width: 100%;
+  /* Grow with content — never lock to 100vh or half the Summary vanishes */
+  height: auto !important;
+  min-height: 100%;
   overflow-x: hidden;
-  /* Prevent iOS rubber-band horizontal scroll from fixed-width children */
+  overflow-y: auto;
   overscroll-behavior-x: none;
+}
+
+html.min-h-full,
+html.h-full {
+  height: auto !important;
+  min-height: 100%;
 }
 
 .af-body,
 body {
   margin: 0;
-  min-height: 100dvh;
+  min-height: 100dvh !important;
+  height: auto !important;
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  /* Do NOT set overflow-x alone — CSS pairs it with overflow-y:auto and can
+     trap scroll in a viewport-tall box, clipping the rest of the page. */
+  overflow: visible !important;
   background: #000;
   color: var(--ink);
   font-family: var(--font-af);
@@ -84,6 +96,12 @@ body {
   text-rendering: optimizeLegibility;
   letter-spacing: -0.01em;
   position: relative;
+}
+
+body.min-h-full,
+body.h-full {
+  height: auto !important;
+  min-height: 100dvh !important;
 }
 
 a {
@@ -123,6 +141,7 @@ img {
 /* ——— App chrome ——— */
 .af-app {
   min-height: 100dvh;
+  height: auto;
   background: #000;
 }
 
@@ -435,10 +454,14 @@ img {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  overflow-x: clip;
+  /* overflow must stay visible so flex children can grow the document height.
+     overflow-x: clip here previously forced overflow-y:auto → viewport lock →
+     bottom half of Summary disappeared. */
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  flex: 1 0 auto;
 }
 
 .af-shell,
@@ -451,7 +474,9 @@ img {
     calc(var(--nav-h) + var(--safe-b) + 1.25rem) max(1rem, env(safe-area-inset-right, 0px));
   box-sizing: border-box;
   min-width: 0;
-  overflow-x: clip;
+  overflow: visible;
+  flex: 1 0 auto;
+  height: auto;
 }
 
 .af-tabbar__inner {
@@ -478,7 +503,9 @@ img {
   min-width: 0;
   margin-inline: 0;
   box-sizing: border-box;
-  overflow-x: clip;
+  /* never clip the page vertically */
+  overflow: visible;
+  height: auto;
 }
 
 /* Never let long bilingual titles or meta blow the card width */
@@ -587,12 +614,14 @@ textarea {
   padding-top: 0.35rem;
   min-width: 0;
   max-width: 100%;
+  overflow: visible;
 }
 
 .af-summary-head > div:first-child {
   min-width: 0;
   flex: 1 1 auto;
-  overflow: hidden;
+  /* overflow:hidden here was unnecessary and could clip title block */
+  overflow: visible;
 }
 
 .af-eyebrow {
