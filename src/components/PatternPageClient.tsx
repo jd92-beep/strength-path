@@ -3,29 +3,49 @@
 import { AppShell } from "@/components/AppShell";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { BilingualList, BilingualText } from "@/components/Bilingual";
+import { BodyPartIcon } from "@/components/BodyPartIcon";
 import { useLocale } from "@/lib/locale";
 import { localizedPattern } from "@/lib/localize";
-import type { MovementPattern, TeachLesson } from "@/lib/teaching";
+import type { MovementPattern, PatternGroup, TeachLesson } from "@/lib/teaching";
 import { applyYueToLesson } from "@/lib/teaching-yue";
-import type { Exercise } from "@/lib/types";
+
+const BODY_YUE: Record<string, string> = {
+  chest: "胸",
+  back: "背",
+  "upper legs": "大腿",
+  shoulders: "膊頭",
+  "upper arms": "手臂",
+  waist: "核心",
+  "lower legs": "小腿",
+  "lower arms": "前臂",
+  cardio: "心肺",
+  neck: "頸",
+};
 
 export function PatternPageClient({
   patternId,
   label,
   skillFocus,
   color,
-  exercises,
+  groups,
   lesson,
 }: {
   patternId: string;
   label: string;
   skillFocus: string;
   color: string;
-  exercises: Exercise[];
+  groups: PatternGroup[];
   lesson: TeachLesson | null;
 }) {
   const { tr, mode } = useLocale();
   const loc = localizedPattern(patternId as MovementPattern, label, skillFocus, mode);
+  const total = groups.reduce((n, g) => n + g.exercises.length, 0);
+  const bodyLabel = (bp: string) =>
+    mode === "yue"
+      ? BODY_YUE[bp] || bp
+      : mode === "both"
+        ? `${bp} · ${BODY_YUE[bp] || bp}`
+        : bp;
   const lessonEn = lesson;
   const lessonYue = lesson ? applyYueToLesson(lesson) : null;
 
@@ -85,14 +105,28 @@ export function PatternPageClient({
 
         <section>
           <div className="section-head">
-            <h2 className="display">{mode === "yue" ? "練習示範" : "Practice demos"}</h2>
+            <h2 className="display">{mode === "yue" ? "全部練習示範" : "All demos"}</h2>
             <span className="faint" style={{ fontSize: "0.8rem" }}>
-              {exercises.length}
+              {total} {tr("moves")}
             </span>
           </div>
           <div className="stack">
-            {exercises.map((ex, i) => (
-              <ExerciseCard key={ex.id} exercise={ex} featured={i === 0} />
+            {groups.map((g, gi) => (
+              <details key={g.bodyPart} className="fold" open={gi === 0}>
+                <summary className="fold__head">
+                  <BodyPartIcon bodyPart={g.bodyPart} size={30} className="fold__icon" alt="" />
+                  <span className="fold__title">{bodyLabel(g.bodyPart)}</span>
+                  <span className="fold__count">{g.exercises.length}</span>
+                  <span className="fold__chev" aria-hidden>
+                    ›
+                  </span>
+                </summary>
+                <div className="stack fold__body">
+                  {g.exercises.map((ex, i) => (
+                    <ExerciseCard key={ex.id} exercise={ex} featured={gi === 0 && i === 0} />
+                  ))}
+                </div>
+              </details>
             ))}
           </div>
         </section>

@@ -1,36 +1,14 @@
-import { LibraryPageClient } from "@/components/LocalizedPages";
-import { filterExercises, uniqueValues } from "@/lib/exercises";
+import { Suspense } from "react";
+import { LibraryClient } from "@/components/LibraryClient";
 
 export const metadata = { title: "Search" };
 
-export default async function LibraryPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string; body?: string; equipment?: string; target?: string }>;
-}) {
-  const sp = await searchParams;
-  const q = sp.q ?? "";
-  const body = sp.body ?? "";
-  const equipment = sp.equipment ?? "";
-  const target = sp.target ?? "";
-
-  const results = filterExercises({
-    q: q || undefined,
-    bodyPart: body || undefined,
-    equipment: equipment || undefined,
-    target: target || undefined,
-    limit: 80,
-  });
-
+/* Filtering happens client-side (from the bundled dataset) so this page can be
+   statically exported — a requirement for Capacitor iOS/Android packaging. */
+export default function LibraryPage() {
   return (
-    <LibraryPageClient
-      results={results}
-      q={q}
-      body={body}
-      equipment={equipment}
-      target={target}
-      equipmentOptions={uniqueValues("equipment")}
-      targetOptions={uniqueValues("target")}
-    />
+    <Suspense>
+      <LibraryClient />
+    </Suspense>
   );
 }

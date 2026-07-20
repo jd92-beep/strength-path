@@ -29,7 +29,10 @@ Client-side state (progress, language mode, nav stack) lives in `localStorage`/`
 - `src/lib/progress.ts` — completed sessions/exercises.
 - `src/lib/log.ts` — per-set workout log (reps/weight), powers `/history` stats + CSV/JSON export.
 - `src/lib/locale.tsx` — language mode context.
-- `src/lib/nav-history.ts` — in-app back stack (sessionStorage) to make the Back button deterministic instead of racing `router.back()`.
+
+Back navigation is **hierarchical, not history-based**: `BackButton` is a plain link to the page's structural parent (`backHref` on `AppShell`). Don't reintroduce history stacks.
+
+The build is a **full static export** (`output: "export"` in next.config.ts; all dynamic routes pre-render every param with `dynamicParams = false`). Keep new pages static-exportable — no server-only `searchParams`, no on-demand rendering — so the `out/` folder can drop into a Capacitor iOS/Android shell unchanged. The library page filters client-side for this reason.
 
 Grid gotcha: every single-column stack class in globals.css uses `grid-template-columns: minmax(0, 1fr)`. Without it the implicit auto track inherits the max-content width of horizontal scroll rails and blows the page wider than the viewport (this was the recurring "viewport overflow" bug).
 

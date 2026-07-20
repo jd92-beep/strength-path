@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { LocaleProvider } from "@/lib/locale";
-import { NavTracker } from "@/components/NavTracker";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -41,10 +40,7 @@ export default function RootLayout({
     /* min-h only — never h-full, or the page locks to viewport height and clips */
     <html lang="en" className="min-h-full">
       <body className="min-h-full antialiased af-body">
-        <LocaleProvider>
-          <NavTracker />
-          {children}
-        </LocaleProvider>
+        <LocaleProvider>{children}</LocaleProvider>
       </body>
     </html>
   );

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { PatternPageClient } from "@/components/PatternPageClient";
 import { getAllExercises } from "@/lib/exercises";
 import {
-  exercisesForPattern,
+  groupedPattern,
   patternCatalog,
   type MovementPattern,
   buildLesson,
@@ -32,8 +32,8 @@ export default async function PatternPage({
   if (!meta) notFound();
 
   const all = getAllExercises();
-  const list = exercisesForPattern(all, pattern as MovementPattern, 30);
-  const sample = list[0];
+  const groups = groupedPattern(all, pattern as MovementPattern);
+  const sample = groups[0]?.exercises[0];
   const lesson = sample ? buildLesson(sample) : null;
 
   return (
@@ -42,7 +42,7 @@ export default async function PatternPage({
       label={meta.label}
       skillFocus={meta.skillFocus}
       color={meta.color}
-      exercises={list}
+      groups={groups}
       lesson={lesson}
     />
   );

@@ -512,6 +512,23 @@ export function patternCatalog(): {
   }));
 }
 
-export function exercisesForPattern(all: Exercise[], pattern: MovementPattern, limit = 24) {
-  return all.filter((e) => detectPattern(e) === pattern).slice(0, limit);
+export function exercisesForPattern(all: Exercise[], pattern: MovementPattern, limit?: number) {
+  const list = all.filter((e) => detectPattern(e) === pattern);
+  return typeof limit === "number" ? list.slice(0, limit) : list;
+}
+
+export type PatternGroup = { bodyPart: string; exercises: Exercise[] };
+
+/** Full catalog for a pattern, organized by body part (largest group first). */
+export function groupedPattern(all: Exercise[], pattern: MovementPattern): PatternGroup[] {
+  const map = new Map<string, Exercise[]>();
+  for (const e of exercisesForPattern(all, pattern)) {
+    const key = e.body_part || "other";
+    const g = map.get(key);
+    if (g) g.push(e);
+    else map.set(key, [e]);
+  }
+  return [...map.entries()]
+    .map(([bodyPart, exercises]) => ({ bodyPart, exercises }))
+    .sort((a, b) => b.exercises.length - a.exercises.length);
 }
