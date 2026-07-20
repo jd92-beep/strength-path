@@ -136,9 +136,11 @@ export function equipmentHref(id: string): string {
   return `/library?equipment=${encodeURIComponent(id)}`;
 }
 
-/** Public URL for the product photo of a machine type. */
+/** Public URL for the product photo of a machine type.
+ *  ?v= bumps when assets are corrected so browsers/CDN drop stale wrong photos.
+ */
 export function equipmentImageSrc(slug: string): string {
-  return `/equipment-icons/${slug}.jpg`;
+  return `/equipment-icons/${slug}.jpg?v=3`;
 }
 
 export function labelEquipment(cat: EquipmentCategory, mode: AppLangMode): string {
