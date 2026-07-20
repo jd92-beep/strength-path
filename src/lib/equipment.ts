@@ -5,6 +5,8 @@ import type { AppLangMode } from "./ui-strings";
 export type EquipmentCategory = {
   /** Exact `exercise.equipment` value from the dataset */
   id: string;
+  /** Filename under /equipment-icons/ (without extension) */
+  slug: string;
   labelEn: string;
   labelYue: string;
   /** Short hint shown under the title */
@@ -17,10 +19,12 @@ export type EquipmentCategory = {
 /**
  * Featured machine / equipment types for Summary + equipment index.
  * Order = display priority (most useful first).
+ * Product photos live in /public/equipment-icons/{slug}.jpg
  */
 export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   {
     id: "body weight",
+    slug: "body-weight",
     labelEn: "Bodyweight",
     labelYue: "徒手",
     hintEn: "No gear needed",
@@ -29,6 +33,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "dumbbell",
+    slug: "dumbbell",
     labelEn: "Dumbbell",
     labelYue: "啞鈴",
     hintEn: "Free weights",
@@ -37,6 +42,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "barbell",
+    slug: "barbell",
     labelEn: "Barbell",
     labelYue: "槓鈴",
     hintEn: "Big compounds",
@@ -45,6 +51,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "cable",
+    slug: "cable",
     labelEn: "Cable",
     labelYue: "鋼纜",
     hintEn: "Constant tension",
@@ -53,6 +60,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "leverage machine",
+    slug: "leverage-machine",
     labelEn: "Leverage machine",
     labelYue: "槓式器械",
     hintEn: "Guided path",
@@ -61,6 +69,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "smith machine",
+    slug: "smith-machine",
     labelEn: "Smith machine",
     labelYue: "史密斯機",
     hintEn: "Bar on rails",
@@ -69,6 +78,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "kettlebell",
+    slug: "kettlebell",
     labelEn: "Kettlebell",
     labelYue: "壺鈴",
     hintEn: "Swing & press",
@@ -77,6 +87,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "band",
+    slug: "band",
     labelEn: "Band",
     labelYue: "彈力帶",
     hintEn: "Light resistance",
@@ -85,6 +96,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "ez barbell",
+    slug: "ez-barbell",
     labelEn: "EZ barbell",
     labelYue: "彎槓",
     hintEn: "Arm work",
@@ -93,6 +105,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "sled machine",
+    slug: "sled-machine",
     labelEn: "Sled machine",
     labelYue: "雪橇機",
     hintEn: "Push & drive",
@@ -101,6 +114,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "stability ball",
+    slug: "stability-ball",
     labelEn: "Stability ball",
     labelYue: "健身球",
     hintEn: "Core balance",
@@ -109,6 +123,7 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
   },
   {
     id: "medicine ball",
+    slug: "medicine-ball",
     labelEn: "Medicine ball",
     labelYue: "藥球",
     hintEn: "Throw & slam",
@@ -119,6 +134,11 @@ export const EQUIPMENT_CATEGORIES: EquipmentCategory[] = [
 
 export function equipmentHref(id: string): string {
   return `/library?equipment=${encodeURIComponent(id)}`;
+}
+
+/** Public URL for the product photo of a machine type. */
+export function equipmentImageSrc(slug: string): string {
+  return `/equipment-icons/${slug}.jpg`;
 }
 
 export function labelEquipment(cat: EquipmentCategory, mode: AppLangMode): string {

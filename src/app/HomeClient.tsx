@@ -13,6 +13,7 @@ import { localizedPattern, localizedProgram, stageBadge } from "@/lib/localize";
 import type { MovementPattern } from "@/lib/teaching";
 import {
   equipmentHref,
+  equipmentImageSrc,
   hintEquipment,
   labelEquipment,
   type EquipmentCategory,
@@ -117,10 +118,22 @@ export function HomeClient({
                 style={{ ["--g" as string]: m.color }}
                 role="listitem"
               >
-                <span className="af-mini-tile__kicker">{tr("machineType")}</span>
-                <span className="af-mini-tile__label">{labelEquipment(m, mode)}</span>
-                <span className="af-mini-tile__sub">
-                  {m.count} {tr("moves")} · {hintEquipment(m, mode)}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={equipmentImageSrc(m.slug)}
+                  alt={labelEquipment(m, "en")}
+                  className="af-mini-tile__photo"
+                  width={168}
+                  height={168}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span className="af-mini-tile__body">
+                  <span className="af-mini-tile__kicker">{tr("machineType")}</span>
+                  <span className="af-mini-tile__label">{labelEquipment(m, mode)}</span>
+                  <span className="af-mini-tile__sub">
+                    {m.count} {tr("moves")}
+                  </span>
                 </span>
               </Link>
             ))}

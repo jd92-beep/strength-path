@@ -300,8 +300,8 @@ export function LibraryPageClient({
             defaultValue={q}
             placeholder={mode === "yue" ? "搜動作名、肌肉、器材…" : "Search name, muscle, equipment…"}
           />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.55rem" }}>
-            <label style={{ display: "grid", gap: "0.25rem", fontSize: "0.78rem", color: "var(--ink-muted)" }}>
+          <div className="library-filter-grid">
+            <label className="library-filter-label">
               {tr("bodyPart")}
               <select name="body" defaultValue={body} className="select-field">
                 <option value="">{tr("all")}</option>
@@ -312,7 +312,7 @@ export function LibraryPageClient({
                 ))}
               </select>
             </label>
-            <label style={{ display: "grid", gap: "0.25rem", fontSize: "0.78rem", color: "var(--ink-muted)" }}>
+            <label className="library-filter-label">
               {tr("equipment")}
               <select name="equipment" defaultValue={equipment} className="select-field">
                 <option value="">{tr("all")}</option>

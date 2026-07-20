@@ -5,6 +5,7 @@ import { AppShell } from "@/components/AppShell";
 import { useLocale } from "@/lib/locale";
 import {
   equipmentHref,
+  equipmentImageSrc,
   hintEquipment,
   labelEquipment,
   type EquipmentCategory,
@@ -40,7 +41,16 @@ export function EquipmentPageClient({ machines }: { machines: MachineItem[] }) {
               className="equip-row"
               style={{ ["--g" as string]: m.color }}
             >
-              <span className="equip-row__swatch" aria-hidden />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={equipmentImageSrc(m.slug)}
+                alt={labelEquipment(m, "en")}
+                className="equip-row__photo"
+                width={68}
+                height={68}
+                loading="lazy"
+                decoding="async"
+              />
               <span className="equip-row__body">
                 <span className="equip-row__title">{labelEquipment(m, mode)}</span>
                 <span className="equip-row__hint">{hintEquipment(m, mode)}</span>
