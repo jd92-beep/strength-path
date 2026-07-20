@@ -14,7 +14,6 @@ import type { MovementPattern } from "@/lib/teaching";
 import {
   equipmentHref,
   equipmentImageSrc,
-  hintEquipment,
   labelEquipment,
   type EquipmentCategory,
 } from "@/lib/equipment";

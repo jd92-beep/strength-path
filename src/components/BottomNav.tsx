@@ -45,6 +45,17 @@ const links = [
       </svg>
     ),
   },
+  {
+    href: "/history",
+    labelKey: "history" as const,
+    icon: (
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <path d="M4 19V5" strokeLinecap="round" />
+        <path d="M4 19h16" strokeLinecap="round" />
+        <path d="M8 15v-4M12 15V8M16 15v-6" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 export function BottomNav() {

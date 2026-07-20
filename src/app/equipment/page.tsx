@@ -1,11 +1,15 @@
 import { EquipmentPageClient } from "@/components/EquipmentPageClient";
-import { equipmentCatalog } from "@/lib/equipment";
+import { equipmentCatalog, topTargetsByEquipment } from "@/lib/equipment";
 
 export const metadata = {
   title: "By machine",
-  description: "Learn exercise demos filtered by machine and equipment type.",
+  description: "Learn which muscles each machine trains, with exercise demos.",
 };
 
 export default function EquipmentPage() {
-  return <EquipmentPageClient machines={equipmentCatalog()} />;
+  const machines = equipmentCatalog().map((m) => ({
+    ...m,
+    targets: topTargetsByEquipment(m.id),
+  }));
+  return <EquipmentPageClient machines={machines} />;
 }

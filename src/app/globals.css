@@ -7,28 +7,35 @@
    ========================================================= */
 
 :root {
-  --bg: #000000;
-  --bg-elevated: #1c1c1e;
-  --surface: #1c1c1e;
-  --surface-2: #2c2c2e;
-  --surface-hover: #3a3a3c;
-  --ink: #ffffff;
-  --ink-muted: rgba(235, 235, 245, 0.72);
-  --ink-faint: rgba(235, 235, 245, 0.48);
-  --primary: #30d158;
-  --primary-ink: #003311;
-  --accent: #ff2d55;
-  --accent-2: #64d2ff;
-  --success: #30d158;
+  /* Canvas — near-black with a cold blue cast (gym at night, screen in hand) */
+  --bg: #030305;
+  --bg-elevated: #131318;
+  --surface: #15151b;
+  --surface-2: #21212a;
+  --surface-hover: #2b2b36;
+  --ink: #f5f6fa;
+  --ink-muted: rgba(226, 230, 245, 0.72);
+  --ink-faint: rgba(226, 230, 245, 0.5);
+  /* Electric triad — Apple Fitness rings, pushed toward neon */
+  --ring-move: #ff2d6c;
+  --ring-exercise: #34e860;
+  --ring-stand: #3ddcff;
+  --primary: var(--ring-exercise);
+  --primary-ink: #02220c;
+  --accent: var(--ring-move);
+  --accent-2: var(--ring-stand);
+  --violet: #8a5cff;
+  --success: var(--ring-exercise);
   --danger: #ff453a;
-  --ring: rgba(48, 209, 88, 0.45);
-  --border: rgba(84, 84, 88, 0.55);
-  --border-strong: rgba(120, 120, 128, 0.45);
+  --ring: rgba(52, 232, 96, 0.4);
+  --border: rgba(140, 148, 184, 0.22);
+  --border-strong: rgba(140, 148, 184, 0.38);
   --media-canvas: #ffffff;
-  --media-frame: #1c1c1e;
-  --ring-move: #ff2d55;
-  --ring-exercise: #30d158;
-  --ring-stand: #64d2ff;
+  --media-frame: #131318;
+  /* Neon glows — used sparingly: primary CTA, active states, rings */
+  --glow-green: 0 0 20px rgba(52, 232, 96, 0.28);
+  --glow-cyan: 0 0 20px rgba(61, 220, 255, 0.25);
+  --glow-magenta: 0 0 20px rgba(255, 45, 108, 0.25);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
   --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.45);
   --radius: 18px;
@@ -60,7 +67,7 @@
 
 html {
   scroll-behavior: smooth;
-  background: #000;
+  background: var(--bg);
   width: 100%;
   max-width: 100%;
   /* Grow with content — never lock to 100vh or half the Summary vanishes */
@@ -87,7 +94,7 @@ body {
   /* Do NOT set overflow-x alone — CSS pairs it with overflow-y:auto and can
      trap scroll in a viewport-tall box, clipping the rest of the page. */
   overflow: visible !important;
-  background: #000;
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--font-af);
   font-size: 17px;
@@ -142,7 +149,7 @@ img {
 .af-app {
   min-height: 100dvh;
   height: auto;
-  background: #000;
+  background: var(--bg);
 }
 
 .af-header {
@@ -150,10 +157,10 @@ img {
   top: 0;
   z-index: var(--z-sticky);
   padding-top: var(--safe-t);
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(3, 3, 8, 0.72);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 0.5px solid rgba(84, 84, 88, 0.45);
+  border-bottom: 0.5px solid var(--border);
 }
 
 .af-header__inner {
@@ -217,7 +224,7 @@ img {
   display: inline-flex;
   padding: 0.15rem;
   border-radius: 999px;
-  background: #000;
+  background: var(--bg-elevated);
   border: 0.5px solid var(--border);
   gap: 0.1rem;
 }
@@ -236,7 +243,7 @@ img {
 
 .lang-switch__btn[data-active="true"] {
   background: var(--ring-exercise);
-  color: #003311;
+  color: var(--primary-ink);
 }
 
 .lang-switch--compact {
@@ -281,12 +288,12 @@ img {
 .guide-block {
   padding: 0.85rem;
   border-radius: 14px;
-  background: #000;
+  background: var(--bg-elevated);
   border: 0.5px solid var(--border);
 }
 
 .guide-block--yue {
-  border-color: rgba(48, 209, 88, 0.35);
+  border-color: color-mix(in srgb, var(--ring-exercise) 35%, transparent);
 }
 
 .guide-block__label {
@@ -506,6 +513,19 @@ img {
   /* never clip the page vertically */
   overflow: visible;
   height: auto;
+  /* Explicit constrained track — an implicit auto column lets any wide child
+     (h-scroll rails, long titles) inflate the whole page width. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.af-stack > *,
+.stack > *,
+.stack-md > *,
+.stack-lg > *,
+.af-tile-stack > *,
+.af-stack-sm > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Never let long bilingual titles or meta blow the card width */
@@ -560,10 +580,10 @@ textarea {
   bottom: 0;
   z-index: var(--z-nav);
   padding: 0.35rem 0.5rem calc(0.35rem + var(--safe-b));
-  background: rgba(22, 22, 24, 0.88);
+  background: rgba(14, 14, 20, 0.88);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-top: 0.5px solid rgba(84, 84, 88, 0.55);
+  border-top: 0.5px solid var(--border);
 }
 
 .af-tabbar__inner,
@@ -571,7 +591,7 @@ textarea {
   width: min(100%, 430px);
   margin-inline: auto;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0.15rem;
 }
 
@@ -593,6 +613,12 @@ textarea {
 .nav-link[data-active="true"] {
   color: var(--ring-exercise);
   background: transparent;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--ring-exercise) 55%, transparent);
+}
+
+.af-tab[data-active="true"] svg,
+.nav-link[data-active="true"] svg {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ring-exercise) 60%, transparent));
 }
 
 /* Summary / home */
@@ -825,7 +851,7 @@ textarea {
   flex-direction: column;
   justify-content: flex-end;
   gap: 0.2rem;
-  background: linear-gradient(155deg, color-mix(in srgb, var(--g) 85%, #000), #1c1c1e);
+  background: linear-gradient(155deg, color-mix(in srgb, var(--g) 85%, #000), var(--surface));
   border: 0.5px solid rgba(255, 255, 255, 0.1);
   box-shadow: var(--shadow-sm);
   box-sizing: border-box;
@@ -883,7 +909,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 0.12rem;
-  background: linear-gradient(180deg, #1c1c1e 0%, #141416 100%);
+  background: linear-gradient(180deg, var(--surface) 0%, #141416 100%);
   min-width: 0;
 }
 
@@ -1014,7 +1040,7 @@ textarea {
 
 .chip-accent,
 .chip[data-active="true"] {
-  background: rgba(48, 209, 88, 0.16);
+  background: color-mix(in srgb, var(--ring-exercise) 16%, transparent);
   color: var(--ring-exercise);
   border-color: transparent;
 }
@@ -1040,7 +1066,8 @@ textarea {
 
 .btn-primary {
   background: var(--ring-exercise);
-  color: #003311;
+  color: var(--primary-ink);
+  box-shadow: var(--glow-green);
 }
 
 .btn-primary:hover {
@@ -1110,14 +1137,21 @@ textarea {
 .media-demo__stage {
   position: relative;
   /* Width-driven square only — never use max-height alone (breaks aspect / overflows) */
-  width: min(100%, 280px, 72vw);
+  width: min(100%, 300px, 78vw);
   margin-inline: auto;
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
   background: #ffffff;
-  border: 0.5px solid var(--border);
+  border: 0.5px solid var(--border-strong);
   box-shadow: var(--shadow-sm);
   box-sizing: border-box;
+  transition: box-shadow 220ms var(--ease-out), border-color 220ms var(--ease-out);
+}
+
+/* Neon frame while the demo runs — the cyber accent lives here, on state */
+.media-demo[data-playing="true"] .media-demo__stage {
+  border-color: color-mix(in srgb, var(--ring-stand) 55%, transparent);
+  box-shadow: var(--shadow-sm), var(--glow-cyan);
 }
 
 .media-demo__canvas {
@@ -1202,35 +1236,58 @@ textarea {
   display: none !important;
 }
 
-.media-ctrl {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2.75rem;
-  min-height: 2.5rem;
-  padding: 0.45rem 1rem;
+/* Overlay play / pause control — glass circle, bottom-right of the stage */
+.media-demo__orb {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  z-index: 4;
+  width: 3rem;
+  height: 3rem;
   border-radius: 999px;
-  border: none;
-  background: var(--ring-exercise);
-  color: #003311;
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  display: grid;
+  place-items: center;
+  background: rgba(10, 10, 16, 0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
   cursor: pointer;
-  font-weight: 750;
-  font-size: 0.9rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: transform 160ms var(--ease-out), background 160ms var(--ease-out);
 }
 
-.media-ctrl--solid {
-  width: 100%;
-  max-width: 12rem;
+.media-demo__orb:active {
+  transform: scale(0.92);
 }
 
-.media-demo__toolbar {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0.65rem 0.65rem;
-  /* Light solid bar — never semi-transparent black */
-  background: #f2f2f7;
-  border-top: 0.5px solid rgba(60, 60, 67, 0.18);
+.media-demo[data-playing="true"] .media-demo__orb {
+  background: color-mix(in srgb, var(--ring-stand) 80%, #000);
+  border-color: transparent;
+  box-shadow: var(--glow-cyan);
+}
+
+.media-demo__orb svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  display: block;
+}
+
+/* Live badge while playing */
+.media-demo__live {
+  position: absolute;
+  left: 0.6rem;
+  top: 0.6rem;
+  z-index: 4;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #001318;
+  background: var(--ring-stand);
+  box-shadow: var(--glow-cyan);
 }
 
 .media-demo__caption {
@@ -1398,7 +1455,7 @@ textarea {
   right: 0.75rem;
   bottom: 0.75rem;
   background: var(--ring-exercise);
-  color: #003311;
+  color: var(--primary-ink);
 }
 
 /* Teaching / path / misc */
@@ -1423,7 +1480,7 @@ textarea {
   align-items: start;
   padding: 0.85rem 0.95rem;
   border-radius: 16px;
-  background: color-mix(in srgb, var(--pattern) 18%, #1c1c1e);
+  background: color-mix(in srgb, var(--pattern) 18%, var(--surface));
   border: 0.5px solid color-mix(in srgb, var(--pattern) 35%, transparent);
 }
 
@@ -1466,7 +1523,7 @@ textarea {
   align-items: center;
   padding: 0.4rem 0.55rem 0.4rem 0.75rem;
   border-radius: 999px;
-  background: #000;
+  background: var(--bg-elevated);
   border: 0.5px solid var(--border);
 }
 
@@ -1494,7 +1551,7 @@ textarea {
   gap: 0.2rem;
   padding: 0.25rem;
   border-radius: 14px;
-  background: #000;
+  background: var(--bg-elevated);
   border: 0.5px solid var(--border);
   width: 100%;
   max-width: 100%;
@@ -1520,7 +1577,7 @@ textarea {
 
 .teach-tab[data-active="true"] {
   background: var(--ring-exercise);
-  color: #003311;
+  color: var(--primary-ink);
 }
 
 .teach-panel {
@@ -1563,12 +1620,12 @@ textarea {
 .teach-callout {
   padding: 0.9rem 1rem;
   border-radius: 14px;
-  background: rgba(48, 209, 88, 0.12);
-  border: 0.5px solid rgba(48, 209, 88, 0.28);
+  background: color-mix(in srgb, var(--ring-exercise) 12%, transparent);
+  border: 0.5px solid color-mix(in srgb, var(--ring-exercise) 28%, transparent);
 }
 
 .teach-callout--soft {
-  background: #000;
+  background: var(--bg-elevated);
   border-color: var(--border);
 }
 
@@ -1591,7 +1648,7 @@ textarea {
   gap: 0.45rem;
   padding: 0.85rem;
   border-radius: 14px;
-  background: #000;
+  background: var(--bg-elevated);
   border: 0.5px solid var(--border);
 }
 
@@ -1620,7 +1677,7 @@ textarea {
   padding: 1rem;
   border-radius: 14px;
   border: 0.5px solid var(--border);
-  background: #000;
+  background: var(--bg-elevated);
 }
 
 .level-card p {
@@ -1670,7 +1727,7 @@ textarea {
   place-items: center;
   font-weight: 800;
   font-size: 0.85rem;
-  background: rgba(48, 209, 88, 0.16);
+  background: color-mix(in srgb, var(--ring-exercise) 16%, transparent);
   color: var(--ring-exercise);
 }
 
@@ -1726,17 +1783,17 @@ textarea {
   text-transform: capitalize;
   padding: 0.22rem 0.55rem;
   border-radius: 999px;
-  background: rgba(100, 210, 255, 0.16);
+  background: color-mix(in srgb, var(--ring-stand) 16%, transparent);
   color: var(--ring-stand);
 }
 
 .level-pill[data-level="beginner"] {
-  background: rgba(48, 209, 88, 0.16);
+  background: color-mix(in srgb, var(--ring-exercise) 16%, transparent);
   color: var(--ring-exercise);
 }
 
 .level-pill[data-level="advanced"] {
-  background: rgba(255, 45, 85, 0.16);
+  background: color-mix(in srgb, var(--ring-move) 16%, transparent);
   color: var(--ring-move);
 }
 
@@ -1745,10 +1802,10 @@ textarea {
   overflow: hidden;
   border-radius: 22px;
   padding: 1.35rem 1.2rem 1.4rem;
-  background: linear-gradient(145deg, #ff2d55 0%, #af52de 48%, #5e5ce6 100%);
+  background: linear-gradient(145deg, #ff2d6c 0%, #8a5cff 52%, #3ddcff 115%);
   border: none;
   color: #fff;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), var(--glow-magenta);
 }
 
 .hero-panel::after {
@@ -2047,7 +2104,7 @@ textarea {
   gap: 0.55rem;
   padding: 0.55rem 0.65rem;
   border-radius: 12px;
-  background: #000;
+  background: var(--bg-elevated);
   border: 0.5px solid var(--border);
 }
 
@@ -2110,13 +2167,13 @@ textarea {
 }
 
 .muscle-tag--primary {
-  background: rgba(48, 209, 88, 0.16);
+  background: color-mix(in srgb, var(--ring-exercise) 16%, transparent);
   color: var(--ring-exercise);
   border-color: transparent;
 }
 
 .muscle-tag--sec {
-  background: rgba(255, 45, 85, 0.14);
+  background: color-mix(in srgb, var(--ring-move) 14%, transparent);
   color: var(--ring-move);
   border-color: transparent;
 }
@@ -2193,6 +2250,217 @@ textarea {
   to {
     background-position-x: -200%;
   }
+}
+
+/* ——— Set logging (workout player) ——— */
+.log-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.log-row__label {
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.log-stepper {
+  display: grid;
+  grid-template-columns: 2.6rem 1fr 2.6rem;
+  align-items: stretch;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 0.5px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.log-stepper__btn {
+  border: none;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 1.15rem;
+  font-weight: 700;
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+
+.log-stepper__btn:active {
+  background: var(--surface-hover);
+}
+
+.log-stepper__input {
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+  width: 100%;
+}
+
+.log-stepper__input:focus {
+  outline: none;
+}
+
+/* ——— History / Log page ——— */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.stat-card {
+  padding: 0.8rem 0.65rem;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  text-align: center;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.stat-card strong {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--c, var(--ink));
+  text-shadow: 0 0 14px color-mix(in srgb, var(--c, transparent) 40%, transparent);
+}
+
+.stat-card span {
+  font-size: 0.68rem;
+  font-weight: 650;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hist-day {
+  border-radius: 18px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  overflow: hidden;
+}
+
+.hist-day__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.8rem 0.95rem 0.55rem;
+}
+
+.hist-day__date {
+  font-weight: 750;
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+}
+
+.hist-day__meta {
+  font-size: 0.75rem;
+  font-weight: 650;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hist-set {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  padding: 0.5rem 0.95rem;
+  border-top: 0.5px solid var(--border);
+  align-items: center;
+}
+
+.hist-set__name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hist-set__data {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hist-empty {
+  padding: 2.25rem 1.25rem;
+  border-radius: 18px;
+  border: 1px dashed var(--border-strong);
+  text-align: center;
+  display: grid;
+  gap: 0.55rem;
+  justify-items: center;
+}
+
+/* ——— Health sync cards ——— */
+.sync-card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+}
+
+.sync-card__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 750;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sync-card__title .af-dot {
+  flex-shrink: 0;
+}
+
+.sync-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  line-height: 1.45;
+}
+
+/* ——— Muscle chips on machine rows ——— */
+.muscle-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0 0.85rem 0.8rem;
+}
+
+.muscle-rail__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.24rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 650;
+  text-transform: capitalize;
+  background: color-mix(in srgb, var(--g, var(--ring-stand)) 14%, transparent);
+  color: color-mix(in srgb, var(--g, var(--ring-stand)) 80%, #fff);
+  border: 0.5px solid color-mix(in srgb, var(--g, var(--ring-stand)) 30%, transparent);
+}
+
+.muscle-rail__chip b {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 380px) {

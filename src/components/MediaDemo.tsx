@@ -169,26 +169,42 @@ export function MediaDemo({
           )}
         </div>
 
+        {playing && gifReady ? (
+          <span className="media-demo__live" aria-hidden>
+            Live
+          </span>
+        ) : null}
+
         {showControls && size !== "sm" && !failed ? (
-          <div className="media-demo__toolbar">
-            <button
-              type="button"
-              className="media-ctrl media-ctrl--solid"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                togglePlay(e);
-              }}
-            >
-              {playing
-                ? (locale?.tr("pause") ?? "Pause")
-                : (locale?.tr("play") ?? "Play")}
-            </button>
-          </div>
+          <button
+            type="button"
+            className="media-demo__orb"
+            aria-label={playing ? (locale?.tr("pause") ?? "Pause") : (locale?.tr("play") ?? "Play")}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              togglePlay(e);
+            }}
+          >
+            {playing ? (
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <rect x="6" y="5" width="4" height="14" rx="1.2" />
+                <rect x="14" y="5" width="4" height="14" rx="1.2" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <path d="M8 5.5v13a1 1 0 0 0 1.52.86l10.2-6.5a1 1 0 0 0 0-1.72L9.52 4.64A1 1 0 0 0 8 5.5z" />
+              </svg>
+            )}
+          </button>
         ) : null}
       </div>
 
-      {caption ? <p className="media-demo__caption">{caption}</p> : null}
+      {caption ? (
+        <p className="media-demo__caption">
+          {playing ? (locale?.tr("playingTap") ?? caption) : caption}
+        </p>
+      ) : null}
       <span id={uid} className="sr-only">
         {playing ? "Animation playing" : "Static form photo"}
       </span>

@@ -170,3 +170,22 @@ export function equipmentCatalog(limit?: number) {
   })).filter((c) => c.count > 0);
   return typeof limit === "number" ? list.slice(0, limit) : list;
 }
+
+export type TargetCount = { target: string; count: number };
+
+/** Which muscles does this machine train, ranked by number of demos. */
+export function topTargetsByEquipment(equipmentId: string, limit = 6): TargetCount[] {
+  const counts = new Map<string, number>();
+  for (const e of getAllExercises()) {
+    if (e.equipment !== equipmentId) continue;
+    counts.set(e.target, (counts.get(e.target) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .map(([target, count]) => ({ target, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, limit);
+}
+
+export function targetHref(equipmentId: string, target: string): string {
+  return `/library?equipment=${encodeURIComponent(equipmentId)}&target=${encodeURIComponent(target)}`;
+}

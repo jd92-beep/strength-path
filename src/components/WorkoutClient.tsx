@@ -12,6 +12,7 @@ import { StepGuide } from "./StepGuide";
 import { BilingualList, BilingualText } from "./Bilingual";
 import { BodyPartIcon } from "./BodyPartIcon";
 import { markSessionComplete } from "@/lib/progress";
+import { lastWeightFor, logSet } from "@/lib/log";
 import { localizedCoaching, localizedSession, localizedSetNote } from "@/lib/localize";
 type Props = {
   session: Session;
@@ -30,6 +31,8 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
   const [restTotal, setRestTotal] = useState(0);
   const [done, setDone] = useState(false);
   const [teachOpen, setTeachOpen] = useState(false);
+  const [weightKg, setWeightKg] = useState<number | "">("");
+  const [weightForId, setWeightForId] = useState<string | null>(null);
 
   const safeIndex = Math.min(index, Math.max(session.exercises.length - 1, 0));
   const item = session.exercises[safeIndex];
@@ -51,6 +54,12 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
       ? 0
       : Math.round(((safeIndex + (totalSets ? setIndexNum / totalSets : 0)) / totalMoves) * 100);
 
+  // Seed the weight stepper when the exercise changes (adjust-state-during-render pattern)
+  if (exercise && weightForId !== exercise.id) {
+    setWeightForId(exercise.id);
+    setWeightKg(exercise.equipment === "body weight" ? "" : (lastWeightFor(exercise.id) ?? ""));
+  }
+
   useEffect(() => {
     if (!resting) return;
     const t = setInterval(() => {
@@ -68,6 +77,18 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
   function completeSet() {
     if (!item || !currentSet) return;
     if (restLeft > 0) setRestLeft(0);
+
+    if (exercise) {
+      logSet({
+        exerciseId: exercise.id,
+        exerciseName: exercise.name,
+        bodyPart: exercise.body_part,
+        sessionId: session.id,
+        programId,
+        reps: currentSet.reps,
+        weightKg: weightKg === "" ? undefined : weightKg,
+      });
+    }
 
     if (setIndexNum + 1 < item.sets.length) {
       setSetIndexNum((s) => s + 1);
@@ -174,6 +195,46 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
           <span className="chip set-chip">{setLabel}</span>
           <span className="workout-reps">{currentSet.reps}</span>
         </div>
+        {exercise.equipment !== "body weight" ? (
+          <div className="log-row">
+            <span className="log-row__label">{tr("weight")}</span>
+            <div className="log-stepper">
+              <button
+                type="button"
+                className="log-stepper__btn"
+                aria-label="−2.5 kg"
+                onClick={() =>
+                  setWeightKg((w) => Math.max(0, (typeof w === "number" ? w : 0) - 2.5))
+                }
+              >
+                −
+              </button>
+              <input
+                className="log-stepper__input"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                step={0.5}
+                value={weightKg}
+                placeholder="0"
+                aria-label={tr("weight")}
+                onChange={(e) => {
+                  const v = e.target.valueAsNumber;
+                  setWeightKg(Number.isFinite(v) ? Math.max(0, v) : "");
+                }}
+              />
+              <button
+                type="button"
+                className="log-stepper__btn"
+                aria-label="+2.5 kg"
+                onClick={() => setWeightKg((w) => (typeof w === "number" ? w : 0) + 2.5)}
+              >
+                +
+              </button>
+            </div>
+            <span className="log-row__label">kg</span>
+          </div>
+        ) : null}
         {currentSet.note ? (
           <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
             {localizedSetNote(
