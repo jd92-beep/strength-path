@@ -228,7 +228,7 @@ export function LearnPageClient({
           </h1>
           <p className="af-caption" style={{ marginTop: "0.45rem" }}>
             {mode === "yue"
-              ? "好似教練咁學：睇示範、鎖死要點、改錯，再升級。"
+              ? "好似教練咁學：睇示範、記實要點、改錯，再升級。"
               : mode === "both"
                 ? "Learn like a coach. 好似教練咁學：睇示範、要點、改錯、升級。"
                 : "Learn like a coach: watch the demo, lock setup cues, fix mistakes, then level up."}

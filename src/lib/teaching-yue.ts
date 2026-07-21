@@ -34,7 +34,7 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
       "平均推起，膊頭依然收穩。",
     ],
     mistakes: [
-      { bad: "腰塌落或者尻得太高", fix: "收腹夾尻，每一組前先夾實。" },
+      { bad: "腰塌低或者臀部撅得太高", fix: "收腹夾臀，開組之前先夾實。" },
       { bad: "手肘開到 90 度", fix: "想像手掌旋入地下／槓，保持 45 度。" },
       { bad: "頸伸長向前望", fix: "頸放長，目光微微向前，唔好成日抬頭。" },
     ],
@@ -45,12 +45,12 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
     patternLabel: "垂直推",
     skillFocus: "舉過頭頂，身體挺直，核心夾實。",
     breathe: "推起之前先收腹 · 上推時呼氣。",
-    feel: "膊頭帶動；尻同腹保持你唔好向後仰得誇張。",
+    feel: "膊頭帶動；臀同腹收實，唔好誇張向後仰。",
     tempo: "2 秒落 · 順暢推上",
     setsRepsHint: "3–4 組 × 6–10 下",
     setup: [
       "握距稍闊過膊頭，手腕疊直。",
-      "肋骨向下，尻輕微夾，唔好腰塌。",
+      "肋骨向下，臀輕微夾，唔好腰塌。",
       "啞鈴／槓由鎖骨高度開始。",
     ],
     execute: [
@@ -101,7 +101,7 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
     setup: [
       "死吊開始，膊頭主動（唔好完全甩鬆）。",
       "握距揀舒服嘅；輕微收腹。",
-      "腳保持靜，唔好亂踢（除非練 kipping）。",
+      "對腳保持定，唔好亂踢（除非你專登練借力擺）。",
     ],
     execute: [
       "手肘向下拉到肋骨位。",
@@ -120,7 +120,7 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
     patternLabel: "深蹲",
     skillFocus: "髖同膝一齊出力；軀幹收穩、夠挺。",
     breathe: "頂部深吸一口氣 · 落去憋住核心 · 企起再呼氣。",
-    feel: "股四頭同尻出力；腳踭貼地，膝跟住腳尖方向。",
+    feel: "股四頭同臀出力；腳踭貼地，膝跟住腳尖方向。",
     tempo: "3 秒落 · 有力企起",
     setsRepsHint: "3–5 組 × 5–10 下",
     setup: [
@@ -134,7 +134,7 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
       "踩地企起，唔好過度後仰。",
     ],
     mistakes: [
-      { bad: "膝向內塌", fix: "膝推向腳仔趾方向；減重量。" },
+      { bad: "膝向內塌", fix: "膝推向尾趾方向；減重量。" },
       { bad: "腳踭離地", fix: "站距調一調或者輕微墊高腳踭。" },
       { bad: "胸口塌落", fix: "核心再夾；到散姿勢前就企返起。" },
     ],
@@ -145,7 +145,7 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
     patternLabel: "髖鉸鏈",
     skillFocus: "髖向後推，膝軟，背平——練後鏈。",
     breathe: "鉸鏈前先收腹 · 企直時呼氣。",
-    feel: "腘繩肌同尻先拉長再收縮——唔好淨係用腰硬扯。",
+    feel: "膕繩肌同臀先拉長再收縮——唔好淨係用腰硬扯。",
     tempo: "3 秒鉸 · 有意圖企直",
     setsRepsHint: "3–4 組 × 5–8 下",
     setup: [
@@ -154,9 +154,9 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
       "重量貼近身體（槓沿小腿上）。",
     ],
     execute: [
-      "髖向後推到腘繩肌有拉感。",
+      "髖向後推到膕繩肌有拉感。",
       "槓路徑垂直貼身。",
-      "用尻夾起身——唔好靠腰大力扯。",
+      "用臀夾起身——唔好靠腰大力扯。",
     ],
     mistakes: [
       { bad: "背圓住", fix: "減少幅度；再夾核心；減重。" },
@@ -164,13 +164,13 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
       { bad: "槓向前甩", fix: "槓沿腿上；闊背夾住。" },
     ],
     regress: "掃把棍練髖鉸鏈 · 輕啞鈴 RDL。",
-    progress: "赤字 RDL · 停頓鉸鏈 · 傳統硬拉加重。",
+    progress: "赤字 RDL · 停頓鉸鏈 · 傳統硬舉加重。",
   },
   lunge: {
     patternLabel: "弓步／分腿",
     skillFocus: "單腳力量，軀幹靜，步幅均勻。",
     breathe: "收腹 · 前腳蹬起時呼氣。",
-    feel: "前腳尻／股四頭；後膝軟；髖向前對正。",
+    feel: "前腳臀／股四頭；後膝軟；髖向前對正。",
     tempo: "2 秒落 · 蹬起",
     setsRepsHint: "3 組 × 每腳 6–10 下",
     setup: [
@@ -184,7 +184,7 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
       "用前腳踭／中掌蹬返起。",
     ],
     mistakes: [
-      { bad: "前膝向內塌", fix: "膝推向腳仔趾。" },
+      { bad: "前膝向內塌", fix: "膝推向尾趾。" },
       { bad: "步幅太細", fix: "踏遠啲，後膝真係落到。" },
       { bad: "軀幹前傾散", fix: "收腹；負重放胸口幫手感。" },
     ],
@@ -200,21 +200,21 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
     setsRepsHint: "3–4 組 × 20–45 秒或者慢速下數",
     setup: [
       "肋骨向下對住盤骨——唔好挺胸散。",
-      "尻輕夾；頸放長。",
+      "臀輕夾；頸放長。",
       "撐點（前臂／手）踩實。",
     ],
     execute: [
       "想像推開地面，全身張力。",
       "呼吸都唔好散核心。",
-      "腰一塌或者尻抬太高就停。",
+      "腰一塌或者臀抬太高就停。",
     ],
     mistakes: [
-      { bad: "尻太高／太低", fix: "側拍片檢查膊–尻–腳線。" },
-      { bad: "成世閉氣", fix: "短而靜嘅呼吸，腹仍然硬。" },
-      { bad: "淨係死撐", fix: "每一秒都主動推地。" },
+      { bad: "臀部太高／太低", fix: "側面拍條片，檢查膊頭、臀、腳踭要成一直線。" },
+      { bad: "全程閉住氣", fix: "細細啖靜靜咁呼吸，個腹照樣收實。" },
+      { bad: "淨係死忍", fix: "每一秒都主動推開地面。" },
     ],
-    regress: "斜板平板或者 10–15 秒短持。",
-    progress: "肩輕拍 · 加長時間 · 健腹輪。",
+    regress: "手墊高嘅平板支撐，或者縮短到 10–15 秒。",
+    progress: "輪流拍膊頭 · 加長時間 · 健腹輪。",
   },
   "core-flex": {
     patternLabel: "核心屈曲／旋轉",
@@ -311,7 +311,7 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
     mistakes: [
       { bad: "彈跳", fix: "底部死停拉長。" },
       { bad: "幅度好細", fix: "用踏板慢落。" },
-      { bad: "變成平衡表演", fix: "扶牆；練小腿唔好練甩。" },
+      { bad: "變咗做平衡表演", fix: "扶住牆——練嘅係小腿，唔係平衡。" },
     ],
     regress: "坐姿或者雙腳有支撐。",
     progress: "單腳 · 停頓 · 4 秒慢落。",
@@ -338,8 +338,8 @@ export const YUE_PATTERN: Record<MovementPattern, YueLessonBits> = {
       { bad: "向一邊歪", fix: "更常換手；拍片睇。" },
       { bad: "急步亂行", fix: "距離短啲；每步企穩。" },
     ],
-    regress: "輕suitcase 手提 · 架上負重行。",
-    progress: "更重農夫行 · 更遠 · 不對稱負重。",
+    regress: "單邊輕手提行走 · 前架式負重行。",
+    progress: "農夫行加重 · 行遠啲 · 兩邊唔同重量。",
   },
 };
 
