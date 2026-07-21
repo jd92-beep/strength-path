@@ -24,7 +24,7 @@ export function ActivityRings({
   return (
     <div className="af-rings" style={{ width: size, height: size }} aria-hidden>
       <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
-        {rings.map((ring) => {
+        {rings.map((ring, i) => {
           const circ = 2 * Math.PI * ring.r;
           const offset = circ * (1 - Math.min(1, Math.max(0, ring.value)));
           return (
@@ -38,6 +38,7 @@ export function ActivityRings({
                 strokeWidth={stroke}
               />
               <circle
+                className="af-rings__fill"
                 cx={c}
                 cy={c}
                 r={ring.r}
@@ -48,6 +49,10 @@ export function ActivityRings({
                 strokeDasharray={circ}
                 strokeDashoffset={offset}
                 transform={`rotate(-90 ${c} ${c})`}
+                style={{
+                  ["--circ" as string]: circ,
+                  animationDelay: `${i * 140}ms`,
+                }}
               />
             </g>
           );
