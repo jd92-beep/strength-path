@@ -5,6 +5,8 @@ const EVENT = "strength-path-log";
 // ponytail: flat array capped at 5000 sets (~years of training); paginate if that ever hurts
 const MAX_ENTRIES = 5000;
 
+export type SetRpe = "easy" | "ok" | "hard";
+
 export type SetLogEntry = {
   /** ms epoch */
   ts: number;
@@ -17,6 +19,8 @@ export type SetLogEntry = {
   reps: string;
   /** user-entered load; undefined for bodyweight */
   weightKg?: number;
+  /** optional how-it-felt tag for progression */
+  rpe?: SetRpe;
 };
 
 let cachedRaw: string | null | undefined = undefined;
@@ -137,11 +141,95 @@ export function toCsv(entries: SetLogEntry[]): string {
       e.sessionId ?? "",
       esc(e.reps),
       e.weightKg ?? "",
+      e.rpe ?? "",
     ].join(","),
   );
-  return ["timestamp,exercise_id,exercise,body_part,program,session,reps,weight_kg", ...rows].join(
-    "\n",
-  );
+  return [
+    "timestamp,exercise_id,exercise,body_part,program,session,reps,weight_kg,rpe",
+    ...rows,
+  ].join("\n");
+}
+
+export type PersonalRecord = {
+  exerciseId: string;
+  exerciseName: string;
+  /** Best single-set load */
+  bestWeightKg: number;
+  repsAtBest: string;
+  /** Best estimated set volume (weight × first rep number) */
+  bestSetVolume: number;
+  ts: number;
+};
+
+/** Best loaded set per exercise (skips bodyweight-only history). */
+export function computePersonalRecords(entries: SetLogEntry[], limit = 12): PersonalRecord[] {
+  const best = new Map<string, PersonalRecord>();
+  for (const e of entries) {
+    if (typeof e.weightKg !== "number" || e.weightKg <= 0) continue;
+    const vol = e.weightKg * firstReps(e.reps);
+    const prev = best.get(e.exerciseId);
+    if (
+      !prev ||
+      e.weightKg > prev.bestWeightKg ||
+      (e.weightKg === prev.bestWeightKg && vol > prev.bestSetVolume)
+    ) {
+      best.set(e.exerciseId, {
+        exerciseId: e.exerciseId,
+        exerciseName: e.exerciseName,
+        bestWeightKg: e.weightKg,
+        repsAtBest: e.reps,
+        bestSetVolume: vol,
+        ts: e.ts,
+      });
+    }
+  }
+  return [...best.values()]
+    .sort((a, b) => b.bestWeightKg - a.bestWeightKg || b.bestSetVolume - a.bestSetVolume)
+    .slice(0, limit);
+}
+
+export type WeekBucket = {
+  /** ISO week key YYYY-Www */
+  week: string;
+  label: string;
+  volumeKg: number;
+  sets: number;
+  startTs: number;
+};
+
+/** Last N calendar weeks of volume (oldest → newest). */
+export function weeklyVolume(entries: SetLogEntry[], weeks = 8): WeekBucket[] {
+  const map = new Map<string, WeekBucket>();
+  for (const e of entries) {
+    const d = new Date(e.ts);
+    const { key, label, startTs } = isoWeek(d);
+    let b = map.get(key);
+    if (!b) {
+      b = { week: key, label, volumeKg: 0, sets: 0, startTs };
+      map.set(key, b);
+    }
+    b.sets += 1;
+    if (typeof e.weightKg === "number") b.volumeKg += e.weightKg * firstReps(e.reps);
+  }
+  const sorted = [...map.values()].sort((a, b) => a.startTs - b.startTs);
+  const slice = sorted.slice(-weeks);
+  for (const b of slice) b.volumeKg = Math.round(b.volumeKg);
+  return slice;
+}
+
+function isoWeek(d: Date): { key: string; label: string; startTs: number } {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+  const key = `${date.getUTCFullYear()}-W${String(weekNo).padStart(2, "0")}`;
+  const mon = new Date(d);
+  const dow = mon.getDay() || 7;
+  mon.setDate(mon.getDate() - dow + 1);
+  mon.setHours(0, 0, 0, 0);
+  const label = mon.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return { key, label, startTs: mon.getTime() };
 }
 
 export function downloadFile(name: string, mime: string, content: string) {

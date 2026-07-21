@@ -59,6 +59,15 @@ export function PathPageClient({ programs }: { programs: Program[] }) {
                 : "Climb Foundation → Dumbbell → Barbell. Each stage is a guided multi-session plan."}
           </p>
         </div>
+        <Link href="/quick" className="resume-rail resume-rail--compact">
+          <div className="resume-rail__copy">
+            <p className="af-eyebrow">{tr("buildSession")}</p>
+            <h2 className="resume-rail__title" style={{ fontSize: "1.15rem" }}>
+              {tr("quickSession")}
+            </h2>
+            <p className="resume-rail__meta">{tr("quickSessionBlurb")}</p>
+          </div>
+        </Link>
         <div className="af-tile-stack">
           {programs.map((program, i) => {
             const p = localizedProgram(program, mode);
@@ -287,25 +296,34 @@ export function LibraryPageClient({
   body,
   equipment,
   target,
+  pattern,
+  programId,
   equipmentOptions,
   targetOptions,
+  programOptions,
+  patternOptions,
 }: {
   results: Exercise[];
   q: string;
   body: string;
   equipment: string;
   target: string;
+  pattern: string;
+  programId: string;
   equipmentOptions: string[];
   targetOptions: string[];
+  programOptions: { id: string; title: string }[];
+  patternOptions: { id: string; label: string }[];
 }) {
   const { tr, mode } = useLocale();
+  const hasFilter = Boolean(q || body || equipment || target || pattern || programId);
   return (
     <AppShell title={tr("search")} backHref="/">
       <div className="stack-md">
         <p className="muted" style={{ margin: 0, fontSize: "0.92rem" }}>
           {mode === "yue"
-            ? "搜尋成個 1,324 動作庫。用部位、器材、目標肌篩選。"
-            : "Search the full 1,324-exercise catalog. Filter by body part, equipment, or target."}
+            ? "搜尋成個 1,324 動作庫。用計劃、模式、部位、器材篩選。"
+            : "Search the full 1,324-exercise catalog. Filter by program, pattern, body part, or equipment."}
         </p>
         <form action="/library" method="get" className="stack">
           <input
@@ -315,6 +333,33 @@ export function LibraryPageClient({
             defaultValue={q}
             placeholder={mode === "yue" ? "搜動作名、肌肉、器材…" : "Search name, muscle, equipment…"}
           />
+          <div className="library-filter-grid">
+            <label className="library-filter-label">
+              {tr("programFilter")}
+              <select name="program" defaultValue={programId} className="select-field">
+                <option value="">{tr("all")}</option>
+                {programOptions.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="library-filter-label">
+              {tr("patternFilter")}
+              <select name="pattern" defaultValue={pattern} className="select-field">
+                <option value="">{tr("all")}</option>
+                {patternOptions.map((p) => {
+                  const loc = localizedPattern(p.id as MovementPattern, p.label, "", mode);
+                  return (
+                    <option key={p.id} value={p.id}>
+                      {loc.label}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+          </div>
           <div className="library-filter-grid">
             <label className="library-filter-label">
               {tr("bodyPart")}
@@ -354,9 +399,10 @@ export function LibraryPageClient({
             {tr("filterDemos")}
           </button>
         </form>
-        {(q || body || equipment || target) && (
+        {hasFilter && (
           <p className="muted" style={{ margin: 0, fontSize: "0.88rem" }}>
-            {results.length} ·{" "}
+            {results.length}
+            {programId ? ` · ${tr("inProgram")}` : ""} ·{" "}
             <Link href="/library" className="section-link">
               {tr("clear")}
             </Link>
@@ -364,7 +410,7 @@ export function LibraryPageClient({
         )}
         <div className="stack">
           {results.map((ex, i) => (
-            <ExerciseCard key={ex.id} exercise={ex} featured={i === 0 && !q && !body} />
+            <ExerciseCard key={ex.id} exercise={ex} featured={i === 0 && !hasFilter} />
           ))}
         </div>
         {!results.length ? (

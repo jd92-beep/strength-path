@@ -84,6 +84,10 @@ export function subscribeProgress(onStoreChange: () => void) {
 
 export function markSessionComplete(sessionId: string, programId?: string) {
   const p = loadProgress();
+  // Freestyle quick sessions don't advance the guided path
+  if (programId === "quick" || sessionId === "quick") {
+    return p;
+  }
   const completedSessions = p.completedSessions.includes(sessionId)
     ? p.completedSessions
     : [...p.completedSessions, sessionId];

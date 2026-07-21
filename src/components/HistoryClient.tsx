@@ -1,19 +1,22 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { useLocale } from "@/lib/locale";
 import {
   clearLog,
+  computePersonalRecords,
   computeStats,
   downloadFile,
   getLogSnapshot,
   groupByDay,
   subscribeLog,
   toCsv,
+  weeklyVolume,
   type SetLogEntry,
 } from "@/lib/log";
+import { estimate1RM, parseRepRange } from "@/lib/progression";
 
 const HEALTH_APPS = [
   { name: "Apple Health", color: "var(--ring-move)" },
@@ -32,6 +35,9 @@ export function HistoryClient() {
   const entries = useSyncExternalStore(subscribeLog, getLogSnapshot, emptyServerSnapshot);
   const stats = computeStats(entries);
   const days = groupByDay(entries);
+  const prs = useMemo(() => computePersonalRecords(entries, 10), [entries]);
+  const weeks = useMemo(() => weeklyVolume(entries, 8), [entries]);
+  const maxVol = Math.max(1, ...weeks.map((w) => w.volumeKg));
   const dateLocale = mode === "en" ? "en-GB" : "zh-HK";
 
   return (
@@ -58,6 +64,52 @@ export function HistoryClient() {
             <span>{tr("daysActive")}</span>
           </div>
         </div>
+
+        {weeks.some((w) => w.sets > 0) ? (
+          <section className="surface chart-card">
+            <h2 className="chart-card__title">{tr("weeklyVolume")}</h2>
+            <div className="vol-chart" role="img" aria-label={tr("weeklyVolume")}>
+              {weeks.map((w) => (
+                <div key={w.week} className="vol-chart__col">
+                  <div className="vol-chart__bar-wrap">
+                    <div
+                      className="vol-chart__bar"
+                      style={{ height: `${Math.max(4, (w.volumeKg / maxVol) * 100)}%` }}
+                      title={`${w.volumeKg} kg · ${w.sets} sets`}
+                    />
+                  </div>
+                  <span className="vol-chart__label">{w.label}</span>
+                  <span className="vol-chart__val">{w.volumeKg || "–"}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section className="surface chart-card">
+          <h2 className="chart-card__title">{tr("personalRecords")}</h2>
+          {prs.length === 0 ? (
+            <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
+              {tr("noPrsYet")}
+            </p>
+          ) : (
+            <ul className="pr-list">
+              {prs.map((pr) => (
+                <li key={pr.exerciseId}>
+                  <Link href={`/exercise/${pr.exerciseId}`} className="pr-row">
+                    <span className="pr-row__name">{pr.exerciseName}</span>
+                    <span className="pr-row__data">
+                      <strong>{pr.bestWeightKg} kg</strong>
+                      <span className="muted">
+                        {" "}· {pr.repsAtBest} ({tr("est1RM")} ~{estimate1RM(pr.bestWeightKg, parseRepRange(pr.repsAtBest).min || 1)} kg)
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
 
         {days.length === 0 ? (
           <div className="hist-empty">
@@ -97,6 +149,7 @@ export function HistoryClient() {
                     <span className="hist-set__data">
                       {s.reps}
                       {typeof s.weightKg === "number" ? ` · ${s.weightKg} kg` : ""}
+                      {s.rpe ? ` · ${s.rpe}` : ""}
                     </span>
                   </Link>
                 ))}

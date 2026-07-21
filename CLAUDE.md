@@ -41,11 +41,20 @@ Health-app note: Apple Health / Health Connect (Google, Samsung, OnePlus, Honor)
 ### Bilingual EN / Cantonese (粵語)
 The app has three language modes: `en`, `yue`, `both` (`AppLangMode` in `src/lib/ui-strings.ts`). Cantonese content is stored in parallel modules (`programs-yue.ts`, `teaching-yue.ts`) and merged at render time via `src/lib/localize.ts` (`pickLang`, `showEn`, `showYue`) and the `Bilingual` component. Any new user-facing copy needs both an English and a Cantonese variant plus a `UiKey` in `ui-strings.ts`.
 
+Cantonese register rules: use 臀 not 尻 (vulgar homophone), 硬舉 not 硬拉, 臥推 not 卧推, 膕繩肌 not 腘繩肌 (simplified form). Check for wrong-region terminology and ungrammatical phrasing when editing Cantonese copy.
+
 ### Pages
 Routes under `src/app/` are mostly thin server components that delegate to `*Client.tsx` / `*PageClient.tsx` components in `src/components/`, because nearly everything depends on client state (locale, progress). Dynamic routes: `exercise/[id]`, `workout/[sessionId]`, `path/[programId]`, `body/[part]`, `learn/[pattern]`.
+
+### Desktop responsive
+At ≥1024px the layout switches to a sidebar nav with multi-column grids (commit da0e14c).
+
+### Motion & interaction
+- Ring sweep-in animation, page transitions, button/card physics (commit 0bc4ee8).
+- Equipment tiles scroll horizontally with drag, snap, fade, scrollbar (commit 33cb95f).
 
 ## Constraints
 
 - Out of scope (per PRODUCT.md): accounts, social, nutrition, paid programs, offline/PWA.
 - Attribution: exercise data from hasaneyldrm/exercises-dataset, media © Gym visual — keep the credit intact.
-- UI is dark, Apple Fitness–inspired (activity rings, gradient tiles — see `fitness-theme.ts`, `ActivityRings.tsx`). Viewport overflow on phones has been a recurring regression; verify new layouts at mobile widths.
+- UI is dark, Apple Fitness-inspired (activity rings, gradient tiles — see `fitness-theme.ts`, `ActivityRings.tsx`). Viewport overflow on phones has been a recurring regression; verify new layouts at mobile widths.

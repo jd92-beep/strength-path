@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { AppShell } from "@/components/AppShell";
 import { computeStats, getLogSnapshot, subscribeLog, type SetLogEntry } from "@/lib/log";
 import { getProgressSnapshot, subscribeProgress, type ProgressState } from "@/lib/progress";
+import { resolveNextSession } from "@/lib/path-resume";
 import { SummaryRings } from "@/components/SummaryRings";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { WorkoutTile } from "@/components/WorkoutTile";
@@ -13,7 +14,7 @@ import { ScrollRail } from "@/components/ScrollRail";
 import type { Exercise } from "@/lib/types";
 import type { Program } from "@/lib/types";
 import { useLocale } from "@/lib/locale";
-import { localizedPattern, localizedProgram, stageBadge } from "@/lib/localize";
+import { localizedPattern, localizedProgram, localizedSession, stageBadge } from "@/lib/localize";
 import type { MovementPattern } from "@/lib/teaching";
 import {
   equipmentHref,
@@ -49,6 +50,7 @@ export function HomeClient({
   const log = useSyncExternalStore(subscribeLog, getLogSnapshot, emptyLog);
   const progress = useSyncExternalStore(subscribeProgress, getProgressSnapshot, emptyProgress);
   const stats = computeStats(log);
+  const next = useMemo(() => resolveNextSession(progress, programs), [progress, programs]);
   const bodies = [
     { id: "chest", href: "/body/chest", label: "Chest", yue: "胸" },
     { id: "back", href: "/body/back", label: "Back", yue: "背" },
@@ -80,6 +82,40 @@ export function HomeClient({
             <strong>{stats.daysActive}</strong> {tr("daysActive").toLowerCase()}
           </Link>
         </section>
+
+        {next ? (
+          <section className="resume-rail" aria-label={tr("trainToday")}>
+            <div className="resume-rail__copy">
+              <p className="af-eyebrow">{tr("trainToday")}</p>
+              <h2 className="resume-rail__title">
+                {localizedSession(next.program.id, next.session, mode).title}
+              </h2>
+              <p className="resume-rail__meta">
+                {localizedProgram(next.program, mode).title}
+                {" · "}
+                {next.session.durationMin} {tr("min")}
+                {" · "}
+                {next.kind === "start"
+                  ? tr("startPath")
+                  : next.kind === "repeat"
+                    ? tr("repeatSession")
+                    : tr("continueSession")}
+              </p>
+            </div>
+            <div className="resume-rail__actions">
+              <Link
+                href={`/workout/${next.session.id}`}
+                className="btn btn-primary btn-lg"
+                style={{ borderRadius: "999px" }}
+              >
+                {tr("letsGo")}
+              </Link>
+              <Link href="/quick" className="btn btn-ghost">
+                {tr("quickSession")}
+              </Link>
+            </div>
+          </section>
+        ) : null}
 
         <section>
           <div className="af-section-head">

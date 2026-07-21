@@ -100,7 +100,44 @@ export type UiKey =
   | "healthSyncBlurb"
   | "musclesTrained"
   | "clearHistory"
-  | "clearHistoryConfirm";
+  | "clearHistoryConfirm"
+  | "trainToday"
+  | "continueSession"
+  | "startPath"
+  | "repeatSession"
+  | "min"
+  | "howItFelt"
+  | "rpeEasy"
+  | "rpeOk"
+  | "rpeHard"
+  | "suggestWeight"
+  | "suggestProgress"
+  | "suggestDeload"
+  | "suggestLast"
+  | "est1RM"
+  | "swapMove"
+  | "noEquipment"
+  | "useThis"
+  | "restCue"
+  | "patternFilter"
+  | "programFilter"
+  | "inProgram"
+  | "quickSession"
+  | "quickSessionBlurb"
+  | "buildSession"
+  | "startQuick"
+  | "equipmentAny"
+  | "equipmentBw"
+  | "equipmentDb"
+  | "pickPatterns"
+  | "personalRecords"
+  | "weeklyVolume"
+  | "noPrsYet"
+  | "bestLoad"
+  | "setsLabel"
+  | "nextTime"
+  | "sessionSummary"
+  | "totalSetsShort";
 
 const en: Record<UiKey, string> = {
   brand: "Strength Path",
@@ -204,6 +241,43 @@ const en: Record<UiKey, string> = {
   musclesTrained: "Muscles trained",
   clearHistory: "Clear history",
   clearHistoryConfirm: "Delete the whole training log on this device?",
+  trainToday: "Train today",
+  continueSession: "Continue your path",
+  startPath: "Start your path",
+  repeatSession: "Run it again",
+  min: "min",
+  howItFelt: "How it felt",
+  rpeEasy: "Easy",
+  rpeOk: "OK",
+  rpeHard: "Hard",
+  suggestWeight: "Suggested",
+  suggestProgress: "Hit the top — try a bit heavier",
+  suggestDeload: "Last time was tough — ease the load",
+  suggestLast: "Last load",
+  est1RM: "Est. 1RM",
+  swapMove: "Swap exercise",
+  noEquipment: "Missing equipment?",
+  useThis: "Use this",
+  restCue: "While you rest",
+  patternFilter: "Pattern",
+  programFilter: "Program",
+  inProgram: "In this path",
+  quickSession: "Quick session",
+  quickSessionBlurb: "Pick movement patterns. We fill in demos, sets, and rest.",
+  buildSession: "Build session",
+  startQuick: "Start session",
+  equipmentAny: "Any gear",
+  equipmentBw: "Body weight",
+  equipmentDb: "Dumbbells",
+  pickPatterns: "Patterns (4–6)",
+  personalRecords: "Personal records",
+  weeklyVolume: "Weekly volume",
+  noPrsYet: "Log weighted sets to earn PRs.",
+  bestLoad: "Best load",
+  setsLabel: "sets",
+  nextTime: "Next time",
+  sessionSummary: "Session summary",
+  totalSetsShort: "sets",
 };
 
 /** Written Cantonese (粵語) UI — natural HK spoken style */
@@ -309,6 +383,43 @@ const yue: Record<UiKey, string> = {
   musclesTrained: "練到嘅肌肉",
   clearHistory: "清除紀錄",
   clearHistoryConfirm: "確定刪除呢部機上面成個訓練日誌？",
+  trainToday: "今日練咩",
+  continueSession: "繼續你嘅計劃",
+  startPath: "開始你嘅計劃",
+  repeatSession: "再練多一次",
+  min: "分鐘",
+  howItFelt: "呢組感覺點",
+  rpeEasy: "輕鬆",
+  rpeOk: "剛好",
+  rpeHard: "吃力",
+  suggestWeight: "建議重量",
+  suggestProgress: "上次做到頂，試下加重少少",
+  suggestDeload: "上次偏硬，今日輕啲",
+  suggestLast: "上次重量",
+  est1RM: "預估 1RM",
+  swapMove: "換動作",
+  noEquipment: "冇器材？",
+  useThis: "用呢個",
+  restCue: "休息期間",
+  patternFilter: "動作模式",
+  programFilter: "計劃",
+  inProgram: "計劃入面嘅動作",
+  quickSession: "快速組課",
+  quickSessionBlurb: "揀動作模式，自動配示範、組數同休息。",
+  buildSession: "組一堂",
+  startQuick: "開始訓練",
+  equipmentAny: "任何器材",
+  equipmentBw: "徒手",
+  equipmentDb: "啞鈴",
+  pickPatterns: "動作模式（4–6 個）",
+  personalRecords: "個人最佳",
+  weeklyVolume: "每週訓練量",
+  noPrsYet: "記低有重量嘅組數，就會有 PR。",
+  bestLoad: "最佳重量",
+  setsLabel: "組",
+  nextTime: "下次",
+  sessionSummary: "今堂總結",
+  totalSetsShort: "組",
 };
 
 export function t(key: UiKey, mode: AppLangMode): string {
