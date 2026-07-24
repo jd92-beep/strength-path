@@ -8,6 +8,8 @@ import {
   buildLesson,
 } from "@/lib/teaching";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return patternCatalog().map((p) => ({ pattern: p.id }));
 }

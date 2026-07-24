@@ -57,7 +57,7 @@ export function ExercisePageChrome({
       : mode === "both"
         ? `More ${bodyPart} · 更多${BODY_YUE[bodyPart] || bodyPart}`
         : `More ${bodyPart}`;
-  const targetLabel = mode === "yue" ? `目標 · ${target}` : `target · ${target}`;
+  const targetLabel = mode === "yue" ? `目標 · ${target}` : target;
 
   return (
     <div className="stack-lg studio-page">

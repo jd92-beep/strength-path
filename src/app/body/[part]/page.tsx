@@ -3,6 +3,8 @@ import { BodyPartPageClient } from "@/components/BodyPartPageClient";
 import { BODY_PARTS, deslugifyPart, getBodyPart, slugifyPart } from "@/lib/body-parts";
 import { filterExercises } from "@/lib/exercises";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return BODY_PARTS.map((p) => ({ part: slugifyPart(p.id) }));
 }

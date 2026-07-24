@@ -3,6 +3,8 @@ import { ProgramPageClient } from "@/components/LocalizedPages";
 import { getExercisesByIds } from "@/lib/exercises";
 import { getProgram, PROGRAMS } from "@/lib/programs";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return PROGRAMS.map((p) => ({ programId: p.id }));
 }

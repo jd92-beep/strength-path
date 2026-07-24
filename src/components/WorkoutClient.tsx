@@ -27,7 +27,6 @@ import { getExercise } from "@/lib/exercises";
 type Props = {
   session: Session;
   exercises: Exercise[];
-  programTitle: string;
   programId: string;
 };
 
@@ -52,7 +51,6 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
   const [teachOpen, setTeachOpen] = useState(false);
   const [swapOpen, setSwapOpen] = useState(false);
   const [weightKg, setWeightKg] = useState<number | "">("");
-  const [weightForId, setWeightForId] = useState<string | null>(null);
   const [rpe, setRpe] = useState<SetRpe | null>(null);
   const [setsLogged, setSetsLogged] = useState(0);
   const [cueIndex, setCueIndex] = useState(0);
@@ -73,7 +71,7 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
 
   const substitutes = useMemo(
     () => (item ? findSubstitutes(item.exerciseId, 4) : []),
-    [item],
+    [item?.exerciseId],
   );
 
   const weightHint = useMemo(() => {
@@ -102,9 +100,9 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
       ? 0
       : Math.round(((safeIndex + (totalSets ? setIndexNum / totalSets : 0)) / totalMoves) * 100);
 
-  // Seed the weight stepper when the exercise changes (adjust-state-during-render pattern)
-  if (exercise && weightForId !== exercise.id) {
-    setWeightForId(exercise.id);
+  // Seed the weight stepper when the exercise changes
+  useEffect(() => {
+    if (!exercise) return;
     setRpe(null);
     setSwapOpen(false);
     const hint = currentSet ? suggestWeightKg(exercise.id, currentSet.reps) : undefined;
@@ -116,7 +114,7 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
     } else {
       setWeightKg(last ?? "");
     }
-  }
+  }, [exercise?.id]);
 
   useEffect(() => {
     if (!resting) return;
@@ -158,7 +156,6 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
       ),
     );
     setSwapOpen(false);
-    setWeightForId(null); // force weight reseed
   }
 
   function completeSet() {

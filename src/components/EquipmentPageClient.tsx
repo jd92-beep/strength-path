@@ -46,7 +46,7 @@ export function EquipmentPageClient({ machines }: { machines: MachineItem[] }) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={equipmentImageSrc(m.slug)}
-                  alt={labelEquipment(m, "en")}
+                  alt={labelEquipment(m, mode)}
                   className="equip-row__photo"
                   width={68}
                   height={68}

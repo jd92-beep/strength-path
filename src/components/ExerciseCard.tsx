@@ -19,7 +19,7 @@ export function ExerciseCard({
         <ExercisePhoto
           imagePath={exercise.image}
           bodyPart={exercise.body_part}
-          alt=""
+          alt={`${exercise.name} form demo`}
           width={featured ? 720 : 112}
           height={featured ? 480 : 112}
         />

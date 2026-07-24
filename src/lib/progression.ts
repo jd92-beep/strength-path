@@ -14,7 +14,7 @@ export function parseRepRange(reps: string): RepRange {
   if (s.includes("amrap") || s.includes("max")) {
     return { min: 1, max: 99, isTimed: false };
   }
-  if (s.includes("s") && !s.includes("/")) {
+  if (/\d+s\b/.test(s) || /\d+s\//.test(s)) {
     const nums = [...s.matchAll(/\d+/g)].map((m) => parseInt(m[0], 10));
     if (nums.length >= 2) return { min: nums[0], max: nums[1], isTimed: true };
     if (nums.length === 1) return { min: nums[0], max: nums[0], isTimed: true };

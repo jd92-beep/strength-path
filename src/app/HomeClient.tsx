@@ -11,8 +11,7 @@ import { ExerciseCard } from "@/components/ExerciseCard";
 import { WorkoutTile } from "@/components/WorkoutTile";
 import { BodyPartIcon } from "@/components/BodyPartIcon";
 import { ScrollRail } from "@/components/ScrollRail";
-import type { Exercise } from "@/lib/types";
-import type { Program } from "@/lib/types";
+import type { Exercise, Program } from "@/lib/types";
 import { useLocale } from "@/lib/locale";
 import { localizedPattern, localizedProgram, localizedSession, stageBadge } from "@/lib/localize";
 import type { MovementPattern } from "@/lib/teaching";
@@ -55,8 +54,8 @@ export function HomeClient({
     { id: "chest", href: "/body/chest", label: "Chest", yue: "胸" },
     { id: "back", href: "/body/back", label: "Back", yue: "背" },
     { id: "upper legs", href: "/body/upper-legs", label: "Legs", yue: "腿" },
-    { id: "shoulders", href: "/body/shoulders", label: "Shoulders", yue: "膊" },
-    { id: "upper arms", href: "/body/upper-arms", label: "Arms", yue: "臂" },
+    { id: "shoulders", href: "/body/shoulders", label: "Shoulders", yue: "膊頭" },
+    { id: "upper arms", href: "/body/upper-arms", label: "Arms", yue: "手臂" },
     { id: "waist", href: "/body/waist", label: "Core", yue: "核心" },
   ];
 
@@ -166,7 +165,7 @@ export function HomeClient({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={equipmentImageSrc(m.slug)}
-                  alt={labelEquipment(m, "en")}
+                  alt={labelEquipment(m, mode)}
                   className="af-mini-tile__photo"
                   width={168}
                   height={168}

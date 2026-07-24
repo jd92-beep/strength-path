@@ -23,8 +23,8 @@ export function QuickSessionClient() {
 
   const preview = useMemo(() => {
     if (selected.length < 2) return null;
-    return buildQuickSession({ patterns: selected, equipment });
-  }, [selected, equipment]);
+    return buildQuickSession({ patterns: selected, equipment, mode });
+  }, [selected, equipment, mode]);
 
   function toggle(p: MovementPattern) {
     setSelected((cur) => {
@@ -48,7 +48,6 @@ export function QuickSessionClient() {
           <WorkoutClient
             session={live.session}
             exercises={live.exercises}
-            programTitle={tr("quickSession")}
             programId="quick"
           />
         </div>

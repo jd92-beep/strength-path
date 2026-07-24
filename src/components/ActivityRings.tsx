@@ -28,7 +28,7 @@ export function ActivityRings({
           const circ = 2 * Math.PI * ring.r;
           const offset = circ * (1 - Math.min(1, Math.max(0, ring.value)));
           return (
-            <g key={ring.color}>
+            <g key={i}>
               <circle
                 cx={c}
                 cy={c}

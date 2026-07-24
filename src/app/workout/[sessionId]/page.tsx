@@ -35,7 +35,6 @@ export default async function WorkoutPage({
     <WorkoutSessionClient
       session={session}
       exercises={exercises}
-      programTitle={program.title}
       programId={program.id}
     />
   );

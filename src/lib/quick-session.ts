@@ -1,6 +1,7 @@
 import { getAllExercises } from "./exercises";
 import { detectPattern, type MovementPattern } from "./teaching";
 import type { Exercise, Session, WorkoutExercise } from "./types";
+import type { AppLangMode } from "./ui-strings";
 
 /** Default slots for a balanced freestyle session. */
 export const QUICK_SLOT_PATTERNS: MovementPattern[] = [
@@ -17,6 +18,12 @@ const DEFAULT_SETS: WorkoutExercise["sets"] = [
   { reps: "8–12" },
   { reps: "8–12" },
 ];
+
+const COACHING: Record<AppLangMode, string> = {
+  en: "Quality reps. Stop 1–2 short of failure. Log how it felt.",
+  yue: "做得好。最後一兩下留返力。記低感覺。",
+  both: "Quality reps. Stop 1–2 short of failure. Log how it felt.\n做得好。最後一兩下留返力。記低感覺。",
+};
 
 function pickExercise(
   pattern: MovementPattern,
@@ -45,6 +52,7 @@ function pickExercise(
 export type QuickBuildOpts = {
   patterns: MovementPattern[];
   equipment: "any" | "body weight" | "dumbbell";
+  mode?: AppLangMode;
 };
 
 export function buildQuickSession(opts: QuickBuildOpts): {
@@ -64,7 +72,7 @@ export function buildQuickSession(opts: QuickBuildOpts): {
       exerciseId: ex.id,
       sets: DEFAULT_SETS.map((s) => ({ ...s })),
       restSec: pattern.startsWith("core") || pattern === "isolation" ? 45 : 75,
-      coaching: "Quality reps. Stop 1–2 short of failure. Log how it felt.",
+      coaching: COACHING[opts.mode ?? "en"],
     });
   }
 

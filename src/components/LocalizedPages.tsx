@@ -186,7 +186,7 @@ export function ProgramPageClient({
                           <ExercisePhoto
                             imagePath={m.image}
                             bodyPart={m.body_part}
-                            alt=""
+                            alt={`${m.name} form demo`}
                             width={72}
                             height={72}
                             className="ex-thumb"

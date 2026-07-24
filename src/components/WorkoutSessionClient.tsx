@@ -9,12 +9,10 @@ import { localizedSession } from "@/lib/localize";
 export function WorkoutSessionClient({
   session,
   exercises,
-  programTitle,
   programId,
 }: {
   session: Session;
   exercises: Exercise[];
-  programTitle: string;
   programId: string;
 }) {
   const { mode } = useLocale();
@@ -25,7 +23,6 @@ export function WorkoutSessionClient({
       <WorkoutClient
         session={session}
         exercises={exercises}
-        programTitle={programTitle}
         programId={programId}
       />
     </AppShell>

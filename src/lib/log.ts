@@ -85,8 +85,9 @@ export function clearLog() {
 
 /** Remember the last weight used per exercise so the stepper starts sensibly. */
 export function lastWeightFor(exerciseId: string): number | undefined {
-  for (let i = getLogSnapshot().length - 1; i >= 0; i--) {
-    const e = getLogSnapshot()[i];
+  const entries = getLogSnapshot();
+  for (let i = entries.length - 1; i >= 0; i--) {
+    const e = entries[i];
     if (e.exerciseId === exerciseId && typeof e.weightKg === "number") return e.weightKg;
   }
   return undefined;
