@@ -9,6 +9,7 @@ import {
   type ProgressState,
 } from "@/lib/progress";
 import { WorkoutTile } from "@/components/WorkoutTile";
+import { Reveal } from "@/components/Reveal";
 import { ExercisePhoto } from "@/components/ExercisePhoto";
 import { ScrollRail } from "@/components/ScrollRail";
 import { BodyMap } from "@/components/BodyMap";
@@ -72,17 +73,18 @@ export function PathPageClient({ programs }: { programs: Program[] }) {
           {programs.map((program, i) => {
             const p = localizedProgram(program, mode);
             return (
-              <WorkoutTile
-                key={program.id}
-                large={i === 0}
-                href={`/path/${program.id}`}
-                title={p.title}
-                subtitle={p.tagline}
-                meta={`${program.sessions.length} ${tr("workoutsCount")} · ${program.weeks}${mode === "yue" ? " 星期" : " weeks"} · ${p.equipment}`}
-                badge={stageBadge(i, program.level, mode)}
-                accent={program.color}
-                stage={i + 1}
-              />
+              <Reveal key={program.id} delay={Math.min(i * 60, 300)}>
+                <WorkoutTile
+                  large={i === 0}
+                  href={`/path/${program.id}`}
+                  title={p.title}
+                  subtitle={p.tagline}
+                  meta={`${program.sessions.length} ${tr("workoutsCount")} · ${program.weeks}${mode === "yue" ? " 星期" : " weeks"} · ${p.equipment}`}
+                  badge={stageBadge(i, program.level, mode)}
+                  accent={program.color}
+                  stage={i + 1}
+                />
+              </Reveal>
             );
           })}
         </div>
@@ -135,8 +137,8 @@ export function ProgramPageClient({
             {sessionsWithMoves.map(({ session, moves }, idx) => {
               const s = localizedSession(program.id, session, mode);
               return (
+                <Reveal key={session.id} delay={Math.min(idx * 60, 300)}>
                 <article
-                  key={session.id}
                   className="surface"
                   style={{ padding: "1rem", borderRadius: "18px" }}
                 >
@@ -212,6 +214,7 @@ export function ProgramPageClient({
                     {tr("letsGo")}
                   </Link>
                 </article>
+                </Reveal>
               );
             })}
           </div>

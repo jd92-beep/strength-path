@@ -1031,6 +1031,7 @@ textarea {
   font-size: 0.8rem;
   font-weight: 650;
   color: color-mix(in srgb, var(--a) 75%, #fff);
+  font-variant-numeric: tabular-nums;
 }
 
 .af-h-scroll {
@@ -3326,6 +3327,11 @@ textarea {
   }
 
   .af-tile--large {
+    grid-column: 1 / -1;
+  }
+
+  /* Tiles wrapped in <Reveal> keep the large tile's full-row span */
+  .af-tile-stack > .reveal:has(> .af-tile--large) {
     grid-column: 1 / -1;
   }
 

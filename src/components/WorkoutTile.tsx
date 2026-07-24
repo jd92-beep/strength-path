@@ -31,7 +31,7 @@ export function WorkoutTile({
   return (
     <Link
       href={href}
-      className={`af-tile ${large ? "af-tile--large" : ""}`.trim()}
+      className={`af-tile hud-hover ${large ? "af-tile--large" : ""}`.trim()}
       style={{ ["--a" as string]: a }}
     >
       {typeof stage === "number" ? (
