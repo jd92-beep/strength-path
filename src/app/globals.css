@@ -3237,6 +3237,9 @@ textarea {
     display: inline-flex;
     padding: 0.35rem 0.55rem;
     font-size: 1.15rem;
+    /* .af-tabbar is pointer-events:none for the phone pill; the brand is a
+       direct child outside the inner pill, so re-enable clicks here. */
+    pointer-events: auto;
   }
 
   .af-tabbar__inner,
