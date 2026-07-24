@@ -101,6 +101,7 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
       : Math.round(((safeIndex + (totalSets ? setIndexNum / totalSets : 0)) / totalMoves) * 100);
 
   // Seed the weight stepper when the exercise changes
+  /* eslint-disable react-hooks/set-state-in-effect -- intentional: resets local form state when the exercise changes */
   useEffect(() => {
     if (!exercise) return;
     setRpe(null);
@@ -115,6 +116,7 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
       setWeightKg(last ?? "");
     }
   }, [exercise?.id]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!resting) return;
