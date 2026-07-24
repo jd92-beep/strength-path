@@ -752,7 +752,8 @@ textarea {
   font-size: 0.8rem;
   font-weight: 650;
   color: var(--ink-faint);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .af-large-title {
@@ -896,10 +897,17 @@ textarea {
   overflow: hidden;
   color: var(--ink);
   isolation: isolate;
+  /* .glow-edge look: interior fills are clipped to padding-box so the
+     accent gradient (border-box) shows through the transparent border */
   background:
-    radial-gradient(26rem 15rem at 100% 0%, color-mix(in srgb, var(--a) 20%, transparent), transparent 65%),
-    linear-gradient(180deg, #16161d 0%, #0c0c11 100%);
-  border: 1px solid color-mix(in srgb, var(--a) 32%, var(--border));
+    radial-gradient(26rem 15rem at 100% 0%, color-mix(in srgb, var(--a) 20%, transparent), transparent 65%) padding-box,
+    linear-gradient(180deg, #16161d 0%, #0c0c11 100%) padding-box,
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--a) 55%, transparent),
+      transparent 40%,
+      transparent 60%,
+      color-mix(in srgb, var(--a) 30%, transparent)) border-box;
+  border: 1px solid transparent;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 10px 28px rgba(0, 0, 0, 0.45);
@@ -936,6 +944,21 @@ textarea {
 
 .af-tile--large {
   min-height: 13.5rem;
+}
+
+/* Corner notch — HUD bracket detail on the featured tile */
+.af-tile--large::before {
+  content: "";
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-top: 2px solid color-mix(in srgb, var(--a) 65%, transparent);
+  border-right: 2px solid color-mix(in srgb, var(--a) 65%, transparent);
+  border-top-right-radius: 6px;
+  opacity: 0.8;
+  z-index: 1;
 }
 
 /* Big stage numeral — programs are a real ordered sequence */
