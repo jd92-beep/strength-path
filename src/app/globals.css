@@ -176,10 +176,22 @@ img {
   top: 0;
   z-index: var(--z-sticky);
   padding-top: var(--safe-t);
-  background: rgba(3, 3, 8, 0.72);
+  background: rgba(5, 6, 10, 0.7);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 0.5px solid var(--border);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* 2px-tall accent energy line along the header's bottom edge */
+.af-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ring-exercise) 45%, transparent), transparent);
+  opacity: 0.7;
 }
 
 .af-header__inner {
@@ -508,17 +520,23 @@ img {
   flex: 1 0 auto;
 }
 
-/* One quiet page-enter: content rises 8px and fades in on navigation */
-@keyframes page-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+/* One quiet page-enter: content rises, scales in and un-blurs on navigation */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.995);
+      filter: blur(3px);
+    }
+  }
+  .af-shell,
+  .shell {
+    animation: page-in 320ms var(--ease-out) backwards;
   }
 }
 
 .af-shell,
 .shell {
-  animation: page-in 240ms var(--ease-out) backwards;
   width: 100%;
   max-width: min(430px, 100%);
   margin-left: auto;
@@ -618,27 +636,34 @@ textarea {
   }
 }
 
-/* Tab bar — Fitness style */
+/* Tab bar — floating glass pill (mobile; ≥1024px restyles it as a sidebar) */
 .af-tabbar,
 .bottom-nav {
   position: fixed;
   inset-inline: 0;
   bottom: 0;
   z-index: var(--z-nav);
-  padding: 0.35rem 0.5rem calc(0.35rem + var(--safe-b));
-  background: rgba(14, 14, 20, 0.88);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  border-top: 0.5px solid var(--border);
+  padding: 0.5rem 0.75rem calc(0.6rem + var(--safe-b));
+  background: transparent;
+  border-top: none;
+  pointer-events: none; /* pill re-enables events */
 }
 
 .af-tabbar__inner,
 .bottom-nav-inner {
+  pointer-events: auto;
   width: min(100%, 430px);
   margin-inline: auto;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.15rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
 }
 
 /* Sidebar-only brand — hidden in the phone tab bar */
@@ -652,7 +677,8 @@ textarea {
   flex-direction: column;
   align-items: center;
   gap: 0.12rem;
-  padding: 0.4rem 0.15rem 0.35rem;
+  min-height: 3rem;
+  padding: 0.45rem 0.15rem 0.4rem;
   border-radius: 14px;
   font-size: 0.625rem;
   font-weight: 500;
@@ -678,6 +704,18 @@ textarea {
 .nav-link[data-active="true"] svg {
   transform: scale(1.1);
   filter: drop-shadow(0 0 6px color-mix(in srgb, var(--ring-exercise) 60%, transparent));
+}
+
+/* Icon pop when a tab becomes active */
+@media (prefers-reduced-motion: no-preference) {
+  .af-tab[data-active="true"] svg,
+  .nav-link[data-active="true"] svg {
+    animation: tab-pop 260ms var(--ease-spring);
+  }
+  @keyframes tab-pop {
+    from { transform: scale(0.8); }
+    to { transform: scale(1.1); }
+  }
 }
 
 /* Summary / home */
@@ -3210,6 +3248,8 @@ textarea {
     max-width: none;
     margin: 0;
     padding: 0;
+    /* Sidebar is a full-height column — drop the phone pill shape */
+    border-radius: 0;
   }
 
   .af-tab,
