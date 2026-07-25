@@ -6,19 +6,24 @@ export function Reveal({
   children,
   className = "",
   delay = 0,
+  as = "div",
 }: {
   children: React.ReactNode;
   className?: string;
   delay?: number;
+  as?: "div" | "section" | "li";
 }) {
-  const { ref, inView } = useInView<HTMLDivElement>();
+  const { ref, inView } = useInView<HTMLElement>();
+  const Tag = as as "div" | "section" | "li";
   return (
-    <div
-      ref={ref}
+    <Tag
+      ref={(el: HTMLElement | null) => {
+        ref.current = el;
+      }}
       className={`reveal ${inView ? "reveal--in" : ""} ${className}`.trim()}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}
-    </div>
+    </Tag>
   );
 }
