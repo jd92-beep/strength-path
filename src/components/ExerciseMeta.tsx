@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { Exercise } from "@/lib/types";
 import { slugifyPart } from "@/lib/body-parts";
 import Link from "next/link";
+import { Reveal } from "./Reveal";
 
 /** Surfaces every dataset field the browser can show. */
 export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
@@ -10,7 +11,10 @@ export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
     {
       label: "Category",
       value: (
-        <Link href={`/body/${slugifyPart(exercise.category || exercise.body_part)}`}>
+        <Link
+          className="meta-sheet__tap"
+          href={`/body/${slugifyPart(exercise.category || exercise.body_part)}`}
+        >
           {exercise.category || exercise.body_part}
         </Link>
       ),
@@ -18,7 +22,9 @@ export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
     {
       label: "Body part",
       value: (
-        <Link href={`/body/${slugifyPart(exercise.body_part)}`}>{exercise.body_part}</Link>
+        <Link className="meta-sheet__tap" href={`/body/${slugifyPart(exercise.body_part)}`}>
+          {exercise.body_part}
+        </Link>
       ),
     },
     { label: "Target", value: exercise.target || "—" },
@@ -43,6 +49,7 @@ export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
       label: "Attribution",
       value: (
         <a
+          className="meta-sheet__tap"
           href="https://gymvisual.com/"
           target="_blank"
           rel="noreferrer"
@@ -55,44 +62,46 @@ export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
   ];
 
   return (
-    <section className="meta-sheet" aria-label="Exercise dataset fields">
-      <div className="meta-sheet__head">
-        <h3 className="meta-sheet__title">Dataset fields</h3>
-        <p className="meta-sheet__sub">
-          Full record from{" "}
-          <a
-            href="https://github.com/hasaneyldrm/exercises-dataset"
-            target="_blank"
-            rel="noreferrer"
-          >
-            exercises-dataset
-          </a>
-        </p>
-      </div>
-      <dl className="meta-sheet__grid">
-        {rows.map((row) => (
-          <div key={row.label} className="meta-sheet__row">
-            <dt>{row.label}</dt>
-            <dd>{row.value}</dd>
-          </div>
-        ))}
-      </dl>
-      {exercise.secondary_muscles?.length ? (
-        <div className="muscle-row">
-          <span className="muscle-row__label">Muscles</span>
-          <div className="muscle-row__tags">
-            <span className="muscle-tag muscle-tag--primary">{exercise.target}</span>
-            {exercise.muscle_group ? (
-              <span className="muscle-tag">{exercise.muscle_group}</span>
-            ) : null}
-            {exercise.secondary_muscles.map((m) => (
-              <span key={m} className="muscle-tag muscle-tag--sec">
-                {m}
-              </span>
-            ))}
-          </div>
+    <Reveal>
+      <section className="meta-sheet" aria-label="Exercise dataset fields">
+        <div className="meta-sheet__head">
+          <h3 className="meta-sheet__title">Dataset fields</h3>
+          <p className="meta-sheet__sub">
+            Full record from{" "}
+            <a
+              href="https://github.com/hasaneyldrm/exercises-dataset"
+              target="_blank"
+              rel="noreferrer"
+            >
+              exercises-dataset
+            </a>
+          </p>
         </div>
-      ) : null}
-    </section>
+        <dl className="meta-sheet__grid">
+          {rows.map((row) => (
+            <div key={row.label} className="meta-sheet__row">
+              <dt className="hud-label">{row.label}</dt>
+              <dd>{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+        {exercise.secondary_muscles?.length ? (
+          <div className="muscle-row">
+            <span className="muscle-row__label hud-label">Muscles</span>
+            <div className="muscle-row__tags">
+              <span className="muscle-tag muscle-tag--primary">{exercise.target}</span>
+              {exercise.muscle_group ? (
+                <span className="muscle-tag">{exercise.muscle_group}</span>
+              ) : null}
+              {exercise.secondary_muscles.map((m) => (
+                <span key={m} className="muscle-tag muscle-tag--sec">
+                  {m}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </section>
+    </Reveal>
   );
 }

@@ -1477,6 +1477,26 @@ textarea {
   box-shadow: var(--shadow-sm), var(--glow-cyan);
 }
 
+/* HUD corner brackets on the media frame — static paint, anchors on the
+   stage's existing position: relative */
+.media-demo__stage::after {
+  content: "";
+  position: absolute;
+  inset: 0.5rem;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--ring-stand), var(--ring-stand)) top left / 14px 2px,
+    linear-gradient(var(--ring-stand), var(--ring-stand)) top left / 2px 14px,
+    linear-gradient(var(--ring-stand), var(--ring-stand)) top right / 14px 2px,
+    linear-gradient(var(--ring-stand), var(--ring-stand)) top right / 2px 14px,
+    linear-gradient(var(--ring-stand), var(--ring-stand)) bottom left / 14px 2px,
+    linear-gradient(var(--ring-stand), var(--ring-stand)) bottom left / 2px 14px,
+    linear-gradient(var(--ring-stand), var(--ring-stand)) bottom right / 14px 2px,
+    linear-gradient(var(--ring-stand), var(--ring-stand)) bottom right / 2px 14px;
+  background-repeat: no-repeat;
+  opacity: 0.55;
+}
+
 .media-demo__canvas {
   position: relative;
   width: 100%;
@@ -2496,13 +2516,9 @@ form[action="/library"] .select-field {
   border: 0.5px solid var(--border);
 }
 
+/* Type style comes from .hud-label (class adoption in ExerciseMeta) */
 .meta-sheet__row dt {
   margin: 0;
-  font-size: 0.7rem;
-  font-weight: 750;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
   padding-top: 0.15rem;
 }
 
@@ -2515,6 +2531,13 @@ form[action="/library"] .select-field {
 
 .meta-sheet__row a {
   color: var(--ring-exercise);
+}
+
+/* Tap targets: tappable meta links stay ≥44px tall */
+.meta-sheet__tap {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 .meta-code {

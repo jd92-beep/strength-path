@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Reveal } from "@/components/Reveal";
 import { ScrollRail } from "@/components/ScrollRail";
 import { useLocale } from "@/lib/locale";
 import { localizedPattern } from "@/lib/localize";
@@ -81,7 +82,7 @@ export function ExercisePageChrome({
       {children}
 
       {related.length ? (
-        <section>
+        <Reveal as="section">
           <div className="section-head">
             <h2 className="display">{moreLabel}</h2>
           </div>
@@ -92,7 +93,7 @@ export function ExercisePageChrome({
               </Link>
             ))}
           </ScrollRail>
-        </section>
+        </Reveal>
       ) : null}
     </div>
   );
