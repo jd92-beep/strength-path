@@ -1668,6 +1668,13 @@ textarea {
   min-width: 0;
 }
 
+/* Tap targets: filter chips/inputs stay ≥44px tall */
+.library-filter-label .select-field,
+form[action="/library"] .field,
+form[action="/library"] .select-field {
+  min-height: 44px;
+}
+
 .ex-card {
   display: grid;
   grid-template-columns: 5.75rem minmax(0, 1fr);
@@ -1675,10 +1682,12 @@ textarea {
   padding: 0.65rem;
   align-items: center;
   border-radius: 18px;
-  background: var(--surface);
-  border: 0.5px solid var(--border);
+  background: var(--glass);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid var(--glass-border);
   transition: background 150ms var(--ease-out), transform 150ms var(--ease-out),
-    border-color 150ms var(--ease-out);
+    border-color 150ms var(--ease-out), box-shadow 240ms var(--ease-out);
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -1689,7 +1698,16 @@ textarea {
   .ex-card:hover {
     background: var(--surface-hover);
     border-color: var(--border-strong);
-    transform: translateY(-1px);
+  }
+}
+
+/* .hud-hover-equivalent lift + accent glow (motion gated on no-preference) */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .ex-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 16px 36px rgba(0, 0, 0, 0.5),
+      0 0 24px color-mix(in srgb, var(--a, var(--ring-exercise)) 24%, transparent);
   }
 }
 

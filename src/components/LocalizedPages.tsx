@@ -413,7 +413,9 @@ export function LibraryPageClient({
         )}
         <div className="stack">
           {results.map((ex, i) => (
-            <ExerciseCard key={ex.id} exercise={ex} featured={i === 0 && !hasFilter} />
+            <Reveal key={ex.id} delay={Math.min(i * 40, 240)}>
+              <ExerciseCard exercise={ex} featured={i === 0 && !hasFilter} />
+            </Reveal>
           ))}
         </div>
         {!results.length ? (
