@@ -9,6 +9,7 @@ import { markExerciseLearned } from "@/lib/progress";
 import { useLocale } from "@/lib/locale";
 import { MediaDemo } from "./MediaDemo";
 import { StepGuide } from "./StepGuide";
+import { Reveal } from "./Reveal";
 import { ExerciseMeta } from "./ExerciseMeta";
 import { BilingualList, BilingualText } from "./Bilingual";
 import { BodyPartIcon } from "./BodyPartIcon";
@@ -160,24 +161,28 @@ export function TeachStudio({
             ) : null}
             {mode === "both" ? (
               <>
-                <div className="guide-block">
-                  <p className="guide-block__label">{tr("guideEn")}</p>
-                  <StepGuide steps={i18n.en.steps} />
-                  {i18n.en.instructions ? (
-                    <p className="muted" style={{ marginTop: "0.75rem" }}>
-                      {i18n.en.instructions}
-                    </p>
-                  ) : null}
-                </div>
-                <div className="guide-block guide-block--yue">
-                  <p className="guide-block__label">{tr("guideYue")}</p>
-                  <StepGuide steps={i18n.yue.steps} />
-                  {i18n.yue.instructions ? (
-                    <p className="muted" style={{ marginTop: "0.75rem" }}>
-                      {i18n.yue.instructions}
-                    </p>
-                  ) : null}
-                </div>
+                <Reveal>
+                  <div className="guide-block">
+                    <p className="guide-block__label">{tr("guideEn")}</p>
+                    <StepGuide steps={i18n.en.steps} />
+                    {i18n.en.instructions ? (
+                      <p className="muted" style={{ marginTop: "0.75rem" }}>
+                        {i18n.en.instructions}
+                      </p>
+                    ) : null}
+                  </div>
+                </Reveal>
+                <Reveal delay={60}>
+                  <div className="guide-block guide-block--yue">
+                    <p className="guide-block__label">{tr("guideYue")}</p>
+                    <StepGuide steps={i18n.yue.steps} />
+                    {i18n.yue.instructions ? (
+                      <p className="muted" style={{ marginTop: "0.75rem" }}>
+                        {i18n.yue.instructions}
+                      </p>
+                    ) : null}
+                  </div>
+                </Reveal>
               </>
             ) : mode === "yue" ? (
               <>

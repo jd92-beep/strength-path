@@ -1,3 +1,5 @@
+import { Reveal } from "./Reveal";
+
 export function StepGuide({
   steps,
   compact = false,
@@ -12,11 +14,13 @@ export function StepGuide({
   return (
     <ol className={`step-list ${compact ? "step-list--compact" : ""}`.trim()}>
       {steps.map((step, i) => (
-        <li key={i}>
-          <div className="step-list__body">
-            <p className="step-list__text">{step}</p>
-          </div>
-        </li>
+        <Reveal key={i} delay={Math.min(i * 60, 300)}>
+          <li>
+            <div className="step-list__body">
+              <p className="step-list__text">{step}</p>
+            </div>
+          </li>
+        </Reveal>
       ))}
     </ol>
   );

@@ -2,6 +2,7 @@
 
 import { AppShell } from "@/components/AppShell";
 import { ExerciseCard } from "@/components/ExerciseCard";
+import { Reveal } from "@/components/Reveal";
 import { BilingualList, BilingualText } from "@/components/Bilingual";
 import { BodyPartIcon } from "@/components/BodyPartIcon";
 import { useLocale } from "@/lib/locale";
@@ -123,7 +124,9 @@ export function PatternPageClient({
                 </summary>
                 <div className="stack fold__body">
                   {g.exercises.map((ex, i) => (
-                    <ExerciseCard key={ex.id} exercise={ex} featured={gi === 0 && i === 0} />
+                    <Reveal key={ex.id} delay={Math.min(i * 60, 300)}>
+                      <ExerciseCard exercise={ex} featured={gi === 0 && i === 0} />
+                    </Reveal>
                   ))}
                 </div>
               </details>
