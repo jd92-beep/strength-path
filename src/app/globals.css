@@ -349,8 +349,10 @@ img {
   justify-items: center;
   padding: 0.65rem 0.4rem 0.75rem;
   border-radius: 18px;
-  background: var(--surface);
-  border: 0.5px solid var(--border);
+  background: var(--glass);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid var(--glass-border);
   text-align: center;
 }
 
@@ -435,8 +437,10 @@ img {
   justify-items: center;
   padding: 0.85rem 0.55rem;
   border-radius: 18px;
-  background: var(--surface);
-  border: 0.5px solid color-mix(in srgb, var(--region) 40%, var(--border));
+  background: var(--glass);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid color-mix(in srgb, var(--region) 40%, var(--border));
   text-align: center;
 }
 
@@ -445,6 +449,15 @@ img {
   height: 64px;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* Icon pop on card press (motion gated on no-preference) */
+@media (prefers-reduced-motion: no-preference) {
+  .bodymap__card:active .bodymap__card-icon,
+  .home-icon-card:active .home-icon-card__img {
+    transform: scale(1.06);
+    transition: transform 180ms var(--ease-spring);
+  }
 }
 
 .af-brand {

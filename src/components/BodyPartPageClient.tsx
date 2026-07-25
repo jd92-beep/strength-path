@@ -5,6 +5,7 @@ import { AppShell } from "@/components/AppShell";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { MediaDemo } from "@/components/MediaDemo";
 import { BodyPartIcon } from "@/components/BodyPartIcon";
+import { Reveal } from "@/components/Reveal";
 import { BilingualList, BilingualText } from "@/components/Bilingual";
 import { useLocale } from "@/lib/locale";
 import type { Exercise } from "@/lib/types";
@@ -103,8 +104,10 @@ export function BodyPartPageClient({
             {mode === "yue" ? "適合起步嘅動作" : "Good starting moves"}
           </h2>
           <div className="stack">
-            {featured.map((ex) => (
-              <ExerciseCard key={ex.id} exercise={ex} />
+            {featured.map((ex, i) => (
+              <Reveal key={ex.id} delay={Math.min(i * 40, 240)}>
+                <ExerciseCard exercise={ex} />
+              </Reveal>
             ))}
           </div>
         </section>
@@ -117,8 +120,10 @@ export function BodyPartPageClient({
             <span className="faint">{exercises.length}</span>
           </div>
           <div className="stack">
-            {exercises.slice(0, 40).map((ex) => (
-              <ExerciseCard key={ex.id} exercise={ex} />
+            {exercises.slice(0, 40).map((ex, i) => (
+              <Reveal key={ex.id} delay={Math.min(i * 40, 240)}>
+                <ExerciseCard exercise={ex} />
+              </Reveal>
             ))}
           </div>
           {exercises.length > 40 ? (

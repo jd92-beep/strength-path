@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BODY_PARTS, slugifyPart } from "@/lib/body-parts";
 import { BodyPartIcon } from "./BodyPartIcon";
+import { Reveal } from "./Reveal";
 import { useLocale } from "@/lib/locale";
 
 const REGION_HREF: Record<string, string> = {
@@ -53,7 +54,7 @@ export function BodyMap({ counts, activePart }: Props) {
   return (
     <div className="bodymap">
       <div className="bodymap__icons-grid" role="list">
-        {parts.map((p) => {
+        {parts.map((p, i) => {
           const active = activePart === p.id;
           const color = REGION_COLOR[p.id] ?? "var(--primary)";
           const label =
@@ -63,20 +64,21 @@ export function BodyMap({ counts, activePart }: Props) {
                 ? `${p.label} · ${YUE_LABEL[p.id] || ""}`
                 : p.label;
           return (
-            <Link
-              key={p.key}
-              href={`/body/${slugifyPart(REGION_HREF[p.key] ?? p.id)}`}
-              className="bodymap__card"
-              data-active={active}
-              style={{ ["--region" as string]: color }}
-              role="listitem"
-            >
-              <BodyPartIcon bodyPart={p.id} size={64} className="bodymap__card-icon" alt="" />
-              <span className="bodymap__label">{label}</span>
-              <span className="bodymap__count">
-                {counts[p.id] ?? 0} {tr("moves")}
-              </span>
-            </Link>
+            <Reveal key={p.key} delay={Math.min(i * 40, 240)}>
+              <Link
+                href={`/body/${slugifyPart(REGION_HREF[p.key] ?? p.id)}`}
+                className="bodymap__card hud-hover"
+                data-active={active}
+                style={{ ["--region" as string]: color }}
+                role="listitem"
+              >
+                <BodyPartIcon bodyPart={p.id} size={64} className="bodymap__card-icon" alt="" />
+                <span className="bodymap__label">{label}</span>
+                <span className="bodymap__count">
+                  {counts[p.id] ?? 0} {tr("moves")}
+                </span>
+              </Link>
+            </Reveal>
           );
         })}
       </div>

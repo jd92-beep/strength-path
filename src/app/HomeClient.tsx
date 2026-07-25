@@ -234,7 +234,7 @@ export function HomeClient({
             </div>
             <div className="home-icon-grid">
               {bodies.map((b) => (
-                <Link key={b.href} href={b.href} className="home-icon-card">
+                <Link key={b.href} href={b.href} className="home-icon-card hud-hover">
                   <BodyPartIcon bodyPart={b.id} size={72} className="home-icon-card__img" alt="" />
                   <span className="home-icon-card__label">
                     {mode === "yue" ? b.yue : mode === "both" ? `${b.label} · ${b.yue}` : b.label}
