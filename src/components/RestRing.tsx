@@ -16,7 +16,7 @@ export function RestRing({ total, left, onSkip }: Props) {
   const offset = c * (1 - pct);
 
   return (
-    <div className="rest-ring" role="timer" aria-live="polite" aria-label={`Rest ${left} seconds`}>
+    <div className="rest-ring glow-edge" role="timer" aria-live="polite" aria-label={`Rest ${left} seconds`}>
       <div className="rest-ring__visual">
         <svg viewBox="0 0 100 100" className="rest-ring__svg">
           <circle cx="50" cy="50" r={r} className="rest-ring__track" />

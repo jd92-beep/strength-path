@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { WorkoutClient } from "@/components/WorkoutClient";
+import { AnimatedNumber } from "@/components/AnimatedNumber";
 import { useLocale } from "@/lib/locale";
 import { patternCatalog, type MovementPattern } from "@/lib/teaching";
 import { localizedPattern } from "@/lib/localize";
@@ -120,8 +121,8 @@ export function QuickSessionClient() {
         {preview && preview.session.exercises.length >= 2 ? (
           <section className="surface" style={{ padding: "1rem", borderRadius: "18px" }}>
             <p className="muted" style={{ margin: "0 0 0.55rem", fontSize: "0.88rem" }}>
-              {preview.session.exercises.length} {tr("moves")} · ~{preview.session.durationMin}{" "}
-              {tr("min")}
+              <AnimatedNumber value={preview.session.exercises.length} /> {tr("moves")} · ~
+              <AnimatedNumber value={preview.session.durationMin} /> {tr("min")}
             </p>
             <ol className="quick-preview">
               {preview.exercises.map((ex) => (
@@ -131,14 +132,16 @@ export function QuickSessionClient() {
                 </li>
               ))}
             </ol>
-            <button
-              type="button"
-              className="btn btn-primary btn-block btn-lg"
-              style={{ marginTop: "0.85rem" }}
-              onClick={() => setLive(preview)}
-            >
-              {tr("startQuick")}
-            </button>
+            <div className="workout-cta-dock">
+              <button
+                type="button"
+                className="btn btn-primary btn-block btn-lg btn--glow"
+                style={{ marginTop: "0.85rem" }}
+                onClick={() => setLive(preview)}
+              >
+                {tr("startQuick")}
+              </button>
+            </div>
           </section>
         ) : (
           <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>

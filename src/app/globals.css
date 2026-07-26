@@ -2298,6 +2298,14 @@ form[action="/library"] .select-field {
   overflow: hidden;
 }
 
+/* Sticky footer dock for primary workout CTAs above the tab bar */
+.workout-cta-dock {
+  position: sticky;
+  bottom: calc(var(--nav-h) + var(--safe-b) + 0.5rem);
+  z-index: var(--z-sticky);
+  padding: 0.5rem 0;
+}
+
 .rest-ring {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -2710,7 +2718,7 @@ form[action="/library"] .select-field {
 
 .log-stepper {
   display: grid;
-  grid-template-columns: 2.6rem 1fr 2.6rem;
+  grid-template-columns: 48px 1fr 48px;
   align-items: stretch;
   border-radius: 14px;
   overflow: hidden;
@@ -2724,8 +2732,16 @@ form[action="/library"] .select-field {
   color: var(--ink);
   font-size: 1.15rem;
   font-weight: 700;
-  min-height: 2.75rem;
+  min-height: 48px;
+  min-width: 48px;
   cursor: pointer;
+}
+
+/* Primary "done set" CTA — 48px tap target */
+.workout-dock .btn,
+.workout-cta-dock .btn {
+  min-height: 48px;
+  min-width: 48px;
 }
 
 .log-stepper__btn:active {

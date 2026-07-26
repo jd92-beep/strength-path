@@ -8,6 +8,7 @@ import { applyYueToLesson } from "@/lib/teaching-yue";
 import { useLocale } from "@/lib/locale";
 import { MediaDemo } from "./MediaDemo";
 import { RestRing } from "./RestRing";
+import { AnimatedNumber } from "./AnimatedNumber";
 import { StepGuide } from "./StepGuide";
 import { BilingualList, BilingualText } from "./Bilingual";
 import { BodyPartIcon } from "./BodyPartIcon";
@@ -233,7 +234,10 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
         <div className="session-summary" style={{ position: "relative", zIndex: 1 }}>
           <p className="session-summary__title">{tr("sessionSummary")}</p>
           <p className="session-summary__stat">
-            <strong>{setsLogged}</strong> {tr("totalSetsShort")}
+            <strong>
+              <AnimatedNumber value={setsLogged} />
+            </strong>{" "}
+            {tr("totalSetsShort")}
           </p>
           {notes.length > 0 ? (
             <ul className="session-summary__notes">
@@ -389,7 +393,14 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
             ) : null}
             {typeof weightKg === "number" && weightKg > 0 ? (
               <p className="muted" style={{ margin: "0.25rem 0 0", fontSize: "0.82rem" }}>
-                {tr("est1RM")}: <strong>{estimate1RM(weightKg, parseRepRange(currentSet.reps).min || 1)} kg</strong>
+                {tr("est1RM")}:{" "}
+                <strong>
+                  <AnimatedNumber
+                    value={estimate1RM(weightKg, parseRepRange(currentSet.reps).min || 1)}
+                    format={(n) => String(Math.round(n * 10) / 10)}
+                  />{" "}
+                  kg
+                </strong>
               </p>
             ) : null}
           </>
@@ -467,7 +478,7 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
       ) : null}
 
       <div className="workout-dock">
-        <button type="button" className="btn btn-primary btn-block btn-lg" onClick={completeSet}>
+        <button type="button" className="btn btn-primary btn-block btn-lg btn--glow" onClick={completeSet}>
           {restLeft > 0
             ? tr("skipRestComplete")
             : setIndexNum + 1 < totalSets
