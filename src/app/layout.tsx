@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { LocaleProvider } from "@/lib/locale";
+import { TapFX } from "@/components/TapFX";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -41,6 +42,7 @@ export default function RootLayout({
     <html lang="en" className="min-h-full">
       <body className="min-h-full antialiased af-body">
         <LocaleProvider>{children}</LocaleProvider>
+        <TapFX />
       </body>
     </html>
   );

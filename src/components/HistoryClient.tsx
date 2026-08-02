@@ -3,6 +3,8 @@
 import { useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
+import { AnimatedNumber } from "@/components/AnimatedNumber";
+import { Reveal } from "@/components/Reveal";
 import { useLocale } from "@/lib/locale";
 import {
   clearLog,
@@ -50,23 +52,34 @@ export function HistoryClient() {
           </h1>
         </div>
 
-        <div className="stat-grid">
-          <div className="stat-card" style={{ ["--c" as string]: "var(--ring-exercise)" }}>
-            <strong>{stats.totalSets.toLocaleString()}</strong>
-            <span>{tr("loggedSets")}</span>
+        <Reveal delay={80}>
+          <div className="stat-grid">
+            <div className="stat-card" style={{ ["--c" as string]: "var(--ring-exercise)" }}>
+              <strong>
+                <AnimatedNumber value={stats.totalSets} format={(n) => Math.round(n).toLocaleString()} />
+              </strong>
+              <span>{tr("loggedSets")}</span>
+            </div>
+            <div className="stat-card" style={{ ["--c" as string]: "var(--ring-move)" }}>
+              <strong>
+                <AnimatedNumber
+                  value={stats.totalVolumeKg}
+                  format={(n) => Math.round(n).toLocaleString()}
+                />
+              </strong>
+              <span>{tr("totalVolume")}</span>
+            </div>
+            <div className="stat-card" style={{ ["--c" as string]: "var(--ring-stand)" }}>
+              <strong>
+                <AnimatedNumber value={stats.daysActive} format={(n) => Math.round(n).toLocaleString()} />
+              </strong>
+              <span>{tr("daysActive")}</span>
+            </div>
           </div>
-          <div className="stat-card" style={{ ["--c" as string]: "var(--ring-move)" }}>
-            <strong>{stats.totalVolumeKg.toLocaleString()}</strong>
-            <span>{tr("totalVolume")}</span>
-          </div>
-          <div className="stat-card" style={{ ["--c" as string]: "var(--ring-stand)" }}>
-            <strong>{stats.daysActive.toLocaleString()}</strong>
-            <span>{tr("daysActive")}</span>
-          </div>
-        </div>
+        </Reveal>
 
         {weeks.some((w) => w.sets > 0) ? (
-          <section className="surface chart-card">
+          <Reveal as="section" delay={160} className="surface chart-card">
             <h2 className="chart-card__title">{tr("weeklyVolume")}</h2>
             <div className="vol-chart" role="img" aria-label={tr("weeklyVolume")}>
               {weeks.map((w) => (
@@ -83,10 +96,10 @@ export function HistoryClient() {
                 </div>
               ))}
             </div>
-          </section>
+          </Reveal>
         ) : null}
 
-        <section className="surface chart-card">
+        <Reveal as="section" delay={240} className="surface chart-card">
           <h2 className="chart-card__title">{tr("personalRecords")}</h2>
           {prs.length === 0 ? (
             <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>
@@ -109,7 +122,7 @@ export function HistoryClient() {
               ))}
             </ul>
           )}
-        </section>
+        </Reveal>
 
         {days.length === 0 ? (
           <div className="hist-empty">
@@ -158,7 +171,7 @@ export function HistoryClient() {
           </div>
         )}
 
-        <section className="af-stack-sm">
+        <Reveal as="section" delay={120} className="af-stack-sm">
           <h2 style={{ margin: 0, fontSize: "1.2rem" }}>{tr("healthSync")}</h2>
           <p className="muted" style={{ margin: 0, fontSize: "0.9rem", lineHeight: 1.5 }}>
             {tr("healthSyncBlurb")}
@@ -197,7 +210,7 @@ export function HistoryClient() {
               {tr("exportJson")}
             </button>
           </div>
-        </section>
+        </Reveal>
 
         {entries.length > 0 ? (
           <button

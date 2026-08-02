@@ -50,8 +50,28 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --hud-grid: rgba(120, 150, 220, 0.05);
-  --glass: rgba(16, 18, 26, 0.66);
-  --glass-border: rgba(140, 170, 255, 0.16);
+  /* Liquid glass — a lighter, more translucent frost so ambient colour
+     refracts through it (the sample look). Layered white sheen sits on top
+     via the gradients below; the base tint stays dark enough for text. */
+  --glass: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 42%,
+    rgba(20, 24, 40, 0.42) 100%
+  );
+  --glass-solid: rgba(20, 24, 38, 0.55);
+  --glass-border: rgba(170, 195, 255, 0.24);
+  --glass-blur: blur(26px) saturate(185%);
+  --glass-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.25);
+  /* Iridescent edge — the rainbow rim on the sample's glass cards */
+  --iris: linear-gradient(
+    135deg,
+    rgba(61, 220, 255, 0.6) 0%,
+    rgba(138, 92, 255, 0.5) 38%,
+    rgba(255, 45, 108, 0.45) 70%,
+    rgba(52, 232, 96, 0.5) 100%
+  );
   --font-af: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
     "Helvetica Neue", system-ui, sans-serif;
 }
@@ -156,7 +176,8 @@ img {
   background: var(--bg);
 }
 
-/* Atmosphere — faint neon wash on the black canvas, fixed so it never scrolls */
+/* Atmosphere — vivid neon light pools so the liquid glass above them
+   has real colour to refract. Fixed so it never scrolls. */
 .af-app::before {
   content: "";
   position: fixed;
@@ -164,11 +185,23 @@ img {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(52rem 30rem at 110% -8%, rgba(61, 220, 255, 0.08), transparent 62%),
-    radial-gradient(46rem 30rem at -18% 4%, rgba(255, 45, 108, 0.07), transparent 60%),
-    radial-gradient(50rem 34rem at 50% 118%, rgba(138, 92, 255, 0.06), transparent 62%),
+    radial-gradient(44rem 30rem at 112% -6%, rgba(61, 220, 255, 0.2), transparent 58%),
+    radial-gradient(40rem 30rem at -16% 2%, rgba(255, 45, 108, 0.16), transparent 56%),
+    radial-gradient(46rem 32rem at 50% 116%, rgba(138, 92, 255, 0.16), transparent 60%),
+    radial-gradient(30rem 22rem at 78% 44%, rgba(52, 232, 96, 0.08), transparent 62%),
     repeating-linear-gradient(0deg, var(--hud-grid) 0 1px, transparent 1px 56px),
     repeating-linear-gradient(90deg, var(--hud-grid) 0 1px, transparent 1px 56px);
+}
+
+/* Slow drift gives the light a living, liquid quality */
+@media (prefers-reduced-motion: no-preference) {
+  .af-app::before {
+    animation: aurora 22s ease-in-out infinite alternate;
+  }
+  @keyframes aurora {
+    from { transform: translate3d(-1.5%, -1%, 0) scale(1.04); }
+    to { transform: translate3d(1.5%, 1.5%, 0) scale(1.1); }
+  }
 }
 
 .af-header {
@@ -176,9 +209,9 @@ img {
   top: 0;
   z-index: var(--z-sticky);
   padding-top: var(--safe-t);
-  background: rgba(5, 6, 10, 0.7);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(5, 6, 10, 0.55);
+  backdrop-filter: saturate(185%) blur(26px);
+  -webkit-backdrop-filter: saturate(185%) blur(26px);
   border-bottom: 1px solid var(--glass-border);
 }
 
@@ -253,14 +286,18 @@ img {
 
 .lang-switch__seg {
   display: inline-flex;
-  padding: 0.15rem;
+  padding: 0.2rem;
   border-radius: 999px;
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   gap: 0.1rem;
 }
 
 .lang-switch__btn {
+  position: relative;
   border: none;
   background: transparent;
   color: var(--ink-faint);
@@ -270,11 +307,24 @@ img {
   padding: 0.25rem 0.55rem;
   border-radius: 999px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 200ms var(--ease-out), transform 200ms var(--ease-spring);
 }
 
+.lang-switch__btn:active {
+  transform: scale(0.94);
+}
+
+/* Liquid-glass thumb on the active segment */
 .lang-switch__btn[data-active="true"] {
-  background: var(--ring-exercise);
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--ring-exercise) 96%, #fff) 0%,
+    var(--ring-exercise) 100%
+  );
   color: var(--primary-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 0 14px color-mix(in srgb, var(--ring-exercise) 40%, transparent);
 }
 
 .lang-switch--compact {
@@ -675,10 +725,10 @@ textarea {
   padding: 0.35rem;
   border-radius: 999px;
   background: var(--glass);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  box-shadow: var(--glass-sheen), 0 12px 32px rgba(0, 0, 0, 0.55);
 }
 
 /* Sidebar-only brand — hidden in the phone tab bar */
@@ -705,8 +755,14 @@ textarea {
 .af-tab[data-active="true"],
 .nav-link[data-active="true"] {
   color: var(--ring-exercise);
-  background: color-mix(in srgb, var(--ring-exercise) 10%, transparent);
-  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--ring-exercise) 25%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--ring-exercise) 20%, transparent) 0%,
+    color-mix(in srgb, var(--ring-exercise) 8%, transparent) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 0 0 0.5px color-mix(in srgb, var(--ring-exercise) 32%, transparent),
+    0 0 16px color-mix(in srgb, var(--ring-exercise) 22%, transparent);
   text-shadow: 0 0 12px color-mix(in srgb, var(--ring-exercise) 55%, transparent);
 }
 
@@ -1313,10 +1369,12 @@ textarea {
 
 .surface,
 .surface-soft {
-  background: linear-gradient(180deg, #17171e 0%, #121218 100%);
-  border: 0.5px solid var(--border);
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--shadow-sm);
 }
 
 .surface-interactive:hover {
@@ -1344,6 +1402,9 @@ textarea {
 }
 
 .btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1354,58 +1415,134 @@ textarea {
   border: none;
   font-weight: 650;
   cursor: pointer;
-  transition: transform 160ms var(--ease-out), opacity 160ms var(--ease-out),
-    filter 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 220ms var(--ease-spring), opacity 160ms var(--ease-out),
+    filter 160ms var(--ease-out), box-shadow 220ms var(--ease-out);
+}
+
+/* Specular sheen — a soft light streak across the top of every button,
+   the tell of liquid glass. Sits above the fill, below the label. */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.06) 34%,
+    transparent 55%
+  );
+  opacity: 0.9;
+  pointer-events: none;
 }
 
 @media (hover: hover) {
   .btn:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
   }
 }
 
 .btn:active {
-  transform: scale(0.97);
-  transition-duration: 80ms;
+  transform: scale(0.96);
+  transition-duration: 90ms;
 }
 
 .btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: default;
   box-shadow: none;
   pointer-events: none;
+  filter: saturate(0.7);
 }
 
 .btn-primary {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--ring-exercise) 92%, #fff) 0%, var(--ring-exercise) 100%);
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--ring-exercise) 96%, #fff) 0%,
+    var(--ring-exercise) 55%,
+    color-mix(in srgb, var(--ring-exercise) 88%, #000) 100%
+  );
   color: var(--primary-ink);
-  box-shadow: var(--glow-green), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: var(--glow-green), inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary:hover {
-  filter: brightness(1.05);
-  box-shadow: 0 0 28px rgba(52, 232, 96, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  filter: brightness(1.06);
+  box-shadow: 0 0 34px rgba(52, 232, 96, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+/* Frosted liquid-glass secondary — translucent, blurred, iridescent edge */
 .btn-ghost {
-  transition: transform 160ms var(--ease-out), background 160ms var(--ease-out),
-    border-color 160ms var(--ease-out);
+  background: linear-gradient(
+    170deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  color: var(--ink);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), var(--shadow-sm);
+  transition: transform 220ms var(--ease-spring), background 200ms var(--ease-out),
+    border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
 }
 
 .btn-ghost:hover {
-  background: var(--surface-hover);
+  background: linear-gradient(
+    170deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
   border-color: var(--border-strong);
 }
 
-.btn-ghost {
-  background: var(--surface-2);
-  color: var(--ink);
-  border: 0.5px solid var(--border);
+/* Liquid-glass tinted button — accent set via --a (defaults to cyan).
+   Iridescent translucent fill in the spirit of the Liquid Glass Kit sample. */
+.btn-glass {
+  --a: var(--ring-stand);
+  color: #fff;
+  background: linear-gradient(
+    165deg,
+    color-mix(in srgb, var(--a) 42%, transparent) 0%,
+    color-mix(in srgb, var(--a) 20%, transparent) 60%,
+    color-mix(in srgb, var(--violet) 24%, transparent) 100%
+  );
+  border: 1px solid color-mix(in srgb, var(--a) 45%, var(--glass-border));
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 22px color-mix(in srgb, var(--a) 25%, transparent);
+}
+
+.btn-glass:hover {
+  filter: brightness(1.08);
 }
 
 .btn-accent {
-  background: var(--ring-move);
+  background: linear-gradient(170deg, color-mix(in srgb, var(--ring-move) 96%, #fff), var(--ring-move));
   color: #fff;
+  box-shadow: var(--glow-magenta), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Tap ripple — spawned by TapFX on pointer-down, fits any radius */
+.tapfx-ripple {
+  position: absolute;
+  z-index: 0;
+  border-radius: 999px;
+  transform: scale(0);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  animation: tapfx-ripple 560ms var(--ease-out) forwards;
+}
+
+@keyframes tapfx-ripple {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
 }
 
 .btn-block {
@@ -1942,10 +2079,13 @@ form[action="/library"] .select-field {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.2rem;
-  padding: 0.25rem;
-  border-radius: 14px;
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
+  padding: 0.3rem;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -1964,13 +2104,25 @@ form[action="/library"] .select-field {
   font-weight: 650;
   font-size: 0.62rem;
   min-height: 2.45rem;
-  border-radius: 10px;
+  border-radius: 11px;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 200ms var(--ease-out), transform 180ms var(--ease-spring);
+}
+
+.teach-tab:active {
+  transform: scale(0.95);
 }
 
 .teach-tab[data-active="true"] {
-  background: var(--ring-exercise);
+  background: linear-gradient(
+    170deg,
+    color-mix(in srgb, var(--ring-exercise) 96%, #fff) 0%,
+    var(--ring-exercise) 100%
+  );
   color: var(--primary-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 0 14px color-mix(in srgb, var(--ring-exercise) 38%, transparent);
 }
 
 .teach-panel {
@@ -2891,16 +3043,35 @@ form[action="/library"] .select-field {
 
 /* Resume / train-today rail */
 .resume-rail {
+  position: relative;
   display: grid;
   gap: 0.85rem;
-  padding: 1.05rem 1.1rem;
-  border-radius: 20px;
+  padding: 1.1rem 1.15rem;
+  border-radius: 22px;
+  border: 1px solid transparent;
   background:
-    radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--ring-move) 28%, transparent), transparent 55%),
-    var(--surface);
-  border: 0.5px solid var(--border);
+    radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--ring-move) 30%, transparent), transparent 55%) padding-box,
+    var(--glass) padding-box,
+    var(--iris) border-box;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--shadow-md), 0 0 30px rgba(255, 45, 108, 0.14);
   text-decoration: none;
   color: inherit;
+  overflow: hidden;
+}
+
+/* Moving specular glint across the hero glass */
+@media (prefers-reduced-motion: no-preference) {
+  .resume-rail::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg, transparent 32%, rgba(255, 255, 255, 0.12) 46%, transparent 60%);
+    background-size: 250% 250%;
+    animation: glint 7s ease-in-out infinite;
+  }
 }
 
 .resume-rail--compact {
@@ -3458,7 +3629,95 @@ form[action="/library"] .select-field {
   }
 }
 
+/* =========================================================
+   Liquid-glass renovation — specular highlights on surfaces.
+   Inset box-shadow only (no pseudo-elements) so nothing clips or
+   reflows. A hairline of light along the top edge is the liquid-glass
+   tell; a whisper of inner shadow at the base gives depth.
+   ========================================================= */
+.surface,
+.guide-block,
+.home-icon-card,
+.chart-card,
+.sync-card,
+.stat-card,
+.hist-day,
+.teach-panel,
+.teach-hero-card,
+.rest-ring,
+.workout-set-panel {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.18), var(--shadow-sm);
+}
+
+/* Reusable liquid-glass panel — frosted, translucent, specular edge */
+.glass-panel {
+  background: linear-gradient(
+    170deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0.02) 60%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--shadow-md);
+}
+
+/* Deepen the frost + specular on the remaining glass cards so the whole
+   app reads as one liquid-glass system, matching the sample kit. */
+.guide-block,
+.home-icon-card,
+.bodymap__card,
+.chart-card,
+.sync-card {
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--shadow-sm);
+}
+
+/* Iridescent rim — the rainbow edge on the sample's premium glass cards.
+   Applied to hero surfaces via .iris-edge (gradient border, glass fill). */
+.iris-edge {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    var(--glass) padding-box,
+    var(--iris) border-box;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-sheen), var(--shadow-md),
+    0 0 30px rgba(120, 150, 255, 0.12);
+}
+
+/* A soft moving specular glint across hero glass */
+@media (prefers-reduced-motion: no-preference) {
+  .iris-edge::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.1) 45%,
+      transparent 60%
+    );
+    background-size: 250% 250%;
+    animation: glint 7s ease-in-out infinite;
+  }
+  @keyframes glint {
+    0%, 100% { background-position: 120% 0; }
+    50% { background-position: -20% 0; }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .tapfx-ripple {
+    display: none !important;
+  }
   *,
   *::before,
   *::after {
@@ -3551,7 +3810,7 @@ form[action="/library"] .select-field {
 .glow-edge {
   border: 1px solid transparent;
   background:
-    linear-gradient(var(--glass), var(--glass)) padding-box,
+    linear-gradient(var(--glass-solid), var(--glass-solid)) padding-box,
     linear-gradient(135deg,
       color-mix(in srgb, var(--a, var(--ring-exercise)) 55%, transparent),
       transparent 40%,

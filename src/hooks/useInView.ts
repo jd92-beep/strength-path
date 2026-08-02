@@ -23,7 +23,14 @@ export function useInView<T extends HTMLElement>(threshold = 0.15) {
       { threshold }
     );
     io.observe(el);
-    return () => io.disconnect();
+    // Safety net: never let content stay permanently hidden if the observer
+    // never fires (e.g. page loaded in a background tab, element never quite
+    // crosses the threshold). Reveal it anyway after a short grace period.
+    const fallback = setTimeout(() => setInView(true), 1200);
+    return () => {
+      io.disconnect();
+      clearTimeout(fallback);
+    };
   }, [threshold, inView]);
 
   return { ref, inView };

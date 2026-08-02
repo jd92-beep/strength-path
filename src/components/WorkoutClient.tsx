@@ -72,6 +72,8 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
 
   const substitutes = useMemo(
     () => (item ? findSubstitutes(item.exerciseId, 4) : []),
+    // Only exerciseId is read; recompute solely when it changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [item?.exerciseId],
   );
 
@@ -116,6 +118,9 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
     } else {
       setWeightKg(last ?? "");
     }
+    // Key off exercise id ONLY — re-running on currentSet would overwrite the
+    // weight the user just typed each time they advance a set.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercise?.id]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
