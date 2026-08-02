@@ -82,6 +82,7 @@ export function PathPageClient({ programs }: { programs: Program[] }) {
                   meta={`${program.sessions.length} ${tr("workoutsCount")} · ${program.weeks}${mode === "yue" ? " 星期" : " weeks"} · ${p.equipment}`}
                   badge={stageBadge(i, program.level, mode)}
                   accent={program.color}
+                  image={`/program-heroes/${program.id}.jpg`}
                   stage={i + 1}
                 />
               </Reveal>
@@ -108,9 +109,19 @@ export function ProgramPageClient({
     <AppShell title={p.title} backHref="/path">
       <div className="af-stack">
         <section
-          className="af-tile af-tile--large"
+          className="af-tile af-tile--large af-tile--photo"
           style={{ ["--a" as string]: program.color, minHeight: "11rem" }}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/program-heroes/${program.id}.jpg`}
+            alt=""
+            className="af-tile__photo"
+            loading="lazy"
+            decoding="async"
+            aria-hidden
+          />
+          <span className="af-tile__scrim" aria-hidden />
           <div className="af-tile__content">
             <span className="af-tile__badge">{levelLabel(program.level, mode)}</span>
             <h1 className="af-tile__title" style={{ fontSize: "1.85rem" }}>
@@ -263,6 +274,7 @@ export function LearnPageClient({
                 meta={`${p.count} ${mode === "yue" ? "個示範" : "demos"}`}
                 badge={mode === "yue" ? "模式" : "Pattern"}
                 accent={p.color}
+                image={`/pattern-banners/${p.id}.jpg`}
               />
             );
           })}

@@ -1033,6 +1033,35 @@ textarea {
 }
 
 /* Big stage numeral — programs are a real ordered sequence */
+/* Cinematic hero photo behind a tile */
+.af-tile__photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 28%;
+}
+
+/* Dark scrim so title/meta stay legible over the photo */
+.af-tile__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 6, 10, 0.12) 0%,
+    rgba(5, 6, 10, 0.5) 52%,
+    rgba(5, 6, 10, 0.92) 100%
+  );
+}
+
+/* Photo tiles: drop the numeral watermark, keep the accent rim/rail */
+.af-tile--photo .af-tile__num {
+  display: none;
+}
+
 .af-tile__num {
   position: absolute;
   right: 0.85rem;
@@ -3059,6 +3088,35 @@ form[action="/library"] .select-field {
   text-decoration: none;
   color: inherit;
   overflow: hidden;
+}
+
+.resume-rail__photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  opacity: 0.55;
+}
+
+.resume-rail__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(5, 6, 10, 0.82) 0%,
+    rgba(5, 6, 10, 0.55) 45%,
+    rgba(5, 6, 10, 0.2) 100%
+  );
+}
+
+.resume-rail__copy,
+.resume-rail__actions {
+  position: relative;
+  z-index: 1;
 }
 
 /* Moving specular glint across the hero glass */

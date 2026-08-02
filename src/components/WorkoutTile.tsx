@@ -10,6 +10,8 @@ type Props = {
   /** Neon accent color; falls back to a stable hash of gradientKey/title */
   accent?: string;
   gradientKey?: string;
+  /** Optional cinematic hero photo behind the tile */
+  image?: string;
   /** Stage number watermark — only for genuinely ordered sequences */
   stage?: number;
   large?: boolean;
@@ -23,6 +25,7 @@ export function WorkoutTile({
   badge,
   accent,
   gradientKey,
+  image,
   stage,
   large,
 }: Props) {
@@ -31,9 +34,16 @@ export function WorkoutTile({
   return (
     <Link
       href={href}
-      className={`af-tile hud-hover ${large ? "af-tile--large" : ""}`.trim()}
+      className={`af-tile hud-hover ${image ? "af-tile--photo" : ""} ${large ? "af-tile--large" : ""}`.trim()}
       style={{ ["--a" as string]: a }}
     >
+      {image ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={image} alt="" className="af-tile__photo" loading="lazy" decoding="async" aria-hidden />
+          <span className="af-tile__scrim" aria-hidden />
+        </>
+      ) : null}
       {typeof stage === "number" ? (
         <span className="af-tile__num" aria-hidden>
           {String(stage).padStart(2, "0")}

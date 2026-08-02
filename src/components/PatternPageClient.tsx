@@ -54,22 +54,28 @@ export function PatternPageClient({
     <AppShell title={loc.label} backHref="/learn">
       <div className="stack-md page-center">
         <section
-          className="surface"
-          style={{
-            padding: "1.15rem",
-            borderColor: `color-mix(in oklab, ${color} 40%, var(--border))`,
-            background: `linear-gradient(155deg, color-mix(in oklab, ${color} 18%, var(--surface)), var(--surface))`,
-          }}
+          className="af-tile af-tile--large af-tile--photo"
+          style={{ ["--a" as string]: color, minHeight: "12rem" }}
         >
-          <p className="chip" style={{ marginBottom: "0.55rem" }}>
-            {mode === "yue" ? "動作模式" : mode === "both" ? "Pattern · 模式" : "Movement pattern"}
-          </p>
-          <h1 className="display" style={{ margin: "0 0 0.4rem", fontSize: "1.45rem" }}>
-            {loc.label}
-          </h1>
-          <p className="muted" style={{ margin: 0 }}>
-            {loc.skillFocus}
-          </p>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/pattern-banners/${patternId}.jpg`}
+            alt=""
+            className="af-tile__photo"
+            loading="lazy"
+            decoding="async"
+            aria-hidden
+          />
+          <span className="af-tile__scrim" aria-hidden />
+          <div className="af-tile__content">
+            <span className="af-tile__badge">
+              {mode === "yue" ? "動作模式" : mode === "both" ? "Pattern · 模式" : "Movement pattern"}
+            </span>
+            <h1 className="af-tile__title" style={{ fontSize: "1.6rem" }}>
+              {loc.label}
+            </h1>
+            <p className="af-tile__sub">{loc.skillFocus}</p>
+          </div>
         </section>
 
         {lessonEn && lessonYue ? (

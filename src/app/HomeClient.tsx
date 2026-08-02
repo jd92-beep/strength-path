@@ -91,6 +91,16 @@ export function HomeClient({
         {next ? (
           <Reveal delay={160}>
             <section className="resume-rail" aria-label={tr("trainToday")}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/hero/train-today.jpg"
+                alt=""
+                className="resume-rail__photo"
+                loading="lazy"
+                decoding="async"
+                aria-hidden
+              />
+              <span className="resume-rail__scrim" aria-hidden />
               <div className="resume-rail__copy">
                 <p className="af-eyebrow">{tr("trainToday")}</p>
                 <h2 className="resume-rail__title">
@@ -143,6 +153,7 @@ export function HomeClient({
                     meta={`${prog.sessions.length} ${tr("sessions")} · ${p.equipment}`}
                     badge={i === 0 ? tr("featured") : stageBadge(i, prog.level, mode)}
                     accent={prog.color}
+                    image={`/program-heroes/${prog.id}.jpg`}
                     stage={i + 1}
                   />
                 );
