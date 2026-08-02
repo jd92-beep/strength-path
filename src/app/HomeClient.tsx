@@ -65,12 +65,24 @@ export function HomeClient({
     <AppShell>
       <div className="af-stack">
         <Reveal>
-          <header className="af-summary-head">
-            <div>
-              <p className="af-eyebrow">{tr("summary")}</p>
-              <h1 className="af-large-title">{tr("forYou")}</h1>
+          <header className="home-hero">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/hero/home-main.jpg"
+              alt=""
+              className="home-hero__photo"
+              fetchPriority="high"
+              decoding="async"
+              aria-hidden
+            />
+            <span className="home-hero__scrim" aria-hidden />
+            <div className="home-hero__content">
+              <div className="home-hero__copy">
+                <p className="af-eyebrow">{tr("summary")}</p>
+                <h1 className="af-large-title">{tr("forYou")}</h1>
+              </div>
+              <SummaryRings size={96} />
             </div>
-            <SummaryRings size={118} />
           </header>
         </Reveal>
 
