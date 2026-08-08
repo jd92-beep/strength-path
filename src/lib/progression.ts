@@ -1,4 +1,4 @@
-import { getLogSnapshot, type SetLogEntry, type SetRpe } from "./log";
+import { getLogSnapshot, workingSets, type SetLogEntry, type SetRpe } from "./log";
 
 export type RepRange = { min: number; max: number; isTimed: boolean };
 
@@ -27,7 +27,7 @@ export function parseRepRange(reps: string): RepRange {
 
 /** Last N logged sets for one exercise (newest last). */
 export function recentSetsFor(exerciseId: string, n = 12): SetLogEntry[] {
-  const all = getLogSnapshot().filter((e) => e.exerciseId === exerciseId);
+  const all = workingSets(getLogSnapshot()).filter((e) => e.exerciseId === exerciseId);
   return all.slice(-n);
 }
 
@@ -97,14 +97,19 @@ export function sessionProgressionNotes(
   exerciseIds: { id: string; name: string; plannedTop: string }[],
 ): ProgressionNote[] {
   if (!sessionId) return [];
-  const log = getLogSnapshot().filter(
+  const log = workingSets(getLogSnapshot()).filter(
     (e) => e.sessionId === sessionId && (!programId || e.programId === programId),
   );
   if (!log.length) return [];
 
+  // Only analyze the most recent completion — pooling all-time history skews
+  // easyCount/anyHard/lastKg, and quick sessions all share sessionId "quick".
+  const lastDay = new Date(log[log.length - 1].ts).toDateString();
+  const session = log.filter((e) => new Date(e.ts).toDateString() === lastDay);
+
   const notes: ProgressionNote[] = [];
   for (const ex of exerciseIds) {
-    const sets = log.filter((e) => e.exerciseId === ex.id);
+    const sets = session.filter((e) => e.exerciseId === ex.id);
     if (!sets.length) continue;
     const lastKg = [...sets].reverse().find((s) => typeof s.weightKg === "number")?.weightKg;
     const tagged = sets.filter((s) => s.rpe);

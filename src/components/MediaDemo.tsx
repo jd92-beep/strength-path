@@ -42,14 +42,29 @@ export function MediaDemo({
   const uid = useId();
   const locale = useLocaleOptional();
   const [playing, setPlaying] = useState(autoPlay);
-  const [cdn, setCdn] = useState(0);
+  const [cdnStill, setCdnStill] = useState(0);
+  const [cdnGif, setCdnGif] = useState(0);
   const [loadedStill, setLoadedStill] = useState<string | null>(null);
   const [loadedGif, setLoadedGif] = useState<string | null>(null);
   const [failedStill, setFailedStill] = useState<string | null>(null);
   const [failedGif, setFailedGif] = useState<string | null>(null);
 
-  const stillSrc = thumbUrl(imagePath, cdn);
-  const animSrc = gifUrl(gifPath, cdn);
+  // Reset the per-layer CDN chains and load state when the media changes
+  // (covers callers that reuse this component without key={exercise.id}).
+  const mediaKey = `${gifPath}|${imagePath}`;
+  const [prevMediaKey, setPrevMediaKey] = useState(mediaKey);
+  if (prevMediaKey !== mediaKey) {
+    setPrevMediaKey(mediaKey);
+    setCdnStill(0);
+    setCdnGif(0);
+    setLoadedStill(null);
+    setLoadedGif(null);
+    setFailedStill(null);
+    setFailedGif(null);
+  }
+
+  const stillSrc = thumbUrl(imagePath, cdnStill);
+  const animSrc = gifUrl(gifPath, cdnGif);
   const stillReady = loadedStill === stillSrc;
   const gifReady = loadedGif === animSrc;
   const stillFailed = failedStill === stillSrc;
@@ -62,18 +77,18 @@ export function MediaDemo({
   }, []);
 
   function onStillError() {
-    const next = nextCdnIndex(cdn);
+    const next = nextCdnIndex(cdnStill);
     if (next !== null) {
-      setCdn(next);
+      setCdnStill(next);
       return;
     }
     setFailedStill(stillSrc);
   }
 
   function onGifError() {
-    const next = nextCdnIndex(cdn);
+    const next = nextCdnIndex(cdnGif);
     if (next !== null) {
-      setCdn(next);
+      setCdnGif(next);
       return;
     }
     setFailedGif(animSrc);
@@ -117,13 +132,24 @@ export function MediaDemo({
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => e.stopPropagation()}
             >
-              <span>Demo unavailable</span>
+              <span>{locale?.tr("demoUnavailable") ?? "Demo unavailable"}</span>
+              {!gifFailed ? (
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  style={{ marginTop: "0.5rem" }}
+                  onClick={(e) => togglePlay(e)}
+                >
+                  {locale?.tr("play") ?? "Play"}
+                </button>
+              ) : null}
               <button
                 type="button"
                 className="btn btn-ghost"
                 style={{ marginTop: "0.5rem" }}
                 onClick={() => {
-                  setCdn(0);
+                  setCdnStill(0);
+                  setCdnGif(0);
                   setFailedStill(null);
                   setFailedGif(null);
                   setLoadedStill(null);

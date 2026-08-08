@@ -118,7 +118,7 @@ export function QuickSessionClient() {
           </div>
         </section>
 
-        {preview && preview.session.exercises.length >= 2 ? (
+        {preview ? (
           <section className="surface" style={{ padding: "1rem", borderRadius: "18px" }}>
             <p className="muted" style={{ margin: "0 0 0.55rem", fontSize: "0.88rem" }}>
               <AnimatedNumber value={preview.session.exercises.length} /> {tr("moves")} · ~
@@ -131,17 +131,40 @@ export function QuickSessionClient() {
                   <span className="muted"> · {ex.equipment}</span>
                 </li>
               ))}
+              {preview.skipped.map((p) => {
+                const meta = catalog.find((c) => c.id === p);
+                const loc = meta
+                  ? localizedPattern(meta.id, meta.label, meta.skillFocus, mode)
+                  : null;
+                return (
+                  <li key={p} data-skipped="true">
+                    <strong>{loc?.label ?? p}</strong>
+                    <span className="muted">
+                      {" · "}
+                      {tr("quickNoMatch")}
+                    </span>
+                  </li>
+                );
+              })}
             </ol>
-            <div className="workout-cta-dock">
-              <button
-                type="button"
-                className="btn btn-primary btn-block btn-lg btn--glow"
-                style={{ marginTop: "0.85rem" }}
-                onClick={() => setLive(preview)}
-              >
-                {tr("startQuick")}
-              </button>
-            </div>
+            {preview.session.exercises.length >= 2 ? (
+              <div className="workout-cta-dock">
+                <button
+                  type="button"
+                  className="btn btn-primary btn-block btn-lg btn--glow"
+                  style={{ marginTop: "0.85rem" }}
+                  onClick={() => setLive(preview)}
+                >
+                  {tr("startQuick")}
+                </button>
+              </div>
+            ) : (
+              <p className="muted" style={{ margin: "0.55rem 0 0", fontSize: "0.9rem" }}>
+                {mode === "yue"
+                  ? "呢個器材配唔到兩個動作，試下換器材。"
+                  : "Fewer than two moves match this equipment — try another equipment option."}
+              </p>
+            )}
           </section>
         ) : (
           <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>

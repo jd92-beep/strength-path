@@ -11,7 +11,7 @@ import type { MovementPattern } from "@/lib/teaching";
 const BODY_YUE: Record<string, string> = {
   chest: "胸",
   back: "背",
-  "upper legs": "大腿",
+  "upper legs": "腿",
   shoulders: "膊頭",
   "upper arms": "手臂",
   waist: "核心",
@@ -88,7 +88,12 @@ export function ExercisePageChrome({
           </div>
           <ScrollRail className="related-rail">
             {related.map((ex) => (
-              <Link key={ex.id} href={`/exercise/${ex.id}`} className="related-rail__item">
+              <Link
+                key={ex.id}
+                href={`/exercise/${ex.id}`}
+                className="related-rail__item"
+                draggable={false}
+              >
                 {ex.name}
               </Link>
             ))}

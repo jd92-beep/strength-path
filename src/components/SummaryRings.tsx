@@ -7,9 +7,10 @@ import {
   subscribeProgress,
   type ProgressState,
 } from "@/lib/progress";
+import { PROGRAMS } from "@/lib/programs";
 
-/** Total guided sessions in the app (Foundation + Dumbbell + Barbell). */
-const TOTAL_SESSIONS = 9;
+/** Total guided sessions across all programs (Foundation + Dumbbell + Barbell). */
+const TOTAL_SESSIONS = PROGRAMS.reduce((sum, p) => sum + p.sessions.length, 0);
 
 const SERVER_SNAPSHOT: ProgressState = {
   completedSessions: [],

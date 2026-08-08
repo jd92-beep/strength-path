@@ -15,8 +15,15 @@ export function RestRing({ total, left, onSkip }: Props) {
   const pct = total > 0 ? left / total : 0;
   const offset = c * (1 - pct);
 
+  // role="timer" + aria-live="off": the per-second value must NOT be in a
+  // polite live region, or screen readers announce every tick.
+  const ariaLabel = (locale?.tr("restSecondsAria") ?? "Rest {n} seconds").replace(
+    "{n}",
+    String(left),
+  );
+
   return (
-    <div className="rest-ring glow-edge" role="timer" aria-live="polite" aria-label={`Rest ${left} seconds`}>
+    <div className="rest-ring glow-edge" role="timer" aria-live="off" aria-label={ariaLabel}>
       <div className="rest-ring__visual">
         <svg viewBox="0 0 100 100" className="rest-ring__svg">
           <circle cx="50" cy="50" r={r} className="rest-ring__track" />
@@ -31,7 +38,7 @@ export function RestRing({ total, left, onSkip }: Props) {
         </svg>
         <div className="rest-ring__time">
           <span className="rest-ring__sec">{left}</span>
-          <span className="rest-ring__unit">sec</span>
+          <span className="rest-ring__unit">{locale?.tr("secUnit") ?? "sec"}</span>
         </div>
       </div>
       <div className="rest-ring__copy">

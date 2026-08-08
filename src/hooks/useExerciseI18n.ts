@@ -6,7 +6,10 @@ import { useLocale } from "@/lib/locale";
 
 const cache = new Map<string, Record<string, ExerciseI18n>>();
 
-/** Chinese pack from dataset (zh) used as written guide for Cantonese mode. */
+/**
+ * Chinese pack from the dataset (zh) — simplified-Chinese standard Mandarin,
+ * NOT Cantonese. UI labels it 中文（簡體） so users aren't misled.
+ */
 async function loadZhPack() {
   const hit = cache.get("zh");
   if (hit) return hit;
@@ -19,7 +22,8 @@ async function loadZhPack() {
 
 /**
  * English always from exercise record.
- * Cantonese mode loads dataset Chinese (zh) instructions as written 粵/中 guide.
+ * Cantonese mode loads the dataset's simplified-Chinese (zh) instructions as
+ * a written Chinese guide (labeled 中文（簡體）, not 粵語).
  * Mode "both" exposes both.
  */
 export function useExerciseI18n(exercise: Exercise) {
@@ -34,6 +38,7 @@ export function useExerciseI18n(exercise: Exercise) {
 
   const [version, setVersion] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (!showYue) return;
@@ -51,7 +56,7 @@ export function useExerciseI18n(exercise: Exercise) {
     return () => {
       cancelled = true;
     };
-  }, [showYue, exercise.id]);
+  }, [showYue, exercise.id, retryCount]);
 
   void version;
   const zh = cache.get("zh")?.[exercise.id];
@@ -72,5 +77,10 @@ export function useExerciseI18n(exercise: Exercise) {
       showYue && !showEn ? yuePack.instructions : english.instructions,
     loading: showYue && !zh && !failed,
     error: failed && showYue && !zh,
+    /** Re-attempt the zh pack fetch after a failure. */
+    retry: () => {
+      setFailed(false);
+      setRetryCount((c) => c + 1);
+    },
   };
 }

@@ -164,6 +164,21 @@ export const PROGRAMS_YUE: Record<string, ProgramYue> = {
       },
     },
   },
+  quick: {
+    title: "快速訓練",
+    tagline: "自由揀動作，即刻開始",
+    description: "隨機配搭訓練動作，即刻開始。",
+    equipment: "任意器材",
+    level: "初階",
+    sessions: {
+      quick: {
+        title: "快速訓練",
+        focus: "全身",
+        coaching: {},
+        notes: {},
+      },
+    },
+  },
 };
 
 export function localizeProgramText(
@@ -175,19 +190,3 @@ export function localizeProgramText(
   if (!yueMode) return fallback;
   return PROGRAMS_YUE[programId]?.[field] ?? fallback;
 }
-
-PROGRAMS_YUE.quick = {
-  title: "快速訓練",
-  tagline: "自由揀動作，即刻開始",
-  description: "隨機配搭訓練動作，即刻開始。",
-  equipment: "任意器材",
-  level: "初階",
-  sessions: {
-    quick: {
-      title: "快速訓練",
-      focus: "全身",
-      coaching: {},
-      notes: {},
-    },
-  },
-};

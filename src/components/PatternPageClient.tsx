@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { Reveal } from "@/components/Reveal";
@@ -10,10 +11,12 @@ import { localizedPattern } from "@/lib/localize";
 import type { MovementPattern, PatternGroup, TeachLesson } from "@/lib/teaching";
 import { applyYueToLesson } from "@/lib/teaching-yue";
 
+const INITIAL_SHOW = 40;
+
 const BODY_YUE: Record<string, string> = {
   chest: "胸",
   back: "背",
-  "upper legs": "大腿",
+  "upper legs": "腿",
   shoulders: "膊頭",
   "upper arms": "手臂",
   waist: "核心",
@@ -41,6 +44,17 @@ export function PatternPageClient({
   const { tr, mode } = useLocale();
   const loc = localizedPattern(patternId as MovementPattern, label, skillFocus, mode);
   const total = groups.reduce((n, g) => n + g.exercises.length, 0);
+  // Cap initial render — big patterns (isolation, push) have 250+ cards.
+  const offsets = groups.map((_, gi) =>
+    groups.slice(0, gi).reduce((n, g) => n + g.exercises.length, 0),
+  );
+  const visibleGroups = groups
+    .map((g, gi) => ({
+      bodyPart: g.bodyPart,
+      count: g.exercises.length,
+      exercises: g.exercises.slice(0, Math.max(0, INITIAL_SHOW - offsets[gi])),
+    }))
+    .filter((g) => g.exercises.length > 0);
   const bodyLabel = (bp: string) =>
     mode === "yue"
       ? BODY_YUE[bp] || bp
@@ -118,12 +132,12 @@ export function PatternPageClient({
             </span>
           </div>
           <div className="stack">
-            {groups.map((g, gi) => (
+            {visibleGroups.map((g, gi) => (
               <details key={g.bodyPart} className="fold" open={gi === 0}>
                 <summary className="fold__head">
                   <BodyPartIcon bodyPart={g.bodyPart} size={30} className="fold__icon" alt="" />
                   <span className="fold__title">{bodyLabel(g.bodyPart)}</span>
-                  <span className="fold__count">{g.exercises.length}</span>
+                  <span className="fold__count">{g.count}</span>
                   <span className="fold__chev" aria-hidden>
                     ›
                   </span>
@@ -138,6 +152,16 @@ export function PatternPageClient({
               </details>
             ))}
           </div>
+          {total > INITIAL_SHOW ? (
+            <p className="muted" style={{ marginTop: "0.85rem" }}>
+              <Link
+                href={`/library?pattern=${encodeURIComponent(patternId)}`}
+                className="section-link"
+              >
+                {tr("seeAll")} →
+              </Link>
+            </p>
+          ) : null}
         </section>
       </div>
     </AppShell>

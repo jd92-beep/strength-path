@@ -32,9 +32,9 @@ const TEACHING: Record<
       "Pair presses with upper-back work the same week.",
     ],
     tipsYue: [
-      "重卧推前，先練好斜板／跪膝掌上壓。",
-      "落去控制——2–3 秒。",
-      "同一星期要配上背拉。",
+      "做大重量臥推之前，先練好斜板／跪膝掌上壓。",
+      "落嘅時候控制速度——2–3 秒。",
+      "同一星期要配埋上背訓練。",
     ],
     starter: "Start with push-up variations 3×/week.",
     starterYue: "一星期 3 次由掌上壓變化開始。",
@@ -64,16 +64,16 @@ const TEACHING: Record<
       "Lunges fix left/right imbalances.",
     ],
     tipsYue: [
-      "深度只去到姿勢仲誠實嘅位置。",
-      "鉸鏈日先保護腰——先收腹。",
+      "深度只去到姿勢唔走樣為止。",
+      "鉸鏈動作日要護腰——先收緊核心。",
       "弓步改善左右不平衡。",
     ],
     starter: "Bodyweight squat + glute bridge before loaded work.",
-    starterYue: "加重前先做徒手蹲 + 尻橋。",
+    starterYue: "加重前先做徒手深蹲 + 臀橋。",
   },
   shoulders: {
     goal: "Overhead capacity without cranky joints.",
-    goalYue: "練過頭能力，關節唔好嘈。",
+    goalYue: "練過頭推嘅能力，唔好激嬲啲關節。",
     tips: [
       "Warm up with light raises before presses.",
       "Stop short of pain — delts love control.",
@@ -98,7 +98,7 @@ const TEACHING: Record<
     tipsYue: [
       "推嘅鎖定靠三頭。",
       "二頭要全伸 + 慢落。",
-      "唔好因為重而毀咗手肘軌跡。",
+      "唔好為咗逞強加重，毀咗手肘軌跡。",
     ],
     starter: "Close-grip push-ups + curls twice weekly.",
     starterYue: "窄距掌上壓 + 彎舉，一星期兩次。",
@@ -146,7 +146,7 @@ const TEACHING: Record<
     tipsYue: [
       "農夫行同死吊最練握力。",
       "手腕伸肌都要練，唔好淨係屈。",
-      "腱有意見就停——用容量大過用極重。",
+      "肌腱有意見就停——寧願加容量，唔好搏極重。",
     ],
     starter: "Hang from a bar 3×20–40s.",
     starterYue: "吊槓 3×20–40 秒。",
@@ -178,7 +178,7 @@ const TEACHING: Record<
     tipsYue: [
       "阻力好輕——絕對唔好扯。",
       "慢速等長好過猛做。",
-      "有頸傷未批准就跳過。",
+      "有頸傷而未經醫生許可，就跳過唔好做。",
     ],
     starter: "Gentle isometrics if pain-free.",
     starterYue: "無痛先做溫和等長。",

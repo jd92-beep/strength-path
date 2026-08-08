@@ -58,14 +58,20 @@ export type QuickBuildOpts = {
 export function buildQuickSession(opts: QuickBuildOpts): {
   session: Session;
   exercises: Exercise[];
+  /** Selected patterns that matched no exercise for this equipment. */
+  skipped: MovementPattern[];
 } {
   const used = new Set<string>();
   const moves: WorkoutExercise[] = [];
   const exercises: Exercise[] = [];
+  const skipped: MovementPattern[] = [];
 
   for (const pattern of opts.patterns) {
     const ex = pickExercise(pattern, opts.equipment, used);
-    if (!ex) continue;
+    if (!ex) {
+      skipped.push(pattern);
+      continue;
+    }
     used.add(ex.id);
     exercises.push(ex);
     moves.push({
@@ -85,5 +91,5 @@ export function buildQuickSession(opts: QuickBuildOpts): {
     exercises: moves,
   };
 
-  return { session, exercises };
+  return { session, exercises, skipped };
 }

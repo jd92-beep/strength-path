@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useSyncExternalStore,
   type ReactNode,
@@ -69,6 +70,12 @@ const Ctx = createContext<LocaleCtx | null>(null);
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const mode = useSyncExternalStore(subscribe, readMode, () => "both" as AppLangMode);
   const setMode = useCallback((m: AppLangMode) => writeMode(m), []);
+
+  // layout.tsx hardcodes <html lang="en">; keep it in sync client-side.
+  // "both" uses EN as primary (tr() is EN for both), so lang stays "en".
+  useEffect(() => {
+    document.documentElement.lang = mode === "yue" ? "zh-HK" : "en";
+  }, [mode]);
 
   const value = useMemo<LocaleCtx>(
     () => ({

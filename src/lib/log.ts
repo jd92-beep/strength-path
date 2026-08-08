@@ -21,7 +21,18 @@ export type SetLogEntry = {
   weightKg?: number;
   /** optional how-it-felt tag for progression */
   rpe?: SetRpe;
+  /**
+   * Warm-up sets are kept in history but excluded from every stat: they would
+   * otherwise inflate volume/PRs and drag weight suggestions down. Route all
+   * analytics through workingSets().
+   */
+  warmup?: boolean;
 };
+
+/** History keeps warm-ups; stats never count them. */
+export function workingSets(entries: SetLogEntry[]): SetLogEntry[] {
+  return entries.filter((e) => !e.warmup);
+}
 
 let cachedRaw: string | null | undefined = undefined;
 let cachedState: SetLogEntry[] = [];
@@ -88,14 +99,24 @@ export function lastWeightFor(exerciseId: string): number | undefined {
   const entries = getLogSnapshot();
   for (let i = entries.length - 1; i >= 0; i--) {
     const e = entries[i];
+    // Skip warm-ups — seeding the stepper from a light warm-up set would walk
+    // the suggested load downwards every session.
+    if (e.warmup) continue;
     if (e.exerciseId === exerciseId && typeof e.weightKg === "number") return e.weightKg;
   }
   return undefined;
 }
 
-/** First rep count in a planned string like "8–10" or "12", for volume estimates. */
+/**
+ * First rep count in a planned string like "8–10" or "12", for volume estimates.
+ * Timed holds ("20–30s") and AMRAP-style entries aren't countable reps — return 0
+ * so they don't inflate volume/PR math (mirrors parseRepRange in progression.ts).
+ */
 function firstReps(reps: string): number {
-  const m = reps.match(/\d+/);
+  const s = reps.trim().toLowerCase();
+  if (s.includes("amrap") || s.includes("max")) return 0;
+  if (/\d+\s*s\b/.test(s) || /\d+\s*s\//.test(s)) return 0;
+  const m = s.match(/\d+/);
   return m ? parseInt(m[0], 10) : 0;
 }
 
@@ -106,13 +127,16 @@ export type LogStats = {
 };
 
 export function computeStats(entries: SetLogEntry[]): LogStats {
+  // daysActive counts any day you trained (a warm-up-only day still happened);
+  // sets and volume count working sets only.
   const days = new Set<string>();
+  for (const e of entries) days.add(new Date(e.ts).toDateString());
+  const working = workingSets(entries);
   let vol = 0;
-  for (const e of entries) {
-    days.add(new Date(e.ts).toDateString());
+  for (const e of working) {
     if (typeof e.weightKg === "number") vol += e.weightKg * firstReps(e.reps);
   }
-  return { totalSets: entries.length, totalVolumeKg: Math.round(vol), daysActive: days.size };
+  return { totalSets: working.length, totalVolumeKg: Math.round(vol), daysActive: days.size };
 }
 
 /** Newest day first, sets within a day in chronological order. */
@@ -143,10 +167,11 @@ export function toCsv(entries: SetLogEntry[]): string {
       esc(e.reps),
       e.weightKg ?? "",
       e.rpe ?? "",
+      e.warmup ? "warmup" : "working",
     ].join(","),
   );
   return [
-    "timestamp,exercise_id,exercise,body_part,program,session,reps,weight_kg,rpe",
+    "timestamp,exercise_id,exercise,body_part,program,session,reps,weight_kg,rpe,set_type",
     ...rows,
   ].join("\n");
 }
@@ -165,9 +190,11 @@ export type PersonalRecord = {
 /** Best loaded set per exercise (skips bodyweight-only history). */
 export function computePersonalRecords(entries: SetLogEntry[], limit = 12): PersonalRecord[] {
   const best = new Map<string, PersonalRecord>();
-  for (const e of entries) {
+  for (const e of workingSets(entries)) {
     if (typeof e.weightKg !== "number" || e.weightKg <= 0) continue;
-    const vol = e.weightKg * firstReps(e.reps);
+    const reps = firstReps(e.reps);
+    if (reps === 0) continue; // timed / AMRAP sets aren't countable PRs
+    const vol = e.weightKg * reps;
     const prev = best.get(e.exerciseId);
     if (
       !prev ||
@@ -199,11 +226,11 @@ export type WeekBucket = {
 };
 
 /** Last N calendar weeks of volume (oldest → newest). */
-export function weeklyVolume(entries: SetLogEntry[], weeks = 8): WeekBucket[] {
+export function weeklyVolume(entries: SetLogEntry[], weeks = 8, locale = "en-GB"): WeekBucket[] {
   const map = new Map<string, WeekBucket>();
-  for (const e of entries) {
+  for (const e of workingSets(entries)) {
     const d = new Date(e.ts);
-    const { key, label, startTs } = isoWeek(d);
+    const { key, label, startTs } = isoWeek(d, locale);
     let b = map.get(key);
     if (!b) {
       b = { week: key, label, volumeKg: 0, sets: 0, startTs };
@@ -218,7 +245,7 @@ export function weeklyVolume(entries: SetLogEntry[], weeks = 8): WeekBucket[] {
   return slice;
 }
 
-function isoWeek(d: Date): { key: string; label: string; startTs: number } {
+function isoWeek(d: Date, locale: string): { key: string; label: string; startTs: number } {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   const day = date.getUTCDay() || 7;
   date.setUTCDate(date.getUTCDate() + 4 - day);
@@ -229,7 +256,7 @@ function isoWeek(d: Date): { key: string; label: string; startTs: number } {
   const dow = mon.getDay() || 7;
   mon.setDate(mon.getDate() - dow + 1);
   mon.setHours(0, 0, 0, 0);
-  const label = mon.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  const label = mon.toLocaleDateString(locale, { day: "numeric", month: "short" });
   return { key, label, startTs: mon.getTime() };
 }
 
@@ -238,6 +265,10 @@ export function downloadFile(name: string, mime: string, content: string) {
   const a = document.createElement("a");
   a.href = url;
   a.download = name;
+  // Firefox/WKWebView ignore clicks on detached anchors and need the object URL
+  // to outlive the click — append, click, remove, revoke on a timer.
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 }

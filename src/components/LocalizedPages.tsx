@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useSyncExternalStore, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import {
   getProgressSnapshot,
@@ -307,6 +308,8 @@ export function BodyPageClient({ counts }: { counts: Record<string, number> }) {
 
 export function LibraryPageClient({
   results,
+  totalMatches,
+  totalExercises,
   q,
   body,
   equipment,
@@ -319,6 +322,8 @@ export function LibraryPageClient({
   patternOptions,
 }: {
   results: Exercise[];
+  totalMatches: number;
+  totalExercises: number;
   q: string;
   body: string;
   equipment: string;
@@ -331,27 +336,63 @@ export function LibraryPageClient({
   patternOptions: { id: string; label: string }[];
 }) {
   const { tr, mode } = useLocale();
+  const router = useRouter();
   const hasFilter = Boolean(q || body || equipment || target || pattern || programId);
+  const [values, setValues] = useState({ q, body, equipment, target, pattern, program: programId });
+
+  /* eslint-disable react-hooks/set-state-in-effect -- intentional: resets the form when the URL params change (back/forward, shared links) */
+  useEffect(() => {
+    setValues({ q, body, equipment, target, pattern, program: programId });
+  }, [q, body, equipment, target, pattern, programId]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const applyFilters = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (values.q) params.set("q", values.q);
+    if (values.program) params.set("program", values.program);
+    if (values.pattern) params.set("pattern", values.pattern);
+    if (values.body) params.set("body", values.body);
+    if (values.equipment) params.set("equipment", values.equipment);
+    if (values.target) params.set("target", values.target);
+    const qs = params.toString();
+    router.replace(qs ? `/library?${qs}` : "/library", { scroll: false });
+  };
+
+  const clearFilters = () => {
+    setValues({ q: "", body: "", equipment: "", target: "", pattern: "", program: "" });
+    router.replace("/library", { scroll: false });
+  };
+
+  const set = (key: keyof typeof values) => (e: { target: { value: string } }) =>
+    setValues((v) => ({ ...v, [key]: e.target.value }));
+
   return (
     <AppShell title={tr("search")} backHref="/">
       <div className="stack-md">
         <p className="muted" style={{ margin: 0, fontSize: "0.92rem" }}>
           {mode === "yue"
-            ? "搜尋成個 1,324 動作庫。用計劃、模式、部位、器材篩選。"
-            : "Search the full 1,324-exercise catalog. Filter by program, pattern, body part, or equipment."}
+            ? `搜尋成個 ${totalExercises.toLocaleString()} 動作庫。用計劃、模式、部位、器材篩選。`
+            : `Search the full ${totalExercises.toLocaleString()}-exercise catalog. Filter by program, pattern, body part, or equipment.`}
         </p>
-        <form action="/library" method="get" className="stack">
+        <form onSubmit={applyFilters} className="stack">
           <input
             id="q"
             name="q"
             className="field"
-            defaultValue={q}
+            value={values.q}
+            onChange={set("q")}
             placeholder={mode === "yue" ? "搜動作名、肌肉、器材…" : "Search name, muscle, equipment…"}
           />
           <div className="library-filter-grid">
             <label className="library-filter-label">
               {tr("programFilter")}
-              <select name="program" defaultValue={programId} className="select-field">
+              <select
+                name="program"
+                value={values.program}
+                onChange={set("program")}
+                className="select-field"
+              >
                 <option value="">{tr("all")}</option>
                 {programOptions.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -362,7 +403,12 @@ export function LibraryPageClient({
             </label>
             <label className="library-filter-label">
               {tr("patternFilter")}
-              <select name="pattern" defaultValue={pattern} className="select-field">
+              <select
+                name="pattern"
+                value={values.pattern}
+                onChange={set("pattern")}
+                className="select-field"
+              >
                 <option value="">{tr("all")}</option>
                 {patternOptions.map((p) => {
                   const loc = localizedPattern(p.id as MovementPattern, p.label, "", mode);
@@ -378,7 +424,12 @@ export function LibraryPageClient({
           <div className="library-filter-grid">
             <label className="library-filter-label">
               {tr("bodyPart")}
-              <select name="body" defaultValue={body} className="select-field">
+              <select
+                name="body"
+                value={values.body}
+                onChange={set("body")}
+                className="select-field"
+              >
                 <option value="">{tr("all")}</option>
                 {BODY_PARTS.map((b) => (
                   <option key={b.id} value={b.id}>
@@ -389,7 +440,12 @@ export function LibraryPageClient({
             </label>
             <label className="library-filter-label">
               {tr("equipment")}
-              <select name="equipment" defaultValue={equipment} className="select-field">
+              <select
+                name="equipment"
+                value={values.equipment}
+                onChange={set("equipment")}
+                className="select-field"
+              >
                 <option value="">{tr("all")}</option>
                 {equipmentOptions.map((eq) => (
                   <option key={eq} value={eq}>
@@ -401,7 +457,12 @@ export function LibraryPageClient({
           </div>
           <label style={{ display: "grid", gap: "0.25rem", fontSize: "0.78rem", color: "var(--ink-muted)" }}>
             {tr("targetMuscle")}
-            <select name="target" defaultValue={target} className="select-field">
+            <select
+              name="target"
+              value={values.target}
+              onChange={set("target")}
+              className="select-field"
+            >
               <option value="">{tr("all")}</option>
               {targetOptions.map((t) => (
                 <option key={t} value={t}>
@@ -416,11 +477,15 @@ export function LibraryPageClient({
         </form>
         {hasFilter && (
           <p className="muted" style={{ margin: 0, fontSize: "0.88rem" }}>
-            {results.length}
+            {totalMatches > results.length
+              ? tr("showingOf")
+                  .replace("{shown}", String(results.length))
+                  .replace("{total}", String(totalMatches))
+              : totalMatches}
             {programId ? ` · ${tr("inProgram")}` : ""} ·{" "}
-            <Link href="/library" className="section-link">
+            <button type="button" className="section-link" onClick={clearFilters}>
               {tr("clear")}
-            </Link>
+            </button>
           </p>
         )}
         <div className="stack">

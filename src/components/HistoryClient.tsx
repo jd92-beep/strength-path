@@ -19,6 +19,7 @@ import {
   type SetLogEntry,
 } from "@/lib/log";
 import { estimate1RM, parseRepRange } from "@/lib/progression";
+import { getExercise } from "@/lib/exercises";
 
 const HEALTH_APPS = [
   { name: "Apple Health", color: "var(--ring-move)" },
@@ -35,12 +36,12 @@ const EMPTY: SetLogEntry[] = [];
 export function HistoryClient() {
   const { tr, mode } = useLocale();
   const entries = useSyncExternalStore(subscribeLog, getLogSnapshot, emptyServerSnapshot);
+  const dateLocale = mode === "en" ? "en-GB" : "zh-HK";
   const stats = computeStats(entries);
   const days = groupByDay(entries);
   const prs = useMemo(() => computePersonalRecords(entries, 10), [entries]);
-  const weeks = useMemo(() => weeklyVolume(entries, 8), [entries]);
+  const weeks = useMemo(() => weeklyVolume(entries, 8, dateLocale), [entries, dateLocale]);
   const maxVol = Math.max(1, ...weeks.map((w) => w.volumeKg));
-  const dateLocale = mode === "en" ? "en-GB" : "zh-HK";
 
   return (
     <AppShell title={tr("historyTitle")} backHref="/">
@@ -107,9 +108,9 @@ export function HistoryClient() {
             </p>
           ) : (
             <ul className="pr-list">
-              {prs.map((pr) => (
-                <li key={pr.exerciseId}>
-                  <Link href={`/exercise/${pr.exerciseId}`} className="pr-row">
+              {prs.map((pr) => {
+                const row = (
+                  <>
                     <span className="pr-row__name">{pr.exerciseName}</span>
                     <span className="pr-row__data">
                       <strong>{pr.bestWeightKg} kg</strong>
@@ -117,9 +118,21 @@ export function HistoryClient() {
                         {" "}· {pr.repsAtBest} ({tr("est1RM")} ~{estimate1RM(pr.bestWeightKg, parseRepRange(pr.repsAtBest).min || 1)} kg)
                       </span>
                     </span>
-                  </Link>
-                </li>
-              ))}
+                  </>
+                );
+                return (
+                  <li key={pr.exerciseId}>
+                    {/* Dataset IDs can be renamed/removed — dead links 404 with dynamicParams=false */}
+                    {getExercise(pr.exerciseId) ? (
+                      <Link href={`/exercise/${pr.exerciseId}`} className="pr-row">
+                        {row}
+                      </Link>
+                    ) : (
+                      <div className="pr-row">{row}</div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </Reveal>
@@ -152,20 +165,31 @@ export function HistoryClient() {
                     {d.sets.length} {tr("set").toLowerCase()}
                   </span>
                 </div>
-                {d.sets.map((s, i) => (
-                  <Link
-                    key={`${s.ts}-${i}`}
-                    href={`/exercise/${s.exerciseId}`}
-                    className="hist-set"
-                  >
-                    <span className="hist-set__name">{s.exerciseName}</span>
-                    <span className="hist-set__data">
-                      {s.reps}
-                      {typeof s.weightKg === "number" ? ` · ${s.weightKg} kg` : ""}
-                      {s.rpe ? ` · ${s.rpe}` : ""}
-                    </span>
-                  </Link>
-                ))}
+                {d.sets.map((s, i) => {
+                  const data = (
+                    <>
+                      <span className="hist-set__name">{s.exerciseName}</span>
+                      <span className="hist-set__data">
+                        {s.reps}
+                        {typeof s.weightKg === "number" ? ` · ${s.weightKg} kg` : ""}
+                        {s.rpe ? ` · ${s.rpe}` : ""}
+                      </span>
+                    </>
+                  );
+                  return getExercise(s.exerciseId) ? (
+                    <Link
+                      key={`${s.ts}-${i}`}
+                      href={`/exercise/${s.exerciseId}`}
+                      className="hist-set"
+                    >
+                      {data}
+                    </Link>
+                  ) : (
+                    <div key={`${s.ts}-${i}`} className="hist-set">
+                      {data}
+                    </div>
+                  );
+                })}
               </section>
             ))}
           </div>

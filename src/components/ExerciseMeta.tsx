@@ -1,15 +1,19 @@
+"use client";
+
 import type { ReactNode } from "react";
 import type { Exercise } from "@/lib/types";
 import { slugifyPart } from "@/lib/body-parts";
 import Link from "next/link";
 import { Reveal } from "./Reveal";
+import { useLocale } from "@/lib/locale";
 
 /** Surfaces every dataset field the browser can show. */
 export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
+  const { tr } = useLocale();
   const rows: { label: string; value: ReactNode }[] = [
     { label: "ID", value: exercise.id },
     {
-      label: "Category",
+      label: tr("metaCategory"),
       value: (
         <Link
           className="meta-sheet__tap"
@@ -20,33 +24,33 @@ export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
       ),
     },
     {
-      label: "Body part",
+      label: tr("bodyPart"),
       value: (
         <Link className="meta-sheet__tap" href={`/body/${slugifyPart(exercise.body_part)}`}>
           {exercise.body_part}
         </Link>
       ),
     },
-    { label: "Target", value: exercise.target || "—" },
-    { label: "Muscle group", value: exercise.muscle_group || "—" },
+    { label: tr("targetMuscle"), value: exercise.target || "—" },
+    { label: tr("metaMuscleGroup"), value: exercise.muscle_group || "—" },
     {
-      label: "Secondary",
+      label: tr("alsoHits"),
       value: exercise.secondary_muscles?.length
         ? exercise.secondary_muscles.join(", ")
         : "—",
     },
-    { label: "Equipment", value: exercise.equipment || "—" },
-    { label: "Media ID", value: exercise.media_id || "—" },
+    { label: tr("equipment"), value: exercise.equipment || "—" },
+    { label: tr("metaMediaId"), value: exercise.media_id || "—" },
     {
-      label: "Thumbnail",
+      label: tr("metaThumbnail"),
       value: <code className="meta-code">{exercise.image}</code>,
     },
     {
-      label: "Animation GIF",
+      label: tr("metaGif"),
       value: <code className="meta-code">{exercise.gif_url}</code>,
     },
     {
-      label: "Attribution",
+      label: tr("metaAttribution"),
       value: (
         <a
           className="meta-sheet__tap"
@@ -63,11 +67,11 @@ export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
 
   return (
     <Reveal>
-      <section className="meta-sheet" aria-label="Exercise dataset fields">
+      <section className="meta-sheet" aria-label={tr("datasetFields")}>
         <div className="meta-sheet__head">
-          <h3 className="meta-sheet__title">Dataset fields</h3>
+          <h3 className="meta-sheet__title">{tr("datasetFields")}</h3>
           <p className="meta-sheet__sub">
-            Full record from{" "}
+            {tr("fullRecordFrom")}{" "}
             <a
               href="https://github.com/hasaneyldrm/exercises-dataset"
               target="_blank"
@@ -87,7 +91,7 @@ export function ExerciseMeta({ exercise }: { exercise: Exercise }) {
         </dl>
         {exercise.secondary_muscles?.length ? (
           <div className="muscle-row">
-            <span className="muscle-row__label hud-label">Muscles</span>
+            <span className="muscle-row__label hud-label">{tr("musclesTrained")}</span>
             <div className="muscle-row__tags">
               <span className="muscle-tag muscle-tag--primary">{exercise.target}</span>
               {exercise.muscle_group ? (

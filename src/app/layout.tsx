@@ -4,6 +4,7 @@ import { TapFX } from "@/components/TapFX";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://strength-path.vercel.app"),
   title: {
     default: "Strength Path",
     template: "%s · Strength Path",

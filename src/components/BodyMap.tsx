@@ -8,9 +8,11 @@ import { useLocale } from "@/lib/locale";
 
 const REGION_HREF: Record<string, string> = {
   head: "neck",
+  neck: "neck",
   chest: "chest",
   shoulders: "shoulders",
   arms: "upper arms",
+  forearms: "lower arms",
   core: "waist",
   back: "back",
   legs: "upper legs",
@@ -27,10 +29,12 @@ const YUE_LABEL: Record<string, string> = {
   chest: "胸",
   back: "背",
   "upper arms": "手臂",
+  "lower arms": "前臂",
   waist: "核心",
   "upper legs": "腿",
   "lower legs": "小腿",
   cardio: "心肺",
+  neck: "頸",
 };
 
 type Props = {
@@ -41,10 +45,12 @@ type Props = {
 export function BodyMap({ counts, activePart }: Props) {
   const { mode, tr } = useLocale();
   const parts = [
+    { key: "neck", label: "Neck", id: "neck" },
     { key: "shoulders", label: "Shoulders", id: "shoulders" },
     { key: "chest", label: "Chest", id: "chest" },
     { key: "back", label: "Back", id: "back" },
     { key: "arms", label: "Arms", id: "upper arms" },
+    { key: "forearms", label: "Forearms", id: "lower arms" },
     { key: "core", label: "Core", id: "waist" },
     { key: "legs", label: "Legs", id: "upper legs" },
     { key: "calves", label: "Calves", id: "lower legs" },

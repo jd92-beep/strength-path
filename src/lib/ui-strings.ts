@@ -115,6 +115,32 @@ export type UiKey =
   | "suggestDeload"
   | "suggestLast"
   | "est1RM"
+  | "warmupSet"
+  | "warmupExcluded"
+  | "logWarmup"
+  | "routines"
+  | "routinesBlurb"
+  | "routinesEmpty"
+  | "newRoutine"
+  | "routineName"
+  | "addMove"
+  | "removeMove"
+  | "saveRoutine"
+  | "deleteRoutine"
+  | "startRoutine"
+  | "editRoutine"
+  | "routineSets"
+  | "repsLabel"
+  | "restLabel"
+  | "routineNeedsMove"
+  | "untitledRoutine"
+  | "confirmDeleteRoutine"
+  | "noResults"
+  | "plateLoader"
+  | "perSide"
+  | "barWeight"
+  | "barOnly"
+  | "plateShort"
   | "swapMove"
   | "noEquipment"
   | "useThis"
@@ -137,7 +163,29 @@ export type UiKey =
   | "setsLabel"
   | "nextTime"
   | "sessionSummary"
-  | "totalSetsShort";
+  | "totalSetsShort"
+  | "showingOf"
+  | "guideLoadFailed"
+  | "noSteps"
+  | "datasetFields"
+  | "fullRecordFrom"
+  | "metaCategory"
+  | "metaMuscleGroup"
+  | "metaMediaId"
+  | "metaThumbnail"
+  | "metaGif"
+  | "metaAttribution"
+  | "restSecondsAria"
+  | "secUnit"
+  | "demoUnavailable"
+  | "quickNoMatch"
+  | "errorEyebrow"
+  | "errorTitle"
+  | "errorBody"
+  | "notFoundTitle"
+  | "notFoundBody"
+  | "backToSummary"
+  | "searchDemos";
 
 const en: Record<UiKey, string> = {
   brand: "Strength Path",
@@ -218,7 +266,7 @@ const en: Record<UiKey, string> = {
   formLibrary: "Form library",
   strengthPath: "Strength path",
   guideEn: "English guide",
-  guideYue: "Cantonese guide",
+  guideYue: "Chinese (Simplified) guide",
   ringMove: "Move",
   ringExercise: "Exercise",
   ringStand: "Stand",
@@ -255,6 +303,32 @@ const en: Record<UiKey, string> = {
   suggestDeload: "Last time was tough — ease the load",
   suggestLast: "Last load",
   est1RM: "Est. 1RM",
+  warmupSet: "Warm-up",
+  warmupExcluded: "Warm-ups stay in history but never count toward volume or PRs.",
+  logWarmup: "Log warm-up set",
+  routines: "My routines",
+  routinesBlurb: "Build your own workout from any of the 1,324 moves.",
+  routinesEmpty: "No routines yet. Build one and it starts like any other workout — with demos, rest timer and logging.",
+  newRoutine: "New routine",
+  routineName: "Routine name",
+  addMove: "Add move",
+  removeMove: "Remove",
+  saveRoutine: "Save routine",
+  deleteRoutine: "Delete",
+  startRoutine: "Start",
+  editRoutine: "Edit",
+  routineSets: "Sets",
+  repsLabel: "Reps",
+  restLabel: "Rest",
+  routineNeedsMove: "Add at least one move to save this routine.",
+  untitledRoutine: "Untitled routine",
+  confirmDeleteRoutine: "Delete this routine? This cannot be undone.",
+  noResults: "No moves match that search.",
+  plateLoader: "Plate loader",
+  perSide: "Per side",
+  barWeight: "Bar",
+  barOnly: "Bar only — no plates",
+  plateShort: "short",
   swapMove: "Swap exercise",
   noEquipment: "Missing equipment?",
   useThis: "Use this",
@@ -278,6 +352,28 @@ const en: Record<UiKey, string> = {
   nextTime: "Next time",
   sessionSummary: "Session summary",
   totalSetsShort: "sets",
+  showingOf: "Showing {shown} of {total}",
+  guideLoadFailed: "Couldn’t load the Chinese guide — showing English.",
+  noSteps: "No step-by-step instructions available.",
+  datasetFields: "Dataset fields",
+  fullRecordFrom: "Full record from",
+  metaCategory: "Category",
+  metaMuscleGroup: "Muscle group",
+  metaMediaId: "Media ID",
+  metaThumbnail: "Thumbnail",
+  metaGif: "Animation GIF",
+  metaAttribution: "Attribution",
+  restSecondsAria: "Rest {n} seconds",
+  secUnit: "sec",
+  demoUnavailable: "Demo unavailable",
+  quickNoMatch: "no match for this equipment",
+  errorEyebrow: "Something went wrong",
+  errorTitle: "Couldn’t load this screen",
+  errorBody: "Try again. If it keeps failing, go home and open another workout.",
+  notFoundTitle: "Page not found",
+  notFoundBody: "That workout, exercise, or pattern doesn’t exist — or the link is incomplete.",
+  backToSummary: "Back to Summary",
+  searchDemos: "Search demos",
 };
 
 /** Written Cantonese (粵語) UI — natural HK spoken style */
@@ -360,7 +456,7 @@ const yue: Record<UiKey, string> = {
   formLibrary: "教學庫",
   strengthPath: "力量之路",
   guideEn: "英文說明",
-  guideYue: "粵語說明",
+  guideYue: "中文（簡體）說明",
   ringMove: "活動",
   ringExercise: "訓練",
   ringStand: "站立",
@@ -397,6 +493,32 @@ const yue: Record<UiKey, string> = {
   suggestDeload: "上次偏硬，今日輕啲",
   suggestLast: "上次重量",
   est1RM: "預估 1RM",
+  warmupSet: "熱身組",
+  warmupExcluded: "熱身組會留喺紀錄，但唔會計入總訓練量同 PR。",
+  logWarmup: "記錄熱身組",
+  routines: "我嘅課表",
+  routinesBlurb: "喺 1,324 個動作入面，砌返你自己嘅課表。",
+  routinesEmpty: "重未有課表。砌一個，開始練嗰陣同其他課表一樣，有示範、休息計時同紀錄。",
+  newRoutine: "新增課表",
+  routineName: "課表名",
+  addMove: "加動作",
+  removeMove: "移走",
+  saveRoutine: "儲存課表",
+  deleteRoutine: "刪除",
+  startRoutine: "開始",
+  editRoutine: "編輯",
+  routineSets: "組數",
+  repsLabel: "次數",
+  restLabel: "休息",
+  routineNeedsMove: "最少要加一個動作先可以儲存。",
+  untitledRoutine: "未命名課表",
+  confirmDeleteRoutine: "確定刪除呢個課表？刪咗就攞唔返。",
+  noResults: "搵唔到相符嘅動作。",
+  plateLoader: "槓片計算",
+  perSide: "每邊",
+  barWeight: "槓鈴",
+  barOnly: "淨係得槓鈴，唔使加片",
+  plateShort: "爭",
   swapMove: "換動作",
   noEquipment: "冇器材？",
   useThis: "用呢個",
@@ -420,6 +542,28 @@ const yue: Record<UiKey, string> = {
   nextTime: "下次",
   sessionSummary: "今堂總結",
   totalSetsShort: "組",
+  showingOf: "顯示 {shown} / 共 {total} 個",
+  guideLoadFailed: "簡體中文說明載入失敗，而家顯示英文。",
+  noSteps: "暫時未有逐步教學。",
+  datasetFields: "數據欄位",
+  fullRecordFrom: "完整紀錄嚟自",
+  metaCategory: "類別",
+  metaMuscleGroup: "肌群",
+  metaMediaId: "媒體 ID",
+  metaThumbnail: "縮圖",
+  metaGif: "示範 GIF",
+  metaAttribution: "署名",
+  restSecondsAria: "休息 {n} 秒",
+  secUnit: "秒",
+  demoUnavailable: "暫時未有示範",
+  quickNoMatch: "呢個器材冇啱嘅動作",
+  errorEyebrow: "出咗啲問題",
+  errorTitle: "呢一版載入唔到",
+  errorBody: "再試一次。如果都係唔得，返主頁開另一課訓練。",
+  notFoundTitle: "搵唔到呢一版",
+  notFoundBody: "呢個訓練、動作或者模式唔存在——或者條連結唔完整。",
+  backToSummary: "返回概覽",
+  searchDemos: "搵示範",
 };
 
 export function t(key: UiKey, mode: AppLangMode): string {

@@ -26,7 +26,9 @@ export function ActivityRings({
       <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
         {rings.map((ring, i) => {
           const circ = 2 * Math.PI * ring.r;
-          const offset = circ * (1 - Math.min(1, Math.max(0, ring.value)));
+          // Clamp non-finite values to 0 so a bad prop can't vanish the ring.
+          const value = Number.isFinite(ring.value) ? ring.value : 0;
+          const offset = circ * (1 - Math.min(1, Math.max(0, value)));
           return (
             <g key={i}>
               <circle

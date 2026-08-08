@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:plates": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-plates.mjs",
+    "check:stats": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-log-stats.mjs",
+    "check": "npm run check:plates && npm run check:stats"
   },
   "dependencies": {
     "next": "16.2.10",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Exercise } from "@/lib/types";
 import { buildLesson } from "@/lib/teaching";
 import { applyYueToLesson } from "@/lib/teaching-yue";
@@ -30,10 +30,12 @@ export function TeachStudio({
   const [tab, setTab] = useState<Tab>("watch");
   const i18n = useExerciseI18n(exercise);
 
-  useEffect(() => {
-    const t = window.setTimeout(() => markExerciseLearned(exercise.id), 0);
-    return () => window.clearTimeout(t);
-  }, [exercise.id]);
+  // Mark learned on genuine engagement — opening any teaching section
+  // (step guide, cues, mistakes, …) — not merely viewing the page.
+  function selectTab(id: Tab) {
+    setTab(id);
+    markExerciseLearned(exercise.id);
+  }
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "watch", label: tr("watch") },
@@ -118,7 +120,7 @@ export function TeachStudio({
             aria-selected={tab === t.id}
             className="teach-tab"
             data-active={tab === t.id}
-            onClick={() => setTab(t.id)}
+            onClick={() => selectTab(t.id)}
           >
             {t.label}
           </button>
@@ -158,6 +160,14 @@ export function TeachStudio({
             <h3 className="teach-panel__title">{tr("steps")}</h3>
             {i18n.loading ? (
               <p className="faint">Loading…</p>
+            ) : null}
+            {i18n.error ? (
+              <p className="faint">
+                {tr("guideLoadFailed")}{" "}
+                <button type="button" className="section-link" onClick={i18n.retry}>
+                  {tr("tryAgain")}
+                </button>
+              </p>
             ) : null}
             {mode === "both" ? (
               <>

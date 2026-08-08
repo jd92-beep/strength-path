@@ -6,7 +6,7 @@ import { filterExercises, uniqueValues } from "@/lib/exercises";
 import { PROGRAMS } from "@/lib/programs";
 import { patternCatalog } from "@/lib/teaching";
 
-export function LibraryClient() {
+export function LibraryClient({ totalExercises }: { totalExercises: number }) {
   const sp = useSearchParams();
   const q = sp.get("q") ?? "";
   const body = sp.get("body") ?? "";
@@ -15,19 +15,21 @@ export function LibraryClient() {
   const pattern = sp.get("pattern") ?? "";
   const programId = sp.get("program") ?? "";
 
-  const results = filterExercises({
+  const matches = filterExercises({
     q: q || undefined,
     bodyPart: body || undefined,
     equipment: equipment || undefined,
     target: target || undefined,
     pattern: pattern || undefined,
     programId: programId || undefined,
-    limit: 80,
   });
+  const results = matches.slice(0, 80);
 
   return (
     <LibraryPageClient
       results={results}
+      totalMatches={matches.length}
+      totalExercises={totalExercises}
       q={q}
       body={body}
       equipment={equipment}

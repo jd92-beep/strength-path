@@ -170,7 +170,15 @@ const PATTERN_META: Record<
 
 function nameHas(name: string, ...words: string[]) {
   const n = name.toLowerCase();
-  return words.some((w) => n.includes(w));
+  // Word-boundary match (trailing "s" allowed) so "row" doesn't hit
+  // "narrow"/"throw" and "walk" doesn't hit "walkout".
+  return words.some((w) => {
+    const re = new RegExp(
+      `\\b${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}s?\\b`,
+      "i",
+    );
+    return re.test(n);
+  });
 }
 
 export function detectPattern(ex: Exercise): MovementPattern {
@@ -182,17 +190,17 @@ export function detectPattern(ex: Exercise): MovementPattern {
   if (bp === "cardio" || t.includes("cardiovascular") || nameHas(n, "burpee", "mountain climber", "jumping"))
     return "cardio";
   if (bp === "lower legs" || t === "calves") return "calves";
-  if (nameHas(n, "deadlift", "rdl", "romanian", "good morning", "hip hinge", "kettlebell swing"))
+  if (nameHas(n, "deadlift", "rdl", "romanian", "good morning", "hip hinge", "kettlebell swing", "glute bridge", "hip thrust", "hyperextension"))
     return "hinge";
   if (nameHas(n, "lunge", "split squat", "step-up", "step up", "bulgarian")) return "lunge";
   if (nameHas(n, "squat", "leg press", "hack squat")) return "squat";
   if (nameHas(n, "pull-up", "pull up", "chin-up", "chin up", "lat pulldown", "pulldown"))
     return "pull-vertical";
-  if (nameHas(n, "row", "face pull", "rear delt")) return "pull-horizontal";
+  if (nameHas(n, "row", "face pull", "rear delt", "rear deltoid")) return "pull-horizontal";
   if (nameHas(n, "overhead", "shoulder press", "military press", "push press", "jerk"))
     return "push-vertical";
   if (
-    nameHas(n, "bench", "push-up", "push up", "chest press", "fly", "dip") ||
+    nameHas(n, "bench", "push-up", "push up", "chest press", "fly", "flye", "dip") ||
     t === "pectorals"
   )
     return "push-horizontal";

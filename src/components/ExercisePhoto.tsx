@@ -21,7 +21,21 @@ export function ExercisePhoto({
 }) {
   const [cdn, setCdn] = useState(0);
   const [useIcon, setUseIcon] = useState(false);
+  const [iconFailed, setIconFailed] = useState(false);
   const src = useIcon ? bodyPartIcon(bodyPart) : thumbUrl(imagePath, cdn);
+
+  // Final fallback: the icon itself 404'd — render a neutral placeholder
+  // so the browser never shows a broken-image glyph.
+  if (iconFailed) {
+    return (
+      <div
+        role="img"
+        aria-label={alt}
+        className={className}
+        style={{ width, height, background: "#111" }}
+      />
+    );
+  }
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
@@ -35,7 +49,10 @@ export function ExercisePhoto({
       className={className}
       draggable={false}
       onError={() => {
-        if (useIcon) return;
+        if (useIcon) {
+          setIconFailed(true);
+          return;
+        }
         const next = nextCdnIndex(cdn);
         if (next !== null) setCdn(next);
         else setUseIcon(true);

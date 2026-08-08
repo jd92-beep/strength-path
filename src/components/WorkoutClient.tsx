@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { Exercise, Session, WorkoutExercise } from "@/lib/types";
 import { buildLesson } from "@/lib/teaching";
@@ -24,6 +24,13 @@ import {
   suggestWeightKg,
 } from "@/lib/progression";
 import { getExercise } from "@/lib/exercises";
+import {
+  BAR_OPTIONS_KG,
+  computePlates,
+  defaultBarKg,
+  formatPerSide,
+  isBarbellEquipment,
+} from "@/lib/plates";
 
 type Props = {
   session: Session;
@@ -53,8 +60,16 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
   const [swapOpen, setSwapOpen] = useState(false);
   const [weightKg, setWeightKg] = useState<number | "">("");
   const [rpe, setRpe] = useState<SetRpe | null>(null);
+  const [isWarmup, setIsWarmup] = useState(false);
+  const [barKg, setBarKg] = useState<number>(20);
   const [setsLogged, setSetsLogged] = useState(0);
+  // Bumped on every logged set INCLUDING warm-ups. Warm-ups deliberately leave
+  // the set/exercise index untouched, so this is what re-arms the double-tap
+  // guard for them — without it the guard latches and blocks all later sets.
+  const [logTick, setLogTick] = useState(0);
   const [cueIndex, setCueIndex] = useState(0);
+  const restEndsAtRef = useRef(0);
+  const committedRef = useRef(false);
 
   const safeIndex = Math.min(index, Math.max(slots.length - 1, 0));
   const item = slots[safeIndex];
@@ -82,6 +97,13 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
     return suggestWeightKg(exercise.id, currentSet.reps);
   }, [item, exercise, currentSet]);
 
+  // Only meaningful on a loadable bar with a real target weight.
+  const plateLoad = useMemo(() => {
+    if (!exercise || !isBarbellEquipment(exercise.equipment)) return null;
+    if (typeof weightKg !== "number" || weightKg <= 0) return null;
+    return computePlates(weightKg, barKg);
+  }, [exercise, weightKg, barKg]);
+
   const restCues = useMemo(() => {
     if (!lessonEn || !lessonYue) return [] as { en: string; yue: string }[];
     const cues: { en: string; yue: string }[] = [];
@@ -108,7 +130,9 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
   useEffect(() => {
     if (!exercise) return;
     setRpe(null);
+    setIsWarmup(false);
     setSwapOpen(false);
+    setBarKg(defaultBarKg(exercise.equipment));
     const hint = currentSet ? suggestWeightKg(exercise.id, currentSet.reps) : undefined;
     const last = lastWeightFor(exercise.id);
     if (exercise.equipment === "body weight") {
@@ -124,12 +148,21 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
   }, [exercise?.id]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  // Timestamp-based countdown: compute remaining time from restEndsAtRef so the
+  // timer survives background throttling / screen lock (intervals are frozen,
+  // wall-clock is not) and can't drift forward.
   useEffect(() => {
     if (!resting) return;
-    const t = setInterval(() => {
-      setRestLeft((s) => (s <= 1 ? 0 : s - 1));
-    }, 1000);
-    return () => clearInterval(t);
+    const update = () => {
+      setRestLeft(Math.max(0, Math.ceil((restEndsAtRef.current - Date.now()) / 1000)));
+    };
+    update();
+    const t = setInterval(update, 250);
+    document.addEventListener("visibilitychange", update);
+    return () => {
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", update);
+    };
   }, [resting, restTotal]);
 
   useEffect(() => {
@@ -140,8 +173,14 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
     return () => clearInterval(t);
   }, [resting, restCues.length]);
 
+  // Re-arm the double-tap guard once the state from a committed set has flushed.
+  useEffect(() => {
+    committedRef.current = false;
+  }, [safeIndex, setIndexNum, done, logTick]);
+
   function startRest(sec: number) {
     const safe = Math.max(0, Math.floor(sec));
+    restEndsAtRef.current = Date.now() + safe * 1000;
     setRestTotal(safe);
     setRestLeft(safe);
     setCueIndex(0);
@@ -168,6 +207,11 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
 
   function completeSet() {
     if (!item || !currentSet) return;
+    // Re-entry guard: a fast double-tap before state flushes must not log two
+    // sets and skip an unperformed one. Re-armed by the effect above once the
+    // committed advance (set/exercise/done) has rendered.
+    if (committedRef.current) return;
+    committedRef.current = true;
     if (restLeft > 0) setRestLeft(0);
 
     if (exercise) {
@@ -180,12 +224,21 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
         reps: currentSet.reps,
         weightKg: weightKg === "" ? undefined : weightKg,
         rpe: rpe ?? undefined,
+        warmup: isWarmup || undefined,
       });
-      setSetsLogged((n) => n + 1);
+      if (!isWarmup) setSetsLogged((n) => n + 1);
+      setLogTick((n) => n + 1);
     }
 
     const restSec = restForRpe(item.restSec, rpe);
     setRpe(null);
+
+    // A warm-up is an extra set before the programmed work, so it rests but does
+    // not consume a working set. The toggle stays on for back-to-back warm-ups.
+    if (isWarmup) {
+      startRest(Math.min(restSec, 60));
+      return;
+    }
 
     if (setIndexNum + 1 < item.sets.length) {
       setSetIndexNum((s) => s + 1);
@@ -342,6 +395,19 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
           <span className="chip set-chip">{setLabel}</span>
           <span className="workout-reps">{currentSet.reps}</span>
         </div>
+
+        <div className="set-type-row">
+          <button
+            type="button"
+            className="rpe-pill"
+            data-active={isWarmup}
+            aria-pressed={isWarmup}
+            onClick={() => setIsWarmup((v) => !v)}
+          >
+            {tr("warmupSet")}
+          </button>
+          {isWarmup ? <span className="set-type-row__hint">{tr("warmupExcluded")}</span> : null}
+        </div>
         {exercise.equipment !== "body weight" ? (
           <>
             <div className="log-row">
@@ -408,6 +474,57 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
                 </strong>
               </p>
             ) : null}
+
+            {plateLoad ? (
+              <div className="plate-loader">
+                <div className="plate-loader__head">
+                  <span className="plate-loader__title">{tr("plateLoader")}</span>
+                  <div className="plate-loader__bars" role="group" aria-label={tr("barWeight")}>
+                    {BAR_OPTIONS_KG.map((b) => (
+                      <button
+                        key={b}
+                        type="button"
+                        className="plate-loader__bar"
+                        data-active={barKg === b}
+                        aria-pressed={barKg === b}
+                        onClick={() => setBarKg(b)}
+                      >
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {plateLoad.perSide.length > 0 ? (
+                  <>
+                    <div className="plate-stack" aria-hidden>
+                      {plateLoad.perSide.flatMap((s) =>
+                        Array.from({ length: s.count }, (_, i) => (
+                          <span
+                            key={`${s.plateKg}-${i}`}
+                            className="plate-chip"
+                            data-plate={s.plateKg}
+                          >
+                            {s.plateKg}
+                          </span>
+                        )),
+                      )}
+                    </div>
+                    <p className="plate-loader__meta">
+                      {tr("perSide")} · {formatPerSide(plateLoad)} kg
+                    </p>
+                  </>
+                ) : (
+                  <p className="plate-loader__meta">{tr("barOnly")}</p>
+                )}
+
+                {plateLoad.leftoverKg > 0 ? (
+                  <p className="plate-loader__short">
+                    {plateLoad.leftoverKg} kg {tr("plateShort")}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </>
         ) : null}
 
@@ -446,9 +563,12 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
             )}
           </p>
         ) : null}
-        <p style={{ margin: 0, fontSize: "0.98rem", lineHeight: 1.45, whiteSpace: "pre-line" }}>
-          {localizedCoaching(programId, session.id, item, mode)}
-        </p>
+        {/* User-built routines carry no authored coaching text. */}
+        {localizedCoaching(programId, session.id, item, mode).trim() ? (
+          <p style={{ margin: 0, fontSize: "0.98rem", lineHeight: 1.45, whiteSpace: "pre-line" }}>
+            {localizedCoaching(programId, session.id, item, mode)}
+          </p>
+        ) : null}
         <div className="teach-callout teach-callout--soft" style={{ marginTop: "0.25rem" }}>
           <strong>{tr("feel")}</strong>
           <BilingualText en={lessonEn.feel} yue={lessonYue.feel} as="p" />
@@ -484,7 +604,9 @@ export function WorkoutClient({ session, exercises, programId }: Props) {
 
       <div className="workout-dock">
         <button type="button" className="btn btn-primary btn-block btn-lg btn--glow" onClick={completeSet}>
-          {restLeft > 0
+          {isWarmup
+            ? tr("logWarmup")
+            : restLeft > 0
             ? tr("skipRestComplete")
             : setIndexNum + 1 < totalSets
               ? tr("completeSet")

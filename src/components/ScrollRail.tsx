@@ -21,6 +21,8 @@ export function ScrollRail({
       className={className}
       onPointerDown={(e) => {
         if (e.pointerType !== "mouse" || !ref.current) return;
+        // Block native image/link dragging; click still fires for taps.
+        e.preventDefault();
         drag.current = { x: e.clientX, left: ref.current.scrollLeft };
         moved.current = false;
       }}

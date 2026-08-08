@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { LibraryClient } from "@/components/LibraryClient";
+import { getAllExercises } from "@/lib/exercises";
 
 export const metadata = { title: "Search" };
 
@@ -8,7 +9,7 @@ export const metadata = { title: "Search" };
 export default function LibraryPage() {
   return (
     <Suspense>
-      <LibraryClient />
+      <LibraryClient totalExercises={getAllExercises().length} />
     </Suspense>
   );
 }

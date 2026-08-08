@@ -150,7 +150,7 @@ export function HomeClient({
           <section>
             <div className="af-section-head">
               <h2>{tr("startWorkout")}</h2>
-              <Link href="/path">{tr("seeAll")}</Link>
+              <Link href="/routines">{tr("routines")}</Link>
             </div>
             <div className="af-tile-stack">
               {programs.map((prog, i) => {
@@ -195,6 +195,7 @@ export function HomeClient({
                   className="af-mini-tile af-mini-tile--machine"
                   style={{ ["--g" as string]: m.color }}
                   role="listitem"
+                  draggable={false}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -205,6 +206,7 @@ export function HomeClient({
                     height={168}
                     loading="lazy"
                     decoding="async"
+                    draggable={false}
                   />
                   <span className="af-mini-tile__body">
                     <span className="af-mini-tile__kicker">{tr("machineType")}</span>
@@ -239,6 +241,7 @@ export function HomeClient({
                     href={`/learn/${p.id}`}
                     className="af-mini-tile"
                     style={{ ["--g" as string]: p.color }}
+                    draggable={false}
                   >
                     <span className="af-mini-tile__label">{loc.label}</span>
                     <span className="af-mini-tile__sub">{tr("formPattern")}</span>
