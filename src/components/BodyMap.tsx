@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BODY_PARTS, slugifyPart } from "@/lib/body-parts";
 import { BodyPartIcon } from "./BodyPartIcon";
+import { MuscleMap } from "./MuscleMap";
 import { Reveal } from "./Reveal";
 import { useLocale } from "@/lib/locale";
 
@@ -59,6 +60,10 @@ export function BodyMap({ counts, activePart }: Props) {
 
   return (
     <div className="bodymap">
+      {/* The figure is for exploring; the grid below stays as the precise,
+          fully-labelled list (and covers regions with no place on a body, e.g. cardio). */}
+      <MuscleMap counts={counts} activePart={activePart} />
+
       <div className="bodymap__icons-grid" role="list">
         {parts.map((p, i) => {
           const active = activePart === p.id;

@@ -3209,6 +3209,113 @@ form[action="/library"] .select-field {
   color: color-mix(in srgb, #e8b71a 78%, var(--ink));
 }
 
+/* --- Interactive muscle map --------------------------------------------- */
+
+.muscle-map {
+  display: grid;
+  gap: 0.7rem;
+  justify-items: center;
+}
+
+.muscle-map__views {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border: 0.5px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+}
+
+.muscle-map__view {
+  min-width: 4.5rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 180ms var(--ease-out),
+    color 180ms var(--ease-out);
+}
+
+@media (hover: hover) {
+  .muscle-map__view:hover {
+    color: var(--ink);
+  }
+}
+
+.muscle-map__view:focus-visible {
+  outline: 2px solid var(--ring-exercise);
+  outline-offset: 2px;
+}
+
+.muscle-map__view[data-active="true"] {
+  background: color-mix(in srgb, var(--ring-exercise) 22%, var(--surface));
+  color: var(--ink);
+}
+
+.muscle-map__stage {
+  width: 100%;
+  /* Kept short enough that the readout below never collides with the dock. */
+  max-width: 236px;
+}
+
+.muscle-figure {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.muscle-figure__body > * {
+  fill: color-mix(in srgb, var(--ink) 7%, transparent);
+}
+
+/* Each region is an anchor; the shapes inside it carry the fill. Muscle groups
+   are tinted with their own accent from the start — a uniformly grey figure
+   reads as a mannequin, not a map of what you can train. */
+.muscle-region > * {
+  fill: color-mix(in srgb, var(--region) 38%, transparent);
+  transition:
+    fill 200ms var(--ease-out),
+    filter 200ms var(--ease-out);
+}
+
+.muscle-region {
+  cursor: pointer;
+  outline: none;
+}
+
+@media (hover: hover) {
+  .muscle-region:hover > * {
+    fill: var(--region);
+    filter: drop-shadow(0 0 7px color-mix(in srgb, var(--region) 55%, transparent));
+  }
+}
+
+.muscle-region[data-active="true"] > * {
+  fill: var(--region);
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--region) 55%, transparent));
+}
+
+.muscle-region:focus-visible > * {
+  fill: var(--region);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  paint-order: stroke fill;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .muscle-region > * {
+    transition: none;
+  }
+}
+
 /* --- Routine builder ---------------------------------------------------- */
 
 .routine-card {

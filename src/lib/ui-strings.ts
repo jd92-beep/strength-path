@@ -136,6 +136,10 @@ export type UiKey =
   | "untitledRoutine"
   | "confirmDeleteRoutine"
   | "noResults"
+  | "muscleFront"
+  | "muscleBack"
+  | "muscleView"
+  | "muscleMapHint"
   | "plateLoader"
   | "perSide"
   | "barWeight"
@@ -324,6 +328,10 @@ const en: Record<UiKey, string> = {
   untitledRoutine: "Untitled routine",
   confirmDeleteRoutine: "Delete this routine? This cannot be undone.",
   noResults: "No moves match that search.",
+  muscleFront: "Front",
+  muscleBack: "Back",
+  muscleView: "Body view",
+  muscleMapHint: "Tap a muscle to see its moves.",
   plateLoader: "Plate loader",
   perSide: "Per side",
   barWeight: "Bar",
@@ -514,6 +522,10 @@ const yue: Record<UiKey, string> = {
   untitledRoutine: "未命名課表",
   confirmDeleteRoutine: "確定刪除呢個課表？刪咗就攞唔返。",
   noResults: "搵唔到相符嘅動作。",
+  muscleFront: "正面",
+  muscleBack: "背面",
+  muscleView: "身體視角",
+  muscleMapHint: "撳一撳肌肉，睇下有咩動作練。",
   plateLoader: "槓片計算",
   perSide: "每邊",
   barWeight: "槓鈴",
