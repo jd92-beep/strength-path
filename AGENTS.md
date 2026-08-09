@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance to AI coding agents (Kimi Code, Claude Code, etc.) when working with code in this repository. Keep it in sync with `CLAUDE.md`.
+This file provides guidance to AI coding agents (Kimi Code, Claude Code, etc.) when working with code in this repository. `CLAUDE.md` is a pointer to this file — keep repo guidance here only.
 
 ## Commands
 
