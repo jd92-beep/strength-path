@@ -68,7 +68,7 @@ export function HomeClient({
           <header className="home-hero">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/hero/home-main.jpg?v=2"
+              src="/hero/home-main.jpg?v=5"
               alt=""
               className="home-hero__photo"
               fetchPriority="high"

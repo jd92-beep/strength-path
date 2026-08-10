@@ -825,7 +825,7 @@ textarea {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 12%;
+  object-position: center 10%;
   /* Kept bright and prominent — no dimming; only the scrim below darkens the base */
 }
 
